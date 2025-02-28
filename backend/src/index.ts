@@ -21,6 +21,10 @@ app.use('/rag', ragRouter);
 app.use('/chat', chatRouter);
 app.use('/subscription', subsriptionRouter);
 
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+});
+
 connectMongoDB();
 
 app.listen(PORT, () => {
