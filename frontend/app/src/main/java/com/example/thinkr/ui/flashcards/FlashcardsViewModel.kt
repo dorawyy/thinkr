@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.FlashcardItem
-import com.example.thinkr.data.repositories.FlashcardsRepositoryImpl
+import com.example.thinkr.data.repositories.flashcards.FlashcardsRepository
 
-class FlashcardsViewModel(private val flashcardsRepositoryImpl: FlashcardsRepositoryImpl) : ViewModel() {
+class FlashcardsViewModel(private val flashcardsRepositoryImpl: FlashcardsRepository) : ViewModel() {
     fun onBackPressed(navController: NavController) {
         navController.popBackStack()
     }

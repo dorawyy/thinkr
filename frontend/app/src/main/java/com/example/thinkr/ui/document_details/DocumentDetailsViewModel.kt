@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
-import com.example.thinkr.data.repositories.DocRepositoryImpl
+import com.example.thinkr.data.repositories.doc.DocRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DocumentDetailsViewModel(private val documentRepositoryImpl: DocRepositoryImpl) : ViewModel() {
+class DocumentDetailsViewModel(private val documentRepositoryImpl: DocRepository) : ViewModel() {
     private val _state = MutableStateFlow(DocumentDetailsState())
 
     fun onBackPressed(navController: NavController) {

@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import com.example.thinkr.data.models.Document
 
 @Composable
-fun DocumentOptionsScreen(documentItem: Document) {
-    Text("Document Options Screen ${documentItem.name}")
+fun DocumentOptionsScreen(document: Document) {
+    Text("Document Options Screen ${document.documentName}")
 }

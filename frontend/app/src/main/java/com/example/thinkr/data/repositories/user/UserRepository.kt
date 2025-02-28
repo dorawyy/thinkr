@@ -1,8 +1,8 @@
-package com.example.thinkr.data.repositories
+package com.example.thinkr.data.repositories.user
 
 import com.example.thinkr.data.models.User
 
-class UserRepositoryImpl: UserRepository {
+class UserRepository: IUserRepository {
     private var _signedInUser: User? = null
     override fun setUser(user: User) {
         _signedInUser = user
@@ -12,7 +12,12 @@ class UserRepositoryImpl: UserRepository {
         if (_signedInUser == null) {
             return null
         }
-        return User(_signedInUser!!.email, _signedInUser!!.name, _signedInUser!!.googleId, _signedInUser!!.userId, _signedInUser!!.subscribed)
+        return User(
+            email = _signedInUser!!.email,
+            name = _signedInUser!!.name,
+            googleId = _signedInUser!!.googleId,
+            subscribed = _signedInUser!!.subscribed
+        )
     }
 
     override fun delUser() {

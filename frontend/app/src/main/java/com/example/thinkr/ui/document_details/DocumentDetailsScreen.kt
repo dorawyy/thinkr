@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
-import com.example.thinkr.data.repositories.DocRepositoryImpl
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,6 +47,7 @@ fun DocumentDetailsScreen(
     var name by remember { mutableStateOf("") }
     var context by remember { mutableStateOf("") }
     val contextForToast = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Row {
         Image(
@@ -115,7 +117,9 @@ fun DocumentDetailsScreen(
                     Toast.makeText(contextForToast, "Please fill in the name", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    viewModel.onUpload(navController, name, context, selectedUri)
+                    coroutineScope.launch {
+                        viewModel.onUpload(navController, name, context, selectedUri)
+                    }
                 }
             },
             modifier = Modifier

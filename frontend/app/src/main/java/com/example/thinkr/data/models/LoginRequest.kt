@@ -3,9 +3,8 @@ package com.example.thinkr.data.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
-    val email: String,
-    val name: String,
+data class LoginRequest(
     val googleId: String,
-    val subscribed: Boolean
+    val name: String,
+    val email: String
 )

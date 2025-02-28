@@ -157,9 +157,6 @@ fun LandingScreen(
             Text(text = "Sign Up")
         }
         Spacer(modifier = Modifier.height(12.dp))
-        if (state.value.isLoading) {
-            CircularProgressIndicator()
-        }
         Button(
             onClick = { signInLauncher.launch(signInIntent) },
             modifier = Modifier.fillMaxWidth(fraction = 0.5f)
@@ -175,5 +172,8 @@ fun LandingScreen(
             },
             modifier = Modifier.padding(top = 8.dp)
         )
+        if (state.value.isLoading) {
+            CircularProgressIndicator()
+        }
     }
 }

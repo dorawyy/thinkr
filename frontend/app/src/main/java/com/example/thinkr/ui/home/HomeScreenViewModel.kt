@@ -3,12 +3,12 @@ package com.example.thinkr.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
-import com.example.thinkr.data.repositories.DocRepositoryImpl
+import com.example.thinkr.data.repositories.doc.DocRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class HomeScreenViewModel(private val docRepositoryImpl: DocRepositoryImpl) : ViewModel() {
+class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
 
@@ -45,7 +45,10 @@ class HomeScreenViewModel(private val docRepositoryImpl: DocRepositoryImpl) : Vi
         }
     }
 
-    fun getDocuments() {
-        docRepositoryImpl.getDocuments()
+    suspend fun getDocuments() {
+        docRepository.getDocuments(
+            userId = "69", // TODO: change this
+            documentIds = null
+        )
     }
 }

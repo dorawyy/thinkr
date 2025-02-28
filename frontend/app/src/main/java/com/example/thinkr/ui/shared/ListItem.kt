@@ -26,20 +26,21 @@ import com.example.thinkr.R
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.ui.home.HomeScreenAction
 
-
 @Composable
-fun ListItem(item: Document, onAction: (HomeScreenAction) -> Unit = {}) {
+fun ListItem(
+    item: Document,
+    onAction: (HomeScreenAction) -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = item.uploadCompleted) {
+            .clickable(enabled = !item.isUploading) {
                 onAction(HomeScreenAction.DocumentItemClicked(documentItem = item))
             }
             .padding(vertical = 8.dp)
-            .alpha(if (item.uploadCompleted) 1f else 0.5f), // Faded effect if not completed
+            .alpha(if (!item.isUploading) 1f else 0.5f),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Circular logo
         Image(
             painter = painterResource(id = R.drawable.document_placeholder_logo),
             contentDescription = "Logo",
@@ -48,19 +49,11 @@ fun ListItem(item: Document, onAction: (HomeScreenAction) -> Unit = {}) {
                 .clip(CircleShape)
                 .background(Color.Gray)
         )
-
         Spacer(modifier = Modifier.width(12.dp))
-
-        // Name
-        Text(text = item.name, fontSize = 18.sp, fontWeight = FontWeight.Medium)
-
-        if (!item.uploadCompleted) {
+        Text(text = item.documentName, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+        if (item.isUploading) {
             Spacer(modifier = Modifier.weight(1f))
-
-            // Circular loading animation
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp)
-            )
+            CircularProgressIndicator(modifier = Modifier.size(24.dp))
         }
     }
 }
