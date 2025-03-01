@@ -1,6 +1,7 @@
 package com.example.thinkr.ui.document_upload
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,48 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
         navController.navigate(Route.Home)
     }
 
+    fun onUploadWithBytes(
+        navController: NavController,
+        documentName: String,
+        documentContext: String,
+        fileBytes: ByteArray,
+        fileName: String,
+        context: Context
+    ) {
+        viewModelScope.launch {
+            try {
+                val result = docRepository.uploadDocument(
+                    fileBytes = fileBytes,
+                    fileName = fileName,
+                    userId = "69",
+                    documentName = documentName,
+                    documentContext = documentContext
+                )
+
+                if (result) {
+                    navController.navigate(Route.Home)
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            "Upload failed",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun onUpload(
         navController: NavController,
         documentName: String,
@@ -33,17 +76,37 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
             try {
                 val inputStream = context.contentResolver.openInputStream(uri)
                     ?: throw IOException("Could not open document")
+                val fileBytes = inputStream.readBytes()
+                inputStream.close()
 
-                inputStream.use { stream ->
-                    docRepository.uploadDocument(
-                        document = stream,
-                        userId = "69",
-                        documentName = documentName,
-                        documentContext = documentContext
-                    )
+                val fileName = context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                    if (cursor.moveToFirst() && nameIndex != -1) {
+                        cursor.getString(nameIndex)
+                    } else {
+                        uri.lastPathSegment ?: "unknown.pdf"
+                    }
+                } ?: "unknown.pdf"
+
+                val result = docRepository.uploadDocument(
+                    fileBytes = fileBytes,
+                    fileName = fileName,
+                    userId = "69",
+                    documentName = documentName,
+                    documentContext = documentContext
+                )
+
+                if (result) {
+                    navController.navigate(Route.Home)
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            "Upload failed",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-
-                navController.navigate(Route.Home)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
