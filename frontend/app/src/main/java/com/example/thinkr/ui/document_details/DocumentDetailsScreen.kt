@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.thinkr.R
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.io.IOException
 
 @Composable
 fun DocumentDetailsScreen(
@@ -44,90 +44,97 @@ fun DocumentDetailsScreen(
     selectedUri: Uri,
     viewModel: DocumentDetailsViewModel = koinViewModel()
 ) {
-    var name by remember { mutableStateOf("") }
-    var context by remember { mutableStateOf("") }
-    val contextForToast = LocalContext.current
+    var documentName by remember { mutableStateOf(value = "") }
+    var documentContext by remember { mutableStateOf(value = "") }
+    val localContext = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    Row {
+    Column(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
-            contentDescription = "Back",
+            contentDescription = "Back button",
             modifier = Modifier
                 .size(48.dp)
                 .clickable { viewModel.onBackPressed(navController) }
         )
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.height(80.dp))
-
-        Box(
+        Column(
             modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.document_placeholder_logo),
-                contentDescription = "Logo",
+            Spacer(modifier = Modifier.height(80.dp))
+            Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray)
+                    .clip(CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.document_placeholder_logo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Selected File: ${selectedUri.lastPathSegment}",
+                fontSize = 20.sp
             )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text("Selected File: ${selectedUri.lastPathSegment}", fontSize = 20.sp)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { if (it.length <= DocumentDetailsViewModel.MAX_NAME_LENGTH) name = it },
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth(0.8f),
-            singleLine = true,
-            maxLines = 1
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = context,
-            onValueChange = { if (it.length <= DocumentDetailsViewModel.MAX_CONTEXT_LENGTH) context = it },
-            label = { Text("Context") },
-            modifier = Modifier
-                .fillMaxWidth(0.8f) // Context box is now ~40% of the screen width
-                .height(240.dp), // Increased default height
-            maxLines = 10
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = {
-                if (name.isBlank()) {
-                    Toast.makeText(contextForToast, "Please fill in the name", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    coroutineScope.launch {
-                        viewModel.onUpload(navController, name, context, selectedUri)
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = documentName,
+                onValueChange = {
+                    if (it.length <= DocumentDetailsViewModel.MAX_NAME_LENGTH) documentName = it
+                },
+                label = { Text(text = "Name") },
+                modifier = Modifier.fillMaxWidth(fraction = 0.8f),
+                singleLine = true,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = documentContext,
+                onValueChange = {
+                    if (it.length <= DocumentDetailsViewModel.MAX_CONTEXT_LENGTH) documentContext = it
+                },
+                label = { Text(text = "Context") },
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.8f)
+                    .height(240.dp),
+                maxLines = 10
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    if (documentName.isBlank()) {
+                        Toast.makeText(
+                            localContext,
+                            "Please fill in the name",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        coroutineScope.launch {
+                            viewModel.onUpload(
+                                navController = navController,
+                                documentName = documentName,
+                                documentContext = documentContext,
+                                uri = selectedUri,
+                                context = localContext
+                            )
+                        }
                     }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .height(50.dp)
-        ) {
-            Text("Upload")
-            Spacer(modifier = Modifier.width(8.dp))
+                },
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.6f)
+                    .height(50.dp)
+            ) {
+                Text(text = "Upload")
+                Spacer(modifier = Modifier.width(8.dp))
+            }
         }
     }
 }
