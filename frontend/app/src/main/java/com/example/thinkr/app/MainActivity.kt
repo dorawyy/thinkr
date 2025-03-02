@@ -126,10 +126,8 @@ class MainActivity : ComponentActivity() {
 
                             composable<Route.Profile> { navBackStackEntry ->
                                 val viewModel = koinViewModel<ProfileViewModel>()
-                                val paymentViewModel =
-                                    navBackStackEntry.sharedKoinViewModel<PaymentViewModel>(
-                                        navController
-                                    )
+                                val paymentViewModel = navBackStackEntry
+                                    .sharedKoinViewModel<PaymentViewModel>(navController)
                                 val isPremium = paymentViewModel.state.value.isSubscribed
 
                                 ProfileScreen(
@@ -143,10 +141,8 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable<Route.Payment> { navBackStackEntry ->
-                                val paymentViewModel =
-                                    navBackStackEntry.sharedKoinViewModel<PaymentViewModel>(
-                                        navController
-                                    )
+                                val paymentViewModel = navBackStackEntry
+                                    .sharedKoinViewModel<PaymentViewModel>(navController)
 
                                 PaymentScreen(
                                     paymentViewModel = paymentViewModel,
