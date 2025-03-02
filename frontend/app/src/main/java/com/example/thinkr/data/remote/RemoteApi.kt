@@ -6,6 +6,7 @@ import com.example.thinkr.data.models.AuthResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.LoginRequest
 import com.example.thinkr.data.models.UploadResponse
+import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -82,6 +83,27 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         return Json.decodeFromString(responseBody)
     }
 
+    override suspend fun subscribe(
+        userId: String
+    ): SubscriptionResponse {
+        val response = client.post(urlString = BASE_URL + SUBSCRIPTION) {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("userId" to userId))
+        }
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
+    override suspend fun getSubscriptionStatus(
+        userId: String
+    ): SubscriptionResponse {
+        val response = client.get(urlString = BASE_URL + SUBSCRIPTION) {
+            parameter("userId", userId)
+        }
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
     private companion object {
         private const val BASE_URL = "https://vazrwha8g4.execute-api.us-east-2.amazonaws.com"
         private const val AUTH = "/auth"
@@ -89,5 +111,6 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         private const val DOCUMENT = "/document"
         private const val UPLOAD = "/upload"
         private const val RETRIEVE = "/retrieve"
+        private const val SUBSCRIPTION = "/subscription"
     }
 }

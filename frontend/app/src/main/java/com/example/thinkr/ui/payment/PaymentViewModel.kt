@@ -1,11 +1,16 @@
 package com.example.thinkr.ui.payment
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.thinkr.data.repositories.subscription.SubscriptionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PaymentViewModel : ViewModel() {
+class PaymentViewModel(
+    private val subscriptionRepository: SubscriptionRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(PaymentScreenState())
     val state = _state.asStateFlow()
 
@@ -23,5 +28,27 @@ class PaymentViewModel : ViewModel() {
 
     fun onBillingAddressChange(cardBillingAddress: String) {
         _state.update { it.copy(cardBillingAddress = cardBillingAddress) }
+    }
+
+    fun subscribeUser(userId: String) {
+        viewModelScope.launch {
+            val result = subscriptionRepository.subscribe(userId)
+            result.onSuccess { response ->
+                _state.update { it.copy(isSubscribed = response.data.subscribed) }
+            }.onFailure { error ->
+                error.printStackTrace()
+            }
+        }
+    }
+
+    fun getSubscriptionStatus(userId: String) {
+        viewModelScope.launch {
+            val result = subscriptionRepository.getSubscriptionStatus(userId)
+            result.onSuccess { response ->
+                _state.update { it.copy(isSubscribed = response.data.subscribed) }
+            }.onFailure { error ->
+                error.printStackTrace()
+            }
+        }
     }
 }
