@@ -3,14 +3,27 @@ package com.example.thinkr.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
+import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.repositories.doc.DocRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
+
+    init {
+        // TODO: Remove, for demo only
+        _state.update {
+            it.copy(
+                retrievedDocuments = listOf(
+                    Document("1", "Document 1", "1", false, false),
+                )
+            )
+        }
+    }
 
     fun onAction(action: HomeScreenAction, navController: NavController) {
         when (action) {
@@ -23,9 +36,7 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
             }
 
             is HomeScreenAction.DocumentItemClicked -> {
-                // TODO: This is for debug/testing flashcards, replace with DocumentOptions
-//                navController.navigate(Route.DocumentOptions.createRoute(action.documentItem))
-                navController.navigate(Route.Flashcards.createRoute(action.documentItem))
+                navController.navigate(Route.DocumentOptions.createRoute(action.documentItem))
             }
 
             HomeScreenAction.AddButtonClicked -> {
@@ -40,15 +51,14 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
 
             is HomeScreenAction.FileSelected -> {
                 // Handle file selected action
-                navController.navigate(Route.DocumentDetails.createRoute(action.selectedUri))
+                navController.navigate(Route.DocumentUpload.createRoute(action.selectedUri))
             }
         }
     }
 
     suspend fun getDocuments() {
-        docRepository.getDocuments(
-            userId = "69", // TODO: change this
-            documentIds = null
-        )
+        _state.update {
+            it.copy(retrievedDocuments = docRepository.getDocuments(userId = "69", documentIds = null))
+        }
     }
 }

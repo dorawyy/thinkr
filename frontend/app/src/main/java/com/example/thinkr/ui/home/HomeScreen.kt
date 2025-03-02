@@ -6,6 +6,10 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,12 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
+import com.example.thinkr.app.Route
 import com.example.thinkr.ui.shared.ListItem
 
 @Composable
@@ -74,6 +80,7 @@ fun HomeScreen(
 
     HomeScreenContent(
         state = state,
+        navController = navController,
         onAction = { action -> viewModel.onAction(action, navController) },
         onSignOut = { showDialog = true }
     )
@@ -82,9 +89,30 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     state: State<HomeScreenState>,
+    navController: NavController,
     onAction: (HomeScreenAction) -> Unit,
     onSignOut: () -> Unit
 ) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            try {
+                val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(uri, takeFlags)
+                navController.navigate(Route.DocumentUpload.createRoute(uri))
+            } catch (e: SecurityException) {
+                Log.e("HomeScreen", "Failed to get permission", e)
+                Toast.makeText(
+                    context,
+                    "Cannot access this file. Please try another.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -151,7 +179,8 @@ fun HomeScreenContent(
         if (state.value.showDialog) {
             FilePickerDialog(
                 onDismiss = { onAction(HomeScreenAction.DismissDialog) },
-                onSelected = { onAction(HomeScreenAction.FileSelected(it)) })
+                onSelected = { onAction(HomeScreenAction.FileSelected(it)) }
+            )
         }
     }
 }

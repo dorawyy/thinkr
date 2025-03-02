@@ -5,7 +5,6 @@ import com.example.thinkr.data.remote.RemoteApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.InputStream
 
 class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
     private val _uploadingDocuments = MutableStateFlow<List<Document>>(emptyList())
@@ -22,18 +21,12 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
     }
 
     override suspend fun uploadDocument(
-        document: InputStream,
+        fileBytes: ByteArray,
+        fileName: String,
         userId: String,
         documentName: String,
         documentContext: String
-    ) {
-        remoteApi.uploadDocument(
-            document = document,
-            userId = userId,
-            documentName = documentName,
-            documentContext = documentContext
-        )
-
+    ): Boolean {
         val tempDocument = Document(
             documentId = "temp_${System.currentTimeMillis()}",
             documentName = documentName,
@@ -46,16 +39,18 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
         _uploadingDocuments.value += tempDocument
 
         try {
-            remoteApi.uploadDocument(
-                document = document,
+            val response = remoteApi.uploadDocument(
+                fileBytes = fileBytes,
+                fileName = fileName,
                 userId = userId,
                 documentName = documentName,
                 documentContext = documentContext
             )
-            _uploadingDocuments.value = _uploadingDocuments.value.filter { it.documentId != tempDocument.documentId }
+            return true
         } catch (e: Exception) {
             _uploadingDocuments.value = _uploadingDocuments.value.filter { it.documentId != tempDocument.documentId }
             e.printStackTrace()
         }
+        return false
     }
 }
