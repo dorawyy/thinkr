@@ -5,6 +5,8 @@ import com.example.thinkr.data.remote.IRemoteApi
 import com.example.thinkr.data.remote.RemoteApi
 import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.auth.IAuthRepository
+import com.example.thinkr.data.repositories.chat.ChatRepository
+import com.example.thinkr.data.repositories.chat.IChatRepository
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.doc.IDocRepository
 import com.example.thinkr.data.repositories.flashcards.FlashcardsRepository
@@ -38,6 +40,7 @@ val appModule = module {
     singleOf(::FlashcardsRepository).bind<IFlashcardsRepository>()
     singleOf(::UserRepository).bind<IUserRepository>()
     singleOf(::SubscriptionRepository).bind<ISubscriptionRepository>()
+    singleOf(::ChatRepository).bind<IChatRepository>()
     viewModelOf(::LandingScreenViewModel)
     viewModelOf(::HomeScreenViewModel)
     viewModelOf(::ProfileViewModel)

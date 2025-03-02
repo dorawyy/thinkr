@@ -22,6 +22,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.ui.chat.ChatScreen
+import com.example.thinkr.ui.chat.ChatViewModel
 import com.example.thinkr.ui.document_options.DocumentOptionsScreen
 import com.example.thinkr.ui.document_options.DocumentOptionsViewModel
 import com.example.thinkr.ui.document_upload.DocumentUploadScreen
@@ -194,8 +195,14 @@ class MainActivity : ComponentActivity() {
                                         ?: ""
                                 val document =
                                     Json.decodeFromString<Document>(Uri.decode(json)) // Decode JSON back to object
+                                val viewModel = koinViewModel<ChatViewModel>()
 
-                                ChatScreen(document, navController)
+                                ChatScreen(
+                                    document = document,
+                                    account = account!!,
+                                    navController = navController,
+                                    viewModel = viewModel
+                                )
                             }
                         }
                     }

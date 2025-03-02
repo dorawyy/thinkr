@@ -22,19 +22,30 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     document: Document,
+    account: GoogleSignInAccount,
     navController: NavController,
-    viewModel: ChatViewModel = viewModel()
+    viewModel: ChatViewModel = koinViewModel()
 ) {
     val chatState = viewModel.state.collectAsState().value
-    val messageText = remember { mutableStateOf("") }
+    val messageText = remember { mutableStateOf(value = "") }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        if (chatState.sessionId.isNotEmpty()) {
+            viewModel.loadChatSession(sessionId = chatState.sessionId)
+        } else {
+            account.id?.let { viewModel.createChatSession(it) }
+        }
+    }
 
     // Scroll to bottom when new message is added
     LaunchedEffect(chatState.messages.size) {
@@ -57,6 +68,18 @@ fun ChatScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
+                    )
+                }
+            },
+            actions = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteChatSession()
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text(
+                        text = "Delete chat"
                     )
                 }
             }
@@ -133,57 +156,6 @@ fun ChatScreen(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ChatMessageItem(message: Message) {
-    val isSender = message.isSender
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalAlignment = if (isSender) Alignment.End else Alignment.Start
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 280.dp)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = if (isSender) 16.dp else 4.dp,
-                        bottomEnd = if (isSender) 4.dp else 16.dp
-                    )
-                )
-                .background(
-                    if (isSender) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondaryContainer
-                )
-                .padding(12.dp)
-        ) {
-            Text(
-                text = message.content.value,
-                style = TextStyle(
-                    color = if (isSender) MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontSize = 16.sp
-                )
-            )
-
-            // Timestamp
-            Text(
-                text = message.formattedTime,
-                style = TextStyle(
-                    color = if (isSender) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                    else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Light
-                ),
-                modifier = Modifier.align(Alignment.End)
-            )
         }
     }
 }

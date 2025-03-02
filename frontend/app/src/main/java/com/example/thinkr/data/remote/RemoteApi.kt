@@ -1,13 +1,18 @@
-@file:OptIn(InternalAPI::class)
-
 package com.example.thinkr.data.remote
 
 import com.example.thinkr.data.models.AuthResponse
+import com.example.thinkr.data.models.ChatMetadata
+import com.example.thinkr.data.models.ChatSessionResponse
+import com.example.thinkr.data.models.CreateSessionRequest
+import com.example.thinkr.data.models.DeleteSessionResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.LoginRequest
+import com.example.thinkr.data.models.MessageResponse
+import com.example.thinkr.data.models.SendMessageRequest
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
@@ -19,13 +24,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import io.ktor.utils.io.InternalAPI
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import java.io.InputStream
 
 class RemoteApi(private val client: HttpClient) : IRemoteApi {
     override suspend fun login(userId: String, name: String, email: String): AuthResponse {
@@ -104,6 +107,42 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         return Json.decodeFromString(responseBody)
     }
 
+    override suspend fun createChatSession(
+        userId: String,
+        metadata: ChatMetadata
+    ): ChatSessionResponse {
+        val response = client.post(urlString = BASE_URL + CHAT) {
+            contentType(ContentType.Application.Json)
+            setBody(CreateSessionRequest(userId, metadata))
+        }
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
+    override suspend fun sendMessage(
+        sessionId: String,
+        message: String
+    ): MessageResponse {
+        val response = client.post(urlString = "$BASE_URL$CHAT/$sessionId$MESSAGE") {
+            contentType(ContentType.Application.Json)
+            setBody(SendMessageRequest(message))
+        }
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
+    override suspend fun getChatSession(sessionId: String): ChatSessionResponse {
+        val response = client.get(urlString = "$BASE_URL$CHAT/$sessionId")
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
+    override suspend fun deleteChatSession(sessionId: String): DeleteSessionResponse {
+        val response = client.delete(urlString = "$BASE_URL$CHAT/$sessionId")
+        val responseBody = response.bodyAsText()
+        return Json.decodeFromString(responseBody)
+    }
+
     private companion object {
         private const val BASE_URL = "https://vazrwha8g4.execute-api.us-east-2.amazonaws.com"
         private const val AUTH = "/auth"
@@ -112,5 +151,7 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         private const val UPLOAD = "/upload"
         private const val RETRIEVE = "/retrieve"
         private const val SUBSCRIPTION = "/subscription"
+        private const val CHAT = "/chat"
+        private const val MESSAGE = "/message"
     }
 }
