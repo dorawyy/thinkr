@@ -57,9 +57,8 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
     }
 
     suspend fun getDocuments() {
-        docRepository.getDocuments(
-            userId = "69", // TODO: change this
-            documentIds = null
-        )
+        _state.update {
+            it.copy(retrievedDocuments = docRepository.getDocuments(userId = "69", documentIds = null))
+        }
     }
 }

@@ -57,22 +57,25 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
     }
 
     override suspend fun uploadDocument(
-        document: InputStream,
+        fileBytes: ByteArray,
+        fileName: String,
         userId: String,
         documentName: String,
         documentContext: String
     ): UploadResponse {
         val response = client.post(urlString = BASE_URL + DOCUMENT + UPLOAD) {
-            body = MultiPartFormDataContent(
-                formData {
-                    append("document", document, Headers.build {
-                        append(HttpHeaders.ContentType, ContentType.Application.OctetStream)
-                        append(HttpHeaders.ContentDisposition, "filename=\"$documentName\"")
-                    })
-                    append("userId", userId)
-                    append("documentName", documentName)
-                    append("context", documentContext)
-                }
+            contentType(ContentType.MultiPart.FormData)
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        append("userId", userId)
+                        append("documentName", documentName)
+                        append("document", fileBytes, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
+                            append(HttpHeaders.ContentType, "application/pdf")
+                        })
+                    }
+                )
             )
         }
         val responseBody = response.bodyAsText()

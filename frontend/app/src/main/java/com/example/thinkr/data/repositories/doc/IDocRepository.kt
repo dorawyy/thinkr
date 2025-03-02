@@ -13,9 +13,10 @@ interface IDocRepository {
     fun getUploadingDocuments(): Flow<List<Document>>
 
     suspend fun uploadDocument(
-        document: InputStream,
+        fileBytes: ByteArray,
+        fileName: String,
         userId: String,
         documentName: String,
         documentContext: String
-    )
+    ): Boolean
 }
