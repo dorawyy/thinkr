@@ -1,4 +1,8 @@
-# thinkr
+# Thinkr
+
+## Frontend/Android Architecture
+
+The Android app implements a Model-View-ViewModel inspired layerd architecture outlined [here](https://developer.android.com/topic/architecture#recommended-app-arch).
 
 ## Backend Setup
 
