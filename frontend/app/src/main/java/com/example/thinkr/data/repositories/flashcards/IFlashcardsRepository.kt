@@ -4,5 +4,5 @@ import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.FlashcardItem
 
 interface IFlashcardsRepository {
-    fun getFlashcards(documentItem: Document): List<FlashcardItem>
+    suspend fun getFlashcards(documentItem: Document): List<FlashcardItem>
 }

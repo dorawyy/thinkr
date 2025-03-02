@@ -13,6 +13,8 @@ import com.example.thinkr.data.repositories.flashcards.FlashcardsRepository
 import com.example.thinkr.data.repositories.flashcards.IFlashcardsRepository
 import com.example.thinkr.data.repositories.subscription.ISubscriptionRepository
 import com.example.thinkr.data.repositories.subscription.SubscriptionRepository
+import com.example.thinkr.data.repositories.quiz.QuizRepository
+import com.example.thinkr.data.repositories.quiz.IQuizRepository
 import com.example.thinkr.data.repositories.user.IUserRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.chat.ChatViewModel
@@ -41,6 +43,7 @@ val appModule = module {
     singleOf(::UserRepository).bind<IUserRepository>()
     singleOf(::SubscriptionRepository).bind<ISubscriptionRepository>()
     singleOf(::ChatRepository).bind<IChatRepository>()
+    singleOf(::QuizRepository).bind<IQuizRepository>()
     viewModelOf(::LandingScreenViewModel)
     viewModelOf(::HomeScreenViewModel)
     viewModelOf(::ProfileViewModel)

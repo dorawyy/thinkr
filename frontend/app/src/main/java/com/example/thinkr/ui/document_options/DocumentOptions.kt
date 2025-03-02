@@ -51,6 +51,10 @@ fun DocumentOptionsScreen(
     navController: NavController,
     viewModel: DocumentOptionsViewModel = koinViewModel()
 ) {
+    LaunchedEffect(documentItem) {
+        viewModel.checkIfDocumentIsReady(documentItem)
+    }
+
     val state by viewModel.state.collectAsState()
 
     // Animation states

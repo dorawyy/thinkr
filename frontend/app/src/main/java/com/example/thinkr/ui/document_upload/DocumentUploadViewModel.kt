@@ -1,7 +1,6 @@
 package com.example.thinkr.ui.document_upload
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.repositories.doc.DocRepository
+import com.example.thinkr.data.repositories.user.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewModel() {
+class DocumentUploadViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository) : ViewModel() {
     private val _state = MutableStateFlow(DocumentUploadState())
 
     fun onBackPressed(navController: NavController) {
@@ -31,7 +31,7 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
         fileName: String,
         context: Context
     ) {
-        val userId = "69" //TODO: Change
+        val userId = userRepository.getUser()!!.googleId
         viewModelScope.launch {
             try {
                 val result = docRepository.uploadDocument(
@@ -73,7 +73,7 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
         uri: Uri,
         context: Context
     ) {
-        val userId = "69" //TODO: Change
+        val userId = userRepository.getUser()!!.googleId
         viewModelScope.launch {
             try {
                 val inputStream = context.contentResolver.openInputStream(uri)
