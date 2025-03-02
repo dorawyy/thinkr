@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,63 +34,66 @@ fun FlashcardsScreen(
     navController: NavController,
     viewModel: FlashcardsViewModel = koinViewModel()
 ) {
-    viewModel.onStart(documentItem)
+    LaunchedEffect(Unit) { viewModel.loadFlashcards(documentItem) }
+
     val state by viewModel.state.collectAsState()
 
-    val frontBackPairs: List<Pair<@Composable () -> Unit, @Composable () -> Unit>> = remember {
-        state.flashcards.map { flashcard ->
-            Pair(
-                // First composable function (front)
-                {
-                    Text(
-                        text = flashcard.frontQuestion,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                },
-                // Second composable function (back)
-                {
-                    Text(
-                        text = flashcard.backAnswer,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        TopAppBar(
-            title = { Text("Flashcards") },
-            navigationIcon = {
-                IconButton(
-                    onClick = { viewModel.onBackPressed(navController) }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
+    if (state.flashcards.isNotEmpty()) {
+        val frontBackPairs: List<Pair<@Composable () -> Unit, @Composable () -> Unit>> = remember {
+            state.flashcards.map { flashcard ->
+                Pair(
+                    // First composable function (front)
+                    {
+                        Text(
+                            text = flashcard.front,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    },
+                    // Second composable function (back)
+                    {
+                        Text(
+                            text = flashcard.back,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                )
             }
-        )
+        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            AnimatedCardDeck(
-                frontBackPairs = frontBackPairs,
-                enableHorizontalSwipe = true
+            TopAppBar(
+                title = { Text("Flashcards") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { viewModel.onBackPressed(navController) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
             )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                AnimatedCardDeck(
+                    frontBackPairs = frontBackPairs,
+                    enableHorizontalSwipe = true
+                )
+            }
         }
     }
 }

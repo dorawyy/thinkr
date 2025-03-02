@@ -5,10 +5,10 @@ import com.example.thinkr.data.models.ChatMetadata
 import com.example.thinkr.data.models.ChatSessionResponse
 import com.example.thinkr.data.models.DeleteSessionResponse
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.data.models.MessageResponse
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
-import java.io.InputStream
 
 interface IRemoteApi {
     suspend fun login(
@@ -55,4 +55,9 @@ interface IRemoteApi {
     suspend fun deleteChatSession(
         sessionId: String
     ): DeleteSessionResponse
+
+    suspend fun getFlashcards(
+        userId: String,
+        documentId: String
+    ): List<FlashcardItem>
 }

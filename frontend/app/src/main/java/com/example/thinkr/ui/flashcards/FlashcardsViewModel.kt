@@ -12,7 +12,7 @@ class FlashcardsViewModel(private val flashcardsRepository: FlashcardsRepository
     private val _state = MutableStateFlow(FlashcardsState())
     val state = _state.asStateFlow()
 
-    fun onStart(documentItem: Document) {
+    suspend fun loadFlashcards(documentItem: Document) {
         _state.update { it.copy(flashcards = flashcardsRepository.getFlashcards(documentItem)) }
     }
 
