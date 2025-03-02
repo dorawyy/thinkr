@@ -31,12 +31,13 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
         fileName: String,
         context: Context
     ) {
+        val userId = "69" //TODO: Change
         viewModelScope.launch {
             try {
                 val result = docRepository.uploadDocument(
                     fileBytes = fileBytes,
                     fileName = fileName,
-                    userId = "69",
+                    userId = userId,
                     documentName = documentName,
                     documentContext = documentContext
                 )
@@ -72,6 +73,7 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
         uri: Uri,
         context: Context
     ) {
+        val userId = "69" //TODO: Change
         viewModelScope.launch {
             try {
                 val inputStream = context.contentResolver.openInputStream(uri)
@@ -79,19 +81,12 @@ class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewMo
                 val fileBytes = inputStream.readBytes()
                 inputStream.close()
 
-                val fileName = context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                    val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                    if (cursor.moveToFirst() && nameIndex != -1) {
-                        cursor.getString(nameIndex)
-                    } else {
-                        uri.lastPathSegment ?: "unknown.pdf"
-                    }
-                } ?: "unknown.pdf"
+                val fileName = uri.lastPathSegment ?: "$userId-$documentName-${System.currentTimeMillis()}.pdf"
 
                 val result = docRepository.uploadDocument(
                     fileBytes = fileBytes,
                     fileName = fileName,
-                    userId = "69",
+                    userId = userId,
                     documentName = documentName,
                     documentContext = documentContext
                 )
