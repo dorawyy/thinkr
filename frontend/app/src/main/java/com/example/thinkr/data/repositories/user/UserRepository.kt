@@ -2,7 +2,7 @@ package com.example.thinkr.data.repositories.user
 
 import com.example.thinkr.data.models.User
 
-class UserRepository: IUserRepository {
+class UserRepository : IUserRepository {
     private var _signedInUser: User? = null
     override fun setUser(user: User) {
         _signedInUser = user

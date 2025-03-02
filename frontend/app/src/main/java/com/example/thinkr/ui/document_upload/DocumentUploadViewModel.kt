@@ -1,4 +1,4 @@
-package com.example.thinkr.ui.document_details
+package com.example.thinkr.ui.document_upload
 
 import android.content.Context
 import android.net.Uri
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class DocumentDetailsViewModel(private val docRepository: DocRepository) : ViewModel() {
-    private val _state = MutableStateFlow(DocumentDetailsState())
+class DocumentUploadViewModel(private val docRepository: DocRepository) : ViewModel() {
+    private val _state = MutableStateFlow(DocumentUploadState())
 
     fun onBackPressed(navController: NavController) {
         navController.navigate(Route.Home)
