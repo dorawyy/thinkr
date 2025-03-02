@@ -125,13 +125,9 @@ fun HomeScreenContent(
             TextButton(onClick = onSignOut) {
                 Text(text = "Sign out")
             }
-            Image(
-                painter = painterResource(id = R.drawable.account_circle),
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(48.dp)
-                    .clickable { onAction(HomeScreenAction.ProfileButtonClicked) }
-            )
+            TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
+                Text(text = "Profile")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -139,38 +135,24 @@ fun HomeScreenContent(
         LazyColumn {
             items(state.value.retrievedDocuments) { document ->
                 ListItem(document, onAction)
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
             items(state.value.uploadingDocuments) { item ->
                 ListItem(item, onAction)
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // Add item
             item {
-                Row(
+                TextButton(
+                    onClick = { onAction(HomeScreenAction.AddButtonClicked) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            onAction(HomeScreenAction.AddButtonClicked)
-                        }
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                        .padding(vertical = 12.dp)
                 ) {
-                    // Circular logo
-                    Image(
-                        painter = painterResource(id = R.drawable.add_box),
-                        contentDescription = "Logo",
-                        modifier = Modifier
-                            .size(40.dp)
+                    Text(
+                        text = "Add",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    // Name
-                    Text(text = "Add", fontSize = 18.sp, fontWeight = FontWeight.Medium)
                 }
             }
 
