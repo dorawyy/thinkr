@@ -101,7 +101,7 @@ fun HomeScreenContent(
             try {
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 context.contentResolver.takePersistableUriPermission(uri, takeFlags)
-                navController.navigate(Route.DocumentDetails.createRoute(uri))
+                navController.navigate(Route.DocumentUpload.createRoute(uri))
             } catch (e: SecurityException) {
                 Log.e("HomeScreen", "Failed to get permission", e)
                 Toast.makeText(
