@@ -1,16 +1,7 @@
 package com.example.thinkr.ui.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,21 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -110,7 +88,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()  // Adjusts for the navigation bar
-        ) {
+        ){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,59 +103,9 @@ fun ChatScreen(
                         .padding(end = 8.dp),
                     placeholder = { Text("Type a message") },
                     shape = RoundedCornerShape(24.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = OutlinedTextFieldTokens.FocusInputColor.value,
-                        unfocusedTextColor = OutlinedTextFieldTokens.InputColor.value,
-                        disabledTextColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                        errorTextColor = OutlinedTextFieldTokens.ErrorInputColor.value,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        cursorColor = OutlinedTextFieldTokens.CaretColor.value,
-                        errorCursorColor = OutlinedTextFieldTokens.ErrorFocusCaretColor.value,
-                        selectionColors = LocalTextSelectionColors.current,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        disabledBorderColor = OutlinedTextFieldTokens.DisabledOutlineColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledOutlineOpacity),
-                        errorBorderColor = OutlinedTextFieldTokens.ErrorOutlineColor.value,
-                        focusedLeadingIconColor = OutlinedTextFieldTokens.FocusLeadingIconColor.value,
-                        unfocusedLeadingIconColor = OutlinedTextFieldTokens.LeadingIconColor.value,
-                        disabledLeadingIconColor = OutlinedTextFieldTokens.DisabledLeadingIconColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledLeadingIconOpacity),
-                        errorLeadingIconColor = OutlinedTextFieldTokens.ErrorLeadingIconColor.value,
-                        focusedTrailingIconColor = OutlinedTextFieldTokens.FocusTrailingIconColor.value,
-                        unfocusedTrailingIconColor = OutlinedTextFieldTokens.TrailingIconColor.value,
-                        disabledTrailingIconColor = OutlinedTextFieldTokens.DisabledTrailingIconColor
-                            .value.copy(alpha = OutlinedTextFieldTokens.DisabledTrailingIconOpacity),
-                        errorTrailingIconColor = OutlinedTextFieldTokens.ErrorTrailingIconColor.value,
-                        focusedLabelColor = OutlinedTextFieldTokens.FocusLabelColor.value,
-                        unfocusedLabelColor = OutlinedTextFieldTokens.LabelColor.value,
-                        disabledLabelColor = OutlinedTextFieldTokens.DisabledLabelColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledLabelOpacity),
-                        errorLabelColor = OutlinedTextFieldTokens.ErrorLabelColor.value,
-                        focusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                        unfocusedPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                        disabledPlaceholderColor = OutlinedTextFieldTokens.DisabledInputColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                        errorPlaceholderColor = OutlinedTextFieldTokens.InputPlaceholderColor.value,
-                        focusedSupportingTextColor = OutlinedTextFieldTokens.FocusSupportingColor.value,
-                        unfocusedSupportingTextColor = OutlinedTextFieldTokens.SupportingColor.value,
-                        disabledSupportingTextColor = OutlinedTextFieldTokens.DisabledSupportingColor
-                            .value.copy(alpha = OutlinedTextFieldTokens.DisabledSupportingOpacity),
-                        errorSupportingTextColor = OutlinedTextFieldTokens.ErrorSupportingColor.value,
-                        focusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                        unfocusedPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                        disabledPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                        errorPrefixColor = OutlinedTextFieldTokens.InputPrefixColor.value,
-                        focusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                        unfocusedSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
-                        disabledSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value
-                            .copy(alpha = OutlinedTextFieldTokens.DisabledInputOpacity),
-                        errorSuffixColor = OutlinedTextFieldTokens.InputSuffixColor.value,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 
