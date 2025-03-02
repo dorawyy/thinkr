@@ -100,7 +100,9 @@ fun DocumentUploadScreen(
 
         OutlinedTextField(
             value = documentName,
-            onValueChange = { if (it.length <= DocumentUploadViewModel.MAX_NAME_LENGTH) documentName = it },
+            onValueChange = {
+                if (it.length <= DocumentUploadViewModel.MAX_NAME_LENGTH) documentName = it
+            },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth(0.8f),
             singleLine = true,
@@ -111,7 +113,9 @@ fun DocumentUploadScreen(
 
         OutlinedTextField(
             value = documentContext,
-            onValueChange = { if (it.length <= DocumentUploadViewModel.MAX_CONTEXT_LENGTH) documentContext = it },
+            onValueChange = {
+                if (it.length <= DocumentUploadViewModel.MAX_CONTEXT_LENGTH) documentContext = it
+            },
             label = { Text("Context") },
             modifier = Modifier
                 .fillMaxWidth(0.8f) // Context box is now ~40% of the screen width

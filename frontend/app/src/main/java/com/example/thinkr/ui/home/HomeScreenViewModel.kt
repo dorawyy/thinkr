@@ -16,9 +16,13 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
 
     init {
         // TODO: Remove, for demo only
-        _state.update { it.copy(retrievedDocuments = listOf(
-            Document("1", "Document 1", "1", false, false),
-        )) }
+        _state.update {
+            it.copy(
+                retrievedDocuments = listOf(
+                    Document("1", "Document 1", "1", false, false),
+                )
+            )
+        }
     }
 
     fun onAction(action: HomeScreenAction, navController: NavController) {

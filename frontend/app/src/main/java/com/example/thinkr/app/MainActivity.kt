@@ -17,13 +17,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.thinkr.data.models.Document
-import com.example.thinkr.ui.document_options.DocumentOptionsViewModel
+import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.document_options.DocumentOptionsScreen
+import com.example.thinkr.ui.document_options.DocumentOptionsViewModel
 import com.example.thinkr.ui.document_upload.DocumentUploadScreen
 import com.example.thinkr.ui.document_upload.DocumentUploadViewModel
 import com.example.thinkr.ui.flashcards.FlashcardsScreen
 import com.example.thinkr.ui.flashcards.FlashcardsViewModel
-import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.home.HomeScreen
 import com.example.thinkr.ui.home.HomeScreenViewModel
 import com.example.thinkr.ui.landing.LandingScreen
