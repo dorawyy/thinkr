@@ -5,25 +5,15 @@ import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.repositories.doc.DocRepository
+import com.example.thinkr.data.repositories.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel() {
+class HomeScreenViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
-
-    init {
-        // TODO: Remove, for demo only
-        _state.update {
-            it.copy(
-                retrievedDocuments = listOf(
-                    Document("1", "Document 1", "1", false, false),
-                )
-            )
-        }
-    }
 
     fun onAction(action: HomeScreenAction, navController: NavController) {
         when (action) {
@@ -57,8 +47,15 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
     }
 
     suspend fun getDocuments() {
-        _state.update {
-            it.copy(retrievedDocuments = docRepository.getDocuments(userId = "69", documentIds = null))
+        if (userRepository.getUser() != null) {
+            _state.update {
+                it.copy(
+                    retrievedDocuments = docRepository.getDocuments(
+                        userId = userRepository.getUser()!!.googleId,
+                        documentIds = null
+                    )
+                )
+            }
         }
     }
 }
