@@ -97,8 +97,7 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         userId: String
     ): SubscriptionResponse {
         val response = client.get(urlString = BASE_URL + SUBSCRIPTION) {
-            contentType(ContentType.Application.Json)
-            setBody(mapOf("userId" to userId))
+            parameter("userId", userId)
         }
         val responseBody = response.bodyAsText()
         return Json.decodeFromString(responseBody)

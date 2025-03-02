@@ -40,7 +40,7 @@ fun ProfileScreen(
             username = account.displayName ?: "Invalid name",
             email = account.email ?: "Invalid email"
         )
-        paymentViewModel.getSubscriptionStatus(account.id)
+        account.id?.let { paymentViewModel.getSubscriptionStatus(it) }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
