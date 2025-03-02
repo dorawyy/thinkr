@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,30 +61,11 @@ fun QuizScreen(
     navController: NavController,
     viewModel: QuizViewModel = koinViewModel()
 ) {
+    LaunchedEffect(Unit) { viewModel.loadQuiz(document) }
+
     val state by viewModel.state.collectAsState()
 
     val context = LocalContext.current
-
-    val frontBackPairs: List<Pair<@Composable () -> Unit, @Composable () -> Unit>> = remember {
-        state.quiz.multipleChoiceQuestions.mapIndexed { index, questionAnswerPair ->
-            Pair(
-                // First composable function
-                {
-                    MultipleChoiceQuizCard(
-                        quizState = state,
-                        quizViewModel = viewModel,
-                        questionIndex = index,
-                        question = questionAnswerPair.first,
-                        choices = questionAnswerPair.second,
-                        correctAnswerIndex = state.quiz.correctAnswerIndexList[index],
-                        revealAnswer = state.revealAnswer,
-                    )
-                },
-                // Second composable function (back) Empty composable
-                { }
-            )
-        }
-    }
 
     if (!state.started) {
         Column(
@@ -113,7 +95,27 @@ fun QuizScreen(
                 }
             }
         }
-    } else {
+    } else if (state.quiz.isNotEmpty()) {
+        val frontBackPairs: List<Pair<@Composable () -> Unit, @Composable () -> Unit>> = remember {
+            state.quiz.mapIndexed { index, quizItem ->
+                Pair(
+                    // First composable function
+                    {
+                        MultipleChoiceQuizCard(
+                            quizState = state,
+                            quizViewModel = viewModel,
+                            questionIndex = index,
+                            question = quizItem.question,
+                            choices = quizItem.options,
+                            correctAnswerKey = state.quiz[index].answer,
+                            revealAnswer = state.revealAnswer,
+                        )
+                    },
+                    // Second composable function (back) Empty composable
+                    { }
+                )
+            }
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -145,7 +147,7 @@ fun QuizScreen(
 
             if (state.revealAnswer) {
                 Text(
-                    text = "Score: ${state.totalScore} / ${state.quiz.multipleChoiceQuestions.size}",
+                    text = "Score: ${state.totalScore} / ${state.quiz.size}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -179,8 +181,8 @@ fun MultipleChoiceQuizCard(
     quizViewModel: QuizViewModel,
     questionIndex: Int,
     question: String,
-    choices: List<String>,
-    correctAnswerIndex: Int,
+    choices: Map<String, String>,
+    correctAnswerKey: String,
     revealAnswer: Boolean = false,
 ) {
     Column(
@@ -200,9 +202,9 @@ fun MultipleChoiceQuizCard(
         )
 
         // Choices
-        choices.forEachIndexed { index, choice ->
-            val isSelected = quizState.selectedAnswerIndices.get(questionIndex) == index
-            val isCorrect = index == correctAnswerIndex
+        choices.forEach { (key, choice) ->
+            val isSelected = quizState.selectedAnswers[questionIndex] == key
+            val isCorrect = key == correctAnswerKey
             val backgroundColor = when {
                 !revealAnswer -> if (isSelected) Color.Gray else Color.Transparent
                 isSelected && isCorrect -> Color(0xFFD0F0D0) // Light green
@@ -226,9 +228,9 @@ fun MultipleChoiceQuizCard(
                         onClick = {
                             if (!revealAnswer) {
                                 if (isSelected) {
-                                    quizViewModel.onAnswerSelected(questionIndex, -1)
+                                    quizViewModel.onAnswerSelected(questionIndex, "")
                                 } else {
-                                    quizViewModel.onAnswerSelected(questionIndex, index)
+                                    quizViewModel.onAnswerSelected(questionIndex, key)
                                 }
                             }
                         }
@@ -246,7 +248,7 @@ fun MultipleChoiceQuizCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${('A' + index)}.",
+                        text = "$key.",
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 8.dp)
                     )
@@ -266,7 +268,7 @@ fun QuizTimer(
     onTimeUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var timeRemaining by remember { mutableStateOf(totalTimeSeconds) }
+    var timeRemaining by remember { mutableIntStateOf(totalTimeSeconds) }
     var isRunning by remember { mutableStateOf(true) }
 
     // Calculate the progress (1.0 -> 0.0 as time passes)

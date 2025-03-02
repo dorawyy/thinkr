@@ -7,6 +7,7 @@ import com.example.thinkr.data.models.DeleteSessionResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.data.models.MessageResponse
+import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
 
@@ -60,4 +61,9 @@ interface IRemoteApi {
         userId: String,
         documentId: String
     ): List<FlashcardItem>
+
+    suspend fun getQuiz(
+        userId: String,
+        documentId: String
+    ): List<QuizItem>
 }

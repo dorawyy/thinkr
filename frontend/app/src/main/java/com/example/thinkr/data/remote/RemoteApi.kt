@@ -10,6 +10,8 @@ import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.data.models.FlashcardsResponse
 import com.example.thinkr.data.models.LoginRequest
 import com.example.thinkr.data.models.MessageResponse
+import com.example.thinkr.data.models.QuizItem
+import com.example.thinkr.data.models.QuizResponse
 import com.example.thinkr.data.models.SendMessageRequest
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
@@ -155,6 +157,16 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         return flashcardsResponse.data.flashcards
     }
 
+    override suspend fun getQuiz(userId: String, documentId: String): List<QuizItem> {
+        val response = client.get(urlString = BASE_URL + STUDY + QUIZ) {
+            parameter("userId", userId)
+            parameter("documentId", documentId)
+        }
+        val responseBody = response.bodyAsText()
+        val quizResponse = Json.decodeFromString<QuizResponse>(responseBody)
+        return quizResponse.data.quiz
+    }
+
     private companion object {
         private const val BASE_URL = "https://vazrwha8g4.execute-api.us-east-2.amazonaws.com"
         private const val AUTH = "/auth"
@@ -164,6 +176,7 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         private const val RETRIEVE = "/retrieve"
         private const val STUDY = "/study"
         private const val FLASHCARDS = "/flashcards"
+        private const val QUIZ = "/quiz"
         private const val SUBSCRIPTION = "/subscription"
         private const val CHAT = "/chat"
         private const val MESSAGE = "/message"
