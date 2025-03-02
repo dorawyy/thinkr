@@ -23,9 +23,7 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
             }
 
             is HomeScreenAction.DocumentItemClicked -> {
-                // TODO: This is for debug/testing flashcards, replace with DocumentOptions
-//                navController.navigate(Route.DocumentOptions.createRoute(action.documentItem))
-                navController.navigate(Route.Flashcards.createRoute(action.documentItem))
+                navController.navigate(Route.DocumentOptions.createRoute(action.documentItem))
             }
 
             HomeScreenAction.AddButtonClicked -> {
@@ -40,15 +38,8 @@ class HomeScreenViewModel(private val docRepository: DocRepository) : ViewModel(
 
             is HomeScreenAction.FileSelected -> {
                 // Handle file selected action
-                navController.navigate(Route.DocumentDetails.createRoute(action.selectedUri))
+                navController.navigate(Route.DocumentUpload.createRoute(action.selectedUri))
             }
         }
-    }
-
-    suspend fun getDocuments() {
-        docRepository.getDocuments(
-            userId = "69", // TODO: change this
-            documentIds = null
-        )
     }
 }
