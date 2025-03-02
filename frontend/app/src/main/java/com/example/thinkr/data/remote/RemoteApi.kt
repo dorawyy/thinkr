@@ -64,29 +64,18 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         documentContext: String
     ): UploadResponse {
         val response = client.post(urlString = BASE_URL + DOCUMENT + UPLOAD) {
-            body = MultiPartFormDataContent(
-                formData {
-                    append(
-                        key = "document",
-                        value = fileBytes,
-                        headers = Headers.build {
-                            append(HttpHeaders.ContentType, ContentType.Application.OctetStream)
+            contentType(ContentType.MultiPart.FormData)
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        append("userId", userId)
+                        append("documentName", documentName)
+                        append("document", fileBytes, Headers.build {
                             append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
-                        }
-                    )
-                    append(
-                        key = "userId",
-                        value = userId
-                    )
-                    append(
-                        key = "documentName",
-                        value = documentName
-                    )
-                    append(
-                        key = "context",
-                        value = documentContext
-                    )
-                }
+                            append(HttpHeaders.ContentType, "application/pdf")
+                        })
+                    }
+                )
             )
         }
         val responseBody = response.bodyAsText()

@@ -16,5 +16,6 @@ data class DocumentData(
 data class DocumentDetails(
     val documentId: String,
     val uploadTime: String,
-    val activityGenerationComplete: Boolean
+    val activityGenerationComplete: Boolean,
+    val documentName: String
 )
