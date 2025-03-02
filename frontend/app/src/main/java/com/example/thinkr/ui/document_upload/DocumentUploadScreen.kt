@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
-import com.example.thinkr.ui.document_details.DocumentDetailsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -48,7 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 fun DocumentUploadScreen(
     navController: NavController,
     selectedUri: Uri,
-    viewModel: DocumentDetailsViewModel = koinViewModel()
+    viewModel: DocumentUploadViewModel = koinViewModel()
 ) {
     var documentName by remember { mutableStateOf("") }
     var documentContext by remember { mutableStateOf("") }
