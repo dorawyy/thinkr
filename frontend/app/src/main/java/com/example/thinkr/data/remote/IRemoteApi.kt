@@ -3,6 +3,7 @@ package com.example.thinkr.data.remote
 import com.example.thinkr.data.models.AuthResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.UploadResponse
+import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
 import java.io.InputStream
 
 interface IRemoteApi {
@@ -23,4 +24,12 @@ interface IRemoteApi {
         documentName: String,
         documentContext: String
     ): UploadResponse
+
+    suspend fun subscribe(
+        userId: String
+    ): SubscriptionResponse
+
+    suspend fun getSubscriptionStatus(
+        userId: String
+    ): SubscriptionResponse
 }
