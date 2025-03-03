@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
 
                             composable<Route.Home> {
                                 val viewModel = koinViewModel<HomeScreenViewModel>()
+                                viewModel.checkUser(account)
 
                                 HomeScreen(
                                     navController = navController,
