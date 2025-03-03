@@ -65,3 +65,17 @@ export interface Quiz {
         [key: string]: string;
     };
 }
+
+export interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+    timestamp: string;
+}
+
+export interface ChatSessionDTO {
+    userId: string;
+    messages: ChatMessage[];
+    createdAt: string;
+    updatedAt: string;
+    metadata: Record<string, any>;
+}

@@ -1,27 +1,15 @@
 import { Router } from 'express';
-import {
-    createChatSession,
-    getChatSession,
-    sendChatMessage,
-    deleteChatSession,
-    getUserChatSessions,
-} from '../controllers/chatController';
+import { getUserChat, sendMessage, clearChatHistory } from '../controllers/chatController';
 
 const router = Router();
 
-// Create a new chat session
-router.post('/', createChatSession);
+// Get or create a user's chat
+router.get('/', getUserChat);
 
-// Get a specific chat session
-router.get('/:sessionId', getChatSession);
+// Send a message to the user's chat
+router.post('/message', sendMessage);
 
-// Get all chat sessions for a user
-router.get('/user/sessions', getUserChatSessions);
-
-// Send a message to a chat session
-router.post('/:sessionId/message', sendChatMessage);
-
-// Delete a chat session
-router.delete('/:sessionId', deleteChatSession);
+// Clear chat history
+router.delete('/history', clearChatHistory);
 
 export default router;
