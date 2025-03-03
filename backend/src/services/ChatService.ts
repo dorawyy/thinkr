@@ -24,7 +24,7 @@ class ChatService {
      */
     public async getOrCreateUserChat(userId: string): Promise<ChatSessionDTO> {
         // Try to find an existing chat session for the user
-        let session = await ChatSession.findOne({ userId });
+        let session = await ChatSession.findOne({ googleId: userId });
 
         // If no session exists, create a new one
         if (!session) {
@@ -36,7 +36,7 @@ class ChatService {
 
             session = await ChatSession.create({
                 sessionId: uuidv4(),
-                userId,
+                googleId: userId,
                 messages: [systemMessage],
                 metadata: { type: 'general' }
             });
@@ -80,7 +80,7 @@ class ChatService {
 
         // Update the session with both messages
         await ChatSession.findOneAndUpdate(
-            { userId },
+            { googleId: userId },
             { 
                 $push: { 
                     messages: { 
@@ -105,7 +105,7 @@ class ChatService {
         };
 
         await ChatSession.findOneAndUpdate(
-            { userId },
+            { googleId: userId },
             { 
                 $set: { 
                     messages: [systemMessage],
