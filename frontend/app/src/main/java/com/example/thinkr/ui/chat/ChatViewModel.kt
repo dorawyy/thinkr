@@ -57,14 +57,16 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                     _state.update { currentState ->
                         currentState.copy(
                             sessionId = session.sessionId,
-                            messages = session.messages.map { chatMessage ->
-                                Message(
-                                    id = chatMessage.timestamp,
-                                    content = mutableStateOf(chatMessage.content),
-                                    timestamp = parseTimestamp(chatMessage.timestamp),
-                                    isSender = chatMessage.role == "user"
-                                )
-                            }
+                            messages = session.messages
+                                .filter { it.role != SYSTEM }
+                                .map { chatMessage ->
+                                    Message(
+                                        id = chatMessage.timestamp,
+                                        content = mutableStateOf(chatMessage.content),
+                                        timestamp = parseTimestamp(chatMessage.timestamp),
+                                        isSender = chatMessage.role == USER
+                                    )
+                                }
                         )
                     }
                 }
@@ -82,14 +84,16 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                     _state.update { currentState ->
                         currentState.copy(
                             sessionId = session.sessionId,
-                            messages = session.messages.map { chatMessage ->
-                                Message(
-                                    id = chatMessage.timestamp,
-                                    content = mutableStateOf(chatMessage.content),
-                                    timestamp = parseTimestamp(chatMessage.timestamp),
-                                    isSender = chatMessage.role == "user"
-                                )
-                            }
+                            messages = session.messages
+                                .filter { it.role != SYSTEM }
+                                .map { chatMessage ->
+                                    Message(
+                                        id = chatMessage.timestamp,
+                                        content = mutableStateOf(chatMessage.content),
+                                        timestamp = parseTimestamp(chatMessage.timestamp),
+                                        isSender = chatMessage.role == USER
+                                    )
+                                }
                         )
                     }
                 }
@@ -185,5 +189,7 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
 
     companion object {
         private const val MESSAGE_STREAM_DELAY = 50L
+        private const val SYSTEM = "system"
+        private const val USER = "user"
     }
 }
