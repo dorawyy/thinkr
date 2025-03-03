@@ -434,101 +434,78 @@ Note: Users and Students will be used synonymously in this document.
 ### **4.8. Main Project Complexity Design**
 
 **Calculating Documents Similarity**
-- **Description**: This feature (use case #7) suggests study materials (flashcards and quizzes) to users based on similarity between their documents and other users' documents. The core of this feature is the similarity calcuation between users' documents to determine what flashcards and quizzes to show to a user that are similar to what they usually study.
-- **Why complex?**: Vector similarity calculation requires multidimensional embedding comparison across potentially hundreds of documents. And cosine similarity computation between high-dimensional vectors is computationally intensive, and must be optimized to maintain acceptable performance at scale. We are also comparing a user to every other user that exists and finding the materials that have highest similarity, which requires complex and intensive computations to do so.
+- **Description**: This feature (use case #7) suggests study materials (flashcards and quizzes) to users based on similarity between their documents and other users' documents. The core of this feature is the similarity calculation between users' documents to determine what flashcards and quizzes to show to a user that are similar to what they usually study.
+- **Why complex?**: Vector similarity calculation requires multidimensional embedding comparison across potentially hundreds of documents. Cosine similarity computation between high-dimensional vectors is computationally intensive and must be optimized to maintain acceptable performance at scale. We are comparing a user's documents to every other user's documents in the system to find the most similar materials.
 - **Design**:
    - **Input**: 
        - User ID (for whom to provide suggestions)
-       - Similarity threshold (configurable minimum similarity score)
+       - Optional limit parameter (maximum number of suggestions to return)
    - **Output**: 
        - Suggested flashcards from similar documents
        - Suggested quizzes from similar documents
    - **Main computational logic**: 
-       - Retrieve embeddings for the user's documents from ChromaDB
-       - For each user document, find similar documents across other users using vector similarity search (these are custom cosine similarity or dot product functions)
-       - Filter results by similarity threshold and remove duplicates
+       - Retrieve all documents for the user
+       - For each user document, find similar documents from other users using vector similarity
+       - Sort results by similarity score and take top matches
        - Retrieve associated flashcards and quizzes for matching documents
    - **Pseudo-code**:
-       ```javascript
-       function suggestStudyMaterials(userId, similarityThreshold):
-           userDocuments = getDocuments(userId)
-           similarDocuments = []
+       ```python
+       def get_suggested_materials(user_id, limit=5):
+           # Get all documents for the user
+           user_documents = get_user_documents(user_id)
            
-           for each document in userDocuments:
-               // Use RAG service to find similar documents
-               similarDocs = findSimilarDocuments(document.id, userId)
+           if empty(user_documents):
+               return empty_result()
+           
+           # Find similar documents from other users
+           similar_documents = find_similar_documents(user_id, user_documents, limit)
+           
+           if empty(similar_documents):
+               return empty_result()
+           
+           # Fetch study materials for similar documents
+           suggested_materials = {
+               "flashcards": get_flashcards_for_documents(similar_documents),
+               "quizzes": get_quizzes_for_documents(similar_documents)
+           }
+           
+           return suggested_materials
+       
+       
+       def find_similar_documents(user_id, user_documents, limit):
+           # Get documents from other users
+           other_users_documents = get_documents_excluding_user(user_id)
+           
+           # Calculate similarity between user documents and other users' documents
+           similarity_results = []
+           
+           for user_doc in user_documents:
+               user_doc_text = get_document_text(user_doc.id, user_id)
                
-               for each doc in similarDocs:
-                   if doc.similarity >= similarityThreshold:
-                       similarDocuments.add(doc)
+               for other_doc in other_users_documents:
+                   other_doc_text = get_document_text(other_doc.id, other_doc.user_id)
+                   
+                   # Calculate vector similarity between documents
+                   similarity_score = calculate_document_similarity(user_doc_text, other_doc_text)
+                   
+                   if similarity_score > SIMILARITY_THRESHOLD:
+                       similarity_results.append({
+                           "document": other_doc,
+                           "score": similarity_score
+                       })
            
-           // Remove duplicates and sort by similarity
-           uniqueDocs = removeDuplicates(similarDocuments)
-           sortedDocs = sortByDescendingSimilarity(uniqueDocs)
+           # Return top similar documents sorted by similarity score
+           return get_top_results(similarity_results, limit)
+       
+       
+       def calculate_document_similarity(text1, text2):
+           # Convert texts to vector embeddings
+           embedding1 = get_embedding(text1)
+           embedding2 = get_embedding(text2)
            
-           suggestedFlashcards = []
-           suggestedQuizzes = []
-           
-           for each doc in sortedDocs:
-               flashcards = getFlashcards(doc.userId, doc.documentId)
-               quizzes = getQuizzes(doc.userId, doc.documentId)
-               
-               if flashcards exists:
-                   suggestedFlashcards.add(flashcards)
-               if quizzes exists:
-                   suggestedQuizzes.add(quizzes)
-           
-           return {suggestedFlashcards, suggestedQuizzes}
+           # Calculate cosine similarity between embeddings
+           return cosine_similarity(embedding1, embedding2)
        ```
-
-**Retrieval Augmented Generation (RAG)**
-- **Description**: An AI architecture that enhances Large Language Model responses by providing relevant context from the user's uploaded documents.
-- **Why complex?**: Requires sophisticated vector embeddings, efficient similarity search, prompt engineering, and careful integration of retrieved context with the LLM's generation process.
-- **Design**:
-    - **Input**: User query and document collection
-    - **Output**: Contextually relevant AI response
-    - **Main computational logic**:
-        1. Convert documents into vector embeddings
-        2. Store embeddings in vector database
-        3. Convert user query to embedding
-        4. Retrieve relevant document chunks
-        5. Construct prompt with retrieved context
-        6. Generate response using LLM
-    - **Pseudo-code**:
-        ```python
-        class RAGService:
-            def __init__(self):
-                self.vector_db = ChromaDB()
-                self.embedding_model = SentenceTransformer()
-                self.llm = OpenAI()
-            
-            async def process_document(self, document):
-                # Generate embeddings for document chunks
-                chunks = self.chunk_document(document)
-                embeddings = [
-                    self.embedding_model.encode(chunk)
-                    for chunk in chunks
-                ]
-                # Store in vector database
-                self.vector_db.add(embeddings, chunks)
-            
-            async def generate_response(self, query):
-                # Convert query to embedding
-                query_embedding = self.embedding_model.encode(query)
-                
-                # Retrieve relevant contexts
-                relevant_chunks = self.vector_db.similarity_search(
-                    query_embedding,
-                    k=3  # Get top 3 most relevant chunks
-                )
-                
-                # Construct prompt with context
-                prompt = self.construct_prompt(query, relevant_chunks)
-                
-                # Generate response using LLM
-                response = await self.llm.generate(prompt)
-                return response
-        ```
 
 ## 5. Contributions
 
