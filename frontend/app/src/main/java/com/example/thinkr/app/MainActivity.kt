@@ -17,6 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.FlashcardSuggestion
+import com.example.thinkr.data.models.QuizSuggestion
 import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.chat.ChatViewModel
 import com.example.thinkr.ui.document_options.DocumentOptionsScreen
@@ -34,6 +36,7 @@ import com.example.thinkr.ui.payment.PaymentViewModel
 import com.example.thinkr.ui.profile.ProfileScreen
 import com.example.thinkr.ui.profile.ProfileViewModel
 import com.example.thinkr.ui.quiz.QuizScreen
+import com.example.thinkr.ui.quiz.QuizViewModel
 import com.example.thinkr.ui.theme.ThinkrTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -152,33 +155,72 @@ class MainActivity : ComponentActivity() {
 
                             composable(
                                 route = Route.Flashcards.ROUTE,
-                                arguments = listOf(navArgument(Route.Flashcards.ARGUMENT) {
-                                    type = NavType.StringType
-                                })
+                                arguments = listOf(
+                                    navArgument(Route.Flashcards.DOCUMENT_ARGUMENT) {
+                                        type = NavType.StringType
+                                    },
+                                    navArgument(Route.Flashcards.FLASHCARD_ARGUMENT) {
+                                        type = NavType.StringType
+                                    }
+                                )
                             ) { backStackEntry ->
-                                val json =
-                                    backStackEntry.arguments?.getString(Route.Flashcards.ARGUMENT)
-                                        ?: ""
-                                val document =
-                                    Json.decodeFromString<Document>(Uri.decode(json)) // Decode JSON back to object
+                                val documentJson = backStackEntry.arguments?.getString(Route.Flashcards.DOCUMENT_ARGUMENT) ?: ""
+                                val flashcardJson = backStackEntry.arguments?.getString(Route.Flashcards.FLASHCARD_ARGUMENT) ?: ""
                                 val viewModel = koinViewModel<FlashcardsViewModel>()
 
-                                FlashcardsScreen(document, navController, viewModel)
+                                val document = if (documentJson.isNotEmpty()) {
+                                    Json.decodeFromString<Document>(Uri.decode(documentJson))
+                                } else {
+                                    null
+                                }
+
+                                val flashcardSet = if (flashcardJson.isNotEmpty()) {
+                                    Json.decodeFromString<FlashcardSuggestion>(Uri.decode(flashcardJson))
+                                } else {
+                                    null
+                                }
+
+                                FlashcardsScreen(
+                                    document = document,
+                                    suggestedFlashcards = flashcardSet,
+                                    navController = navController,
+                                    viewModel = viewModel
+                                )
                             }
 
                             composable(
                                 route = Route.Quiz.ROUTE,
-                                arguments = listOf(navArgument(Route.Quiz.ARGUMENT) {
-                                    type = NavType.StringType
-                                })
+                                arguments = listOf(
+                                    navArgument(Route.Quiz.DOCUMENT_ARGUMENT) {
+                                        type = NavType.StringType
+                                    },
+                                    navArgument(Route.Quiz.QUIZ_ARGUMENT) {
+                                        type = NavType.StringType
+                                    }
+                                )
                             ) { backStackEntry ->
-                                val json =
-                                    backStackEntry.arguments?.getString(Route.Quiz.ARGUMENT)
-                                        ?: ""
-                                val document =
-                                    Json.decodeFromString<Document>(Uri.decode(json)) // Decode JSON back to object
+                                val documentJson = backStackEntry.arguments?.getString(Route.Quiz.DOCUMENT_ARGUMENT) ?: ""
+                                val quizJson = backStackEntry.arguments?.getString(Route.Quiz.QUIZ_ARGUMENT) ?: ""
+                                val viewModel = koinViewModel<QuizViewModel>()
 
-                                QuizScreen(document, navController)
+                                val document = if (documentJson.isNotEmpty()) {
+                                    Json.decodeFromString<Document>(Uri.decode(documentJson))
+                                } else {
+                                    null
+                                }
+
+                                val quizSet = if (quizJson.isNotEmpty()) {
+                                    Json.decodeFromString<QuizSuggestion>(Uri.decode(quizJson))
+                                } else {
+                                    null
+                                }
+
+                                QuizScreen(
+                                    document = document,
+                                    suggestedQuiz = quizSet,
+                                    navController = navController,
+                                    viewModel = viewModel
+                                )
                             }
 
                             composable(

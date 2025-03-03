@@ -1,5 +1,6 @@
 package com.example.thinkr.data.repositories.subscription
 
+import com.example.thinkr.data.models.SubscriptionResponse
 import com.example.thinkr.data.remote.RemoteApi
 
 class SubscriptionRepository(private val remoteApi: RemoteApi) : ISubscriptionRepository {

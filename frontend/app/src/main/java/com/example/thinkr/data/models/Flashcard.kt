@@ -2,7 +2,6 @@ package com.example.thinkr.data.models
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class FlashcardsResponse(
     val data: FlashcardData
@@ -18,5 +17,5 @@ data class FlashcardData(
 @Serializable
 data class FlashcardItem(
     val front: String,
-    val back: String,
+    val back: String
 )

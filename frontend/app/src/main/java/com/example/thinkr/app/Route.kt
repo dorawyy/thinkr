@@ -46,25 +46,37 @@ sealed interface Route {
     data object Payment : Route
 
     @Serializable
-    data class Flashcards(val documentItem: Document) : Route {
+    data class Flashcards(val documentItem: Document? = null, val flashcardSuggestion: String? = null) : Route {
         companion object {
-            const val ROUTE = "flashcards/{documentJson}"
-            const val ARGUMENT = "documentJson"
-            fun createRoute(document: Document): String {
-                val json = Json.encodeToString(document)
-                return ROUTE.replace("{documentJson}", Uri.encode(json))
+            const val ROUTE = "flashcards/{documentJson}/{flashcardSuggestion}"
+            const val DOCUMENT_ARGUMENT = "documentJson"
+            const val FLASHCARD_ARGUMENT = "flashcardSuggestion"
+
+            fun createRoute(document: Document? = null, flashcardSuggestion: String? = null): String {
+                val docJson = document?.let { Json.encodeToString(it) } ?: ""
+                val flashcardJson = flashcardSuggestion ?: ""
+
+                return ROUTE
+                    .replace("{documentJson}", Uri.encode(docJson))
+                    .replace("{flashcardSuggestion}", Uri.encode(flashcardJson))
             }
         }
     }
 
     @Serializable
-    data class Quiz(val documentItem: Document) : Route {
+    data class Quiz(val documentItem: Document? = null, val quizSuggestion: String? = null) : Route {
         companion object {
-            const val ROUTE = "quiz/{documentJson}"
-            const val ARGUMENT = "documentJson"
-            fun createRoute(document: Document): String {
-                val json = Json.encodeToString(document)
-                return ROUTE.replace("{documentJson}", Uri.encode(json))
+            const val ROUTE = "quiz/{documentJson}/{quizSuggestion}"
+            const val DOCUMENT_ARGUMENT = "documentJson"
+            const val QUIZ_ARGUMENT = "quizSuggestion"
+
+            fun createRoute(document: Document? = null, quizSuggestion: String? = null): String {
+                val docJson = document?.let { Json.encodeToString(it) } ?: ""
+                val quizJson = quizSuggestion ?: ""
+
+                return ROUTE
+                    .replace("{documentJson}", Uri.encode(docJson))
+                    .replace("{quizSuggestion}", Uri.encode(quizJson))
             }
         }
     }

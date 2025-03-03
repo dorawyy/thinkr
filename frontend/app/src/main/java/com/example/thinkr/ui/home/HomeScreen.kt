@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +47,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
 import com.example.thinkr.app.Route
+import com.example.thinkr.data.models.Document
 import com.example.thinkr.ui.shared.ListItem
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeScreen(
@@ -58,6 +63,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getDocuments()
+        viewModel.getSuggestedMaterial()
     }
 
     if (showDialog) {
@@ -113,52 +119,129 @@ fun HomeScreenContent(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            TextButton(onClick = onSignOut) {
-                Text(text = "Sign out")
-            }
-            TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
-                Text(text = "Profile")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-            items(state.value.retrievedDocuments) { document ->
-                ListItem(document, onAction)
-            }
-
-            items(state.value.uploadingDocuments) { item ->
-                ListItem(item, onAction)
-            }
-
-            item {
-                TextButton(
-                    onClick = { onAction(HomeScreenAction.AddButtonClicked) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                ) {
-                    Text(text = "Add")
-                }
-            }
-
-        }
-        // Dialog
+    Box(modifier = Modifier.fillMaxSize()) {
         if (state.value.showDialog) {
             FilePickerDialog(
                 onDismiss = { onAction(HomeScreenAction.DismissDialog) },
                 onSelected = { onAction(HomeScreenAction.FileSelected(it)) }
             )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onSignOut) {
+                    Text(text = "Sign out")
+                }
+                TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
+                    Text(text = "Profile")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn {
+                items(state.value.retrievedDocuments) { document ->
+                    ListItem(document, onAction)
+                }
+
+                items(state.value.uploadingDocuments) { item ->
+                    ListItem(item, onAction)
+                }
+
+                item {
+                    TextButton(
+                        onClick = { onAction(HomeScreenAction.AddButtonClicked) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                    ) {
+                        Text(text = "Add")
+                    }
+                }
+
+                if (state.value.retrievedDocuments.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Materials from a most similar document",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
+                        item {
+                            Text(text = "Flashcards")
+                        }
+
+                        items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        val flashcardJson = Json.encodeToString(flashcardSet)
+                                        navController.navigate(Route.Flashcards.createRoute(flashcardSuggestion = flashcardJson))
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "${flashcardSet.flashcards.size} flashcards",
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        item {
+                            Text(text = "No similar document with flashcards")
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
+                        item {
+                            Text(text = "Quiz")
+                        }
+
+                        items(state.value.suggestedMaterials.quizzes) { quizSet ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        val quizJson = Json.encodeToString(quizSet)
+                                        navController.navigate(Route.Quiz.createRoute(quizSuggestion = quizJson))
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "${quizSet.quiz.size} questions",
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        item {
+                            Text(text = "No similar document with quiz")
+                        }
+                    }
+                } else {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Upload a document to get materials from a most similar document")
+                    }
+                }
+            }
         }
     }
 }

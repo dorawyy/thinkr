@@ -1,6 +1,7 @@
 package com.example.thinkr.data.repositories.doc
 
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.SuggestedMaterials
 import kotlinx.coroutines.flow.Flow
 import java.io.InputStream
 
@@ -19,4 +20,9 @@ interface IDocRepository {
         documentName: String,
         documentContext: String
     ): Boolean
+
+    suspend fun getSuggestedMaterials(
+        userId: String,
+        limit: Int? = null
+    ): SuggestedMaterials
 }

@@ -18,5 +18,5 @@ data class QuizData(
 data class QuizItem(
     val question: String,
     val answer: String,
-    val options: Map<String, String>
+    val options: Map<String, String>,
 )

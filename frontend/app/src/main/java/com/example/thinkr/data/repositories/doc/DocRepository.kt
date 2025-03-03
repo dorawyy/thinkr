@@ -1,6 +1,8 @@
 package com.example.thinkr.data.repositories.doc
 
+import android.util.Log
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.SuggestedMaterials
 import com.example.thinkr.data.remote.RemoteApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,9 +50,23 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
             )
             return true
         } catch (e: Exception) {
-            _uploadingDocuments.value = _uploadingDocuments.value.filter { it.documentId != tempDocument.documentId }
+            _uploadingDocuments.value = _uploadingDocuments.value
+                .filter {it.documentId != tempDocument.documentId }
             e.printStackTrace()
         }
         return false
+    }
+
+    override suspend fun getSuggestedMaterials(
+        userId: String,
+        limit: Int?
+    ): SuggestedMaterials {
+        return try {
+            remoteApi.getSuggestedMaterials(userId, limit)
+        } catch (e: Exception) {
+            Log.e("DocRepository", "Error fetching suggested materials", e)
+            e.printStackTrace()
+            SuggestedMaterials(emptyList(), emptyList())
+        }
     }
 }
