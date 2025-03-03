@@ -27,20 +27,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.FlashcardSuggestion
 import com.example.thinkr.ui.shared.AnimatedCardDeck
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlashcardsScreen(
-    documentItem: Document,
+    document: Document? = null,
+    suggestedFlashcards: FlashcardSuggestion? = null,
     navController: NavController,
     viewModel: FlashcardsViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.loadFlashcards(documentItem)
+        if (document != null) {
+            viewModel.loadFlashcards(document)
+        } else if (suggestedFlashcards != null) {
+            viewModel.loadSuggestedFlashcards(suggestedFlashcards.flashcards)
+        }
     }
 
     if (state.flashcards.isNotEmpty()) {

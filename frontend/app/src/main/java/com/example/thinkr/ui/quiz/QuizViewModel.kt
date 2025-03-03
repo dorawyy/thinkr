@@ -1,12 +1,15 @@
 package com.example.thinkr.ui.quiz
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.QuizSuggestion
 import com.example.thinkr.data.repositories.quiz.QuizRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
     private var _state = MutableStateFlow(QuizState())
@@ -20,6 +23,18 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
                 selectedAnswers = List(quiz.size) { "" },
                 totalTimeSeconds = quiz.size * 15
             )
+        }
+    }
+
+    fun loadSuggestedQuiz(suggestedQuiz: QuizSuggestion) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    quiz = suggestedQuiz.quiz.toMutableList(),
+                    selectedAnswers = List(suggestedQuiz.quiz.size) { "" },
+                    totalTimeSeconds = 15 * suggestedQuiz.quiz.size
+                )
+            }
         }
     }
 

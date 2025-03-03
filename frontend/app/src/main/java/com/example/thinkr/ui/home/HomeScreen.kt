@@ -164,72 +164,81 @@ fun HomeScreenContent(
                     }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Materials from most similar document",
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
+                if (state.value.retrievedDocuments.isNotEmpty()) {
                     item {
-                        Text(text = "Flashcards")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Materials from a most similar document",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
 
-                    items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .clickable {
-                                    // Navigate to flashcard detail screen if needed
+                    if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
+                        item {
+                            Text(text = "Flashcards")
+                        }
+
+                        items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        val flashcardJson = Json.encodeToString(flashcardSet)
+                                        navController.navigate(Route.Flashcards.createRoute(flashcardSuggestion = flashcardJson))
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "${flashcardSet.flashcards.size} flashcards",
+                                        fontSize = 12.sp
+                                    )
                                 }
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(
-                                    text = "${flashcardSet.flashcards.size} flashcards",
-                                    fontSize = 12.sp
-                                )
                             }
+                        }
+                    } else {
+                        item {
+                            Text(text = "No similar document with flashcards")
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
+                        item {
+                            Text(text = "Quiz")
+                        }
+
+                        items(state.value.suggestedMaterials.quizzes) { quizSet ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        val quizJson = Json.encodeToString(quizSet)
+                                        navController.navigate(Route.Quiz.createRoute(quizSuggestion = quizJson))
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "${quizSet.quiz.size} questions",
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        item {
+                            Text(text = "No similar document with quiz")
                         }
                     }
                 } else {
                     item {
-                        Text(text = "No similar document with flashcards")
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
-                    item {
-                        Text(text = "Quiz")
-                    }
-
-                    items(state.value.suggestedMaterials.quizzes) { quizSet ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .clickable {
-                                    // Navigate to quiz detail screen if needed
-                                }
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(
-                                    text = "${quizSet.quiz.size} questions",
-                                    fontSize = 12.sp
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    item {
-                        Text(text = "No similar document with quiz")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Upload a document to get materials from a most similar document")
                     }
                 }
             }

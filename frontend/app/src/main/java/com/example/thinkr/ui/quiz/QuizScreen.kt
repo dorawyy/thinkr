@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.QuizSuggestion
 import com.example.thinkr.ui.shared.AnimatedCardDeck
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -58,15 +59,21 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
-    document: Document,
+    document: Document?,
+    suggestedQuiz: QuizSuggestion?,
     navController: NavController,
     viewModel: QuizViewModel = koinViewModel()
 ) {
-    LaunchedEffect(Unit) { viewModel.loadQuiz(document) }
-
     val state by viewModel.state.collectAsState()
-
     val context = LocalContext.current
+
+    LaunchedEffect(document, suggestedQuiz) {
+        if (document != null) {
+            viewModel.loadQuiz(document)
+        } else if (suggestedQuiz != null) {
+            viewModel.loadSuggestedQuiz(suggestedQuiz)
+        }
+    }
 
     if (!state.started) {
         Column(
