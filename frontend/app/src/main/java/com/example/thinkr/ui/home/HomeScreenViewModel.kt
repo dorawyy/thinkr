@@ -76,4 +76,19 @@ class HomeScreenViewModel(private val docRepository: DocRepository, private val 
             }
         }
     }
+
+    suspend fun getSuggestedMaterial() {
+        if (userRepository.getUser() != null) {
+            try {
+                val suggestedMaterials = docRepository.getSuggestedMaterials(
+                    userId = userRepository.getUser()!!.googleId,
+                    limit = 1
+                )
+                _state.update { it.copy(suggestedMaterials = suggestedMaterials) }
+            } catch (e: Exception) {
+                Log.e("HomeScreenViewModel", "Error getting suggested materials", e)
+                e.printStackTrace()
+            }
+        }
+    }
 }

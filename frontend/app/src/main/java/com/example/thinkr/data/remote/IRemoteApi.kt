@@ -9,7 +9,8 @@ import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.data.models.MessageResponse
 import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.UploadResponse
-import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
+import com.example.thinkr.data.models.SubscriptionResponse
+import com.example.thinkr.data.models.SuggestedMaterialsResponse
 
 interface IRemoteApi {
     suspend fun login(
@@ -66,4 +67,9 @@ interface IRemoteApi {
         userId: String,
         documentId: String
     ): List<QuizItem>
+
+    suspend fun getSuggestedMaterials(
+        userId: String,
+        limit: Int?
+    ): SuggestedMaterialsResponse
 }

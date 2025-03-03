@@ -14,7 +14,13 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
 
     suspend fun loadQuiz(documentItem: Document) {
         val quiz = quizRepository.getQuiz(documentItem)
-        _state.update { it.copy(quiz = quiz, selectedAnswers = List(quiz.size) { "" }, totalTimeSeconds = quiz.size * 15) }
+        _state.update {
+            it.copy(
+                quiz = quiz,
+                selectedAnswers = List(quiz.size) { "" },
+                totalTimeSeconds = quiz.size * 15
+            )
+        }
     }
 
     fun onBackPressed(navController: NavController) {

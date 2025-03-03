@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -58,6 +60,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getDocuments()
+        viewModel.getSuggestedMaterial()
     }
 
     if (showDialog) {
@@ -113,52 +116,119 @@ fun HomeScreenContent(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            TextButton(onClick = onSignOut) {
-                Text(text = "Sign out")
-            }
-            TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
-                Text(text = "Profile")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-            items(state.value.retrievedDocuments) { document ->
-                ListItem(document, onAction)
-            }
-
-            items(state.value.uploadingDocuments) { item ->
-                ListItem(item, onAction)
-            }
-
-            item {
-                TextButton(
-                    onClick = { onAction(HomeScreenAction.AddButtonClicked) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                ) {
-                    Text(text = "Add")
-                }
-            }
-
-        }
-        // Dialog
+    Box(modifier = Modifier.fillMaxSize()) {
         if (state.value.showDialog) {
             FilePickerDialog(
                 onDismiss = { onAction(HomeScreenAction.DismissDialog) },
                 onSelected = { onAction(HomeScreenAction.FileSelected(it)) }
             )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onSignOut) {
+                    Text(text = "Sign out")
+                }
+                TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
+                    Text(text = "Profile")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn {
+                items(state.value.retrievedDocuments) { document ->
+                    ListItem(document, onAction)
+                }
+
+                items(state.value.uploadingDocuments) { item ->
+                    ListItem(item, onAction)
+                }
+
+                item {
+                    TextButton(
+                        onClick = { onAction(HomeScreenAction.AddButtonClicked) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                    ) {
+                        Text(text = "Add")
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Flashcards",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+
+                    items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .clickable {
+                                    // Navigate to flashcard detail screen if needed
+                                }
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "From document: ${flashcardSet.documentId}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "${flashcardSet.flashcards.size} flashcards",
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Quizzes",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+
+                    items(state.value.suggestedMaterials.quizzes) { quizSet ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .clickable {
+                                    // Navigate to quiz detail screen if needed
+                                }
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "From document: ${quizSet.documentId}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "${quizSet.quiz.size} questions",
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

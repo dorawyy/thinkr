@@ -1,5 +1,6 @@
 package com.example.thinkr.data.remote
 
+import android.util.Log
 import com.example.thinkr.data.models.AuthResponse
 import com.example.thinkr.data.models.ChatMetadata
 import com.example.thinkr.data.models.ChatSessionResponse
@@ -14,7 +15,8 @@ import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.QuizResponse
 import com.example.thinkr.data.models.SendMessageRequest
 import com.example.thinkr.data.models.UploadResponse
-import com.example.thinkr.data.repositories.subscription.SubscriptionResponse
+import com.example.thinkr.data.models.SubscriptionResponse
+import com.example.thinkr.data.models.SuggestedMaterialsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -167,6 +169,20 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         return quizResponse.data.quiz
     }
 
+    override suspend fun getSuggestedMaterials(
+        userId: String,
+        limit: Int?
+    ): SuggestedMaterialsResponse {
+        val response = client.get(urlString = BASE_URL + STUDY + SUGGESTED_MATERIALS) {
+            parameter("userId", userId)
+            parameter("limit", limit ?: 1)
+        }
+        val responseBody = response.bodyAsText()
+        Log.i(RemoteApi::class.simpleName, Json.decodeFromString(responseBody))
+        println(responseBody)
+        return Json.decodeFromString(responseBody)
+    }
+
     private companion object {
         private const val BASE_URL = "https://vazrwha8g4.execute-api.us-east-2.amazonaws.com"
         private const val AUTH = "/auth"
@@ -180,5 +196,6 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         private const val SUBSCRIPTION = "/subscription"
         private const val CHAT = "/chat"
         private const val MESSAGE = "/message"
+        private const val SUGGESTED_MATERIALS = "/suggestedMaterials"
     }
 }

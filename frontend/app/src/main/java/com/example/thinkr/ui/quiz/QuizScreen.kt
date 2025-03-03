@@ -55,7 +55,6 @@ import com.example.thinkr.ui.shared.AnimatedCardDeck
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
@@ -91,8 +90,14 @@ fun QuizScreen(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Button(onClick = { viewModel.onStartQuiz() }) {
-                    Text(text = "Start Quiz")
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button(onClick = { viewModel.onStartQuiz() }) {
+                        Text(text = "Start Quiz")
+                    }
                 }
             }
         }
