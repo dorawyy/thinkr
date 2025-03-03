@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.chat.ChatViewModel
 import com.example.thinkr.ui.document_options.DocumentOptionsScreen

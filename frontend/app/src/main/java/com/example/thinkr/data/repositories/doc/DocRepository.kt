@@ -62,7 +62,7 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
         limit: Int?
     ): SuggestedMaterials {
         return try {
-            remoteApi.getSuggestedMaterials(userId, limit).data
+            remoteApi.getSuggestedMaterials(userId, limit)
         } catch (e: Exception) {
             Log.e("DocRepository", "Error fetching suggested materials", e)
             e.printStackTrace()

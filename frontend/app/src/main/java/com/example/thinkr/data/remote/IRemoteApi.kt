@@ -10,6 +10,7 @@ import com.example.thinkr.data.models.MessageResponse
 import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.models.SubscriptionResponse
+import com.example.thinkr.data.models.SuggestedMaterials
 import com.example.thinkr.data.models.SuggestedMaterialsResponse
 
 interface IRemoteApi {
@@ -71,5 +72,5 @@ interface IRemoteApi {
     suspend fun getSuggestedMaterials(
         userId: String,
         limit: Int?
-    ): SuggestedMaterialsResponse
+    ): SuggestedMaterials
 }

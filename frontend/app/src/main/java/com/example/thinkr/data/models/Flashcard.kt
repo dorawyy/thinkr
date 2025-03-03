@@ -17,5 +17,5 @@ data class FlashcardData(
 @Serializable
 data class FlashcardItem(
     val front: String,
-    val back: String,
+    val back: String
 )

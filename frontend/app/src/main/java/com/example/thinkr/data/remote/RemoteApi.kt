@@ -16,6 +16,7 @@ import com.example.thinkr.data.models.QuizResponse
 import com.example.thinkr.data.models.SendMessageRequest
 import com.example.thinkr.data.models.UploadResponse
 import com.example.thinkr.data.models.SubscriptionResponse
+import com.example.thinkr.data.models.SuggestedMaterials
 import com.example.thinkr.data.models.SuggestedMaterialsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
@@ -172,15 +173,15 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
     override suspend fun getSuggestedMaterials(
         userId: String,
         limit: Int?
-    ): SuggestedMaterialsResponse {
+    ): SuggestedMaterials {
         val response = client.get(urlString = BASE_URL + STUDY + SUGGESTED_MATERIALS) {
             parameter("userId", userId)
             parameter("limit", limit ?: 1)
         }
+        println("suggested materials GET request $response")
         val responseBody = response.bodyAsText()
-        Log.i(RemoteApi::class.simpleName, Json.decodeFromString(responseBody))
-        println(responseBody)
-        return Json.decodeFromString(responseBody)
+        println("suggested materials GET request $responseBody")
+        return Json.decodeFromString<SuggestedMaterialsResponse>(responseBody).data
     }
 
     private companion object {

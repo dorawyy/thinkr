@@ -37,9 +37,11 @@ fun FlashcardsScreen(
     navController: NavController,
     viewModel: FlashcardsViewModel = koinViewModel()
 ) {
-    LaunchedEffect(Unit) { viewModel.loadFlashcards(documentItem) }
-
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFlashcards(documentItem)
+    }
 
     if (state.flashcards.isNotEmpty()) {
         val frontBackPairs: List<Pair<@Composable () -> Unit, @Composable () -> Unit>> = remember {

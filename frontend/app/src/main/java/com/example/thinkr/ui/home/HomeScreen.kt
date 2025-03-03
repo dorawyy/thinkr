@@ -47,7 +47,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
 import com.example.thinkr.app.Route
+import com.example.thinkr.data.models.Document
 import com.example.thinkr.ui.shared.ListItem
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun HomeScreen(
@@ -163,15 +166,16 @@ fun HomeScreenContent(
 
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Materials from most similar document",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
                     item {
-                        Text(
-                            text = "Flashcards",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        Text(text = "Flashcards")
                     }
 
                     items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
@@ -185,25 +189,25 @@ fun HomeScreenContent(
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
-                                    text = "From document: ${flashcardSet.documentId}",
-                                    fontSize = 14.sp
-                                )
-                                Text(
                                     text = "${flashcardSet.flashcards.size} flashcards",
                                     fontSize = 12.sp
                                 )
                             }
                         }
                     }
+                } else {
+                    item {
+                        Text(text = "No similar document with flashcards")
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
                     item {
-                        Text(
-                            text = "Quizzes",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        Text(text = "Quiz")
                     }
 
                     items(state.value.suggestedMaterials.quizzes) { quizSet ->
@@ -217,15 +221,15 @@ fun HomeScreenContent(
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
-                                    text = "From document: ${quizSet.documentId}",
-                                    fontSize = 14.sp
-                                )
-                                Text(
                                     text = "${quizSet.quiz.size} questions",
                                     fontSize = 12.sp
                                 )
                             }
                         }
+                    }
+                } else {
+                    item {
+                        Text(text = "No similar document with quiz")
                     }
                 }
             }
