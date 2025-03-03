@@ -109,7 +109,6 @@ The system uses ChromaDB to store document embeddings with the following archite
 {
    "data": {
       "chat": {
-         "userId": "user123",
          "messages": [
             {
                "role": "system",
