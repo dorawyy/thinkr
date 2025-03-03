@@ -1,46 +1,31 @@
 package com.example.thinkr.data.repositories.chat
 
-import com.example.thinkr.data.models.ChatMetadata
-import com.example.thinkr.data.models.ChatSession
+import com.example.thinkr.data.models.ChatData
+import com.example.thinkr.data.models.ChatMessage
 import com.example.thinkr.data.remote.RemoteApi
 
 class ChatRepository(private val remoteApi: RemoteApi) : IChatRepository {
-    override suspend fun createChatSession(
-        userId: String,
-        metadata: ChatMetadata
-    ): Result<ChatSession> {
+    override suspend fun getChatHistory(userId: String): Result<ChatData> {
         return try {
-            val response = remoteApi.createChatSession(userId, metadata)
-            Result.success(response.data.session)
+            val response = remoteApi.getChatHistory(userId)
+            Result.success(response.data.chat)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun sendMessage(
-        sessionId: String,
-        message: String
-    ): Result<String> {
+    override suspend fun sendMessage(userId: String, message: String): Result<ChatMessage> {
         return try {
-            val response = remoteApi.sendMessage(sessionId, message)
+            val response = remoteApi.sendChatMessage(userId, message)
             Result.success(response.data.response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getChatSession(sessionId: String): Result<ChatSession> {
+    override suspend fun clearChatHistory(userId: String): Result<String> {
         return try {
-            val response = remoteApi.getChatSession(sessionId)
-            Result.success(response.data.session)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun deleteChatSession(sessionId: String): Result<String> {
-        return try {
-            val response = remoteApi.deleteChatSession(sessionId)
+            val response = remoteApi.deleteChatHistory(userId)
             Result.success(response.message)
         } catch (e: Exception) {
             Result.failure(e)

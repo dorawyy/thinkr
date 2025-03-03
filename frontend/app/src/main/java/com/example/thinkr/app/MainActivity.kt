@@ -237,7 +237,6 @@ class MainActivity : ComponentActivity() {
                                 val viewModel = koinViewModel<ChatViewModel>()
 
                                 ChatScreen(
-                                    document = document,
                                     account = account!!,
                                     navController = navController,
                                     viewModel = viewModel

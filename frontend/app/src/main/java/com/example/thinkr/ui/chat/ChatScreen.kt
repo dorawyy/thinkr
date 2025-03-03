@@ -29,7 +29,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    document: Document,
     account: GoogleSignInAccount,
     navController: NavController,
     viewModel: ChatViewModel = koinViewModel()
@@ -40,11 +39,7 @@ fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        if (chatState.sessionId.isNotEmpty()) {
-            viewModel.loadChatSession(sessionId = chatState.sessionId)
-        } else {
-            account.id?.let { viewModel.createChatSession(it) }
-        }
+        account.id?.let { viewModel.loadChatHistory(userId = it) }
     }
 
     // Scroll to bottom when new message is added
@@ -58,6 +53,7 @@ fun ChatScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .imePadding()
     ) {
         TopAppBar(
             title = { Text("Chat") },
@@ -71,18 +67,18 @@ fun ChatScreen(
                     )
                 }
             },
-            actions = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteChatSession()
-                        navController.popBackStack()
-                    }
-                ) {
-                    Text(
-                        text = "Delete chat"
-                    )
-                }
-            }
+//            actions = {
+//                TextButton(
+//                    onClick = {
+//                        viewModel.clearChatHistory()
+//                        navController.popBackStack()
+//                    }
+//                ) {
+//                    Text(
+//                        text = "Delete chat"
+//                    )
+//                }
+//            }
         )
 
         // Messages List

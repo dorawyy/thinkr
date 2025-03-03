@@ -1,63 +1,52 @@
 package com.example.thinkr.data.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChatMetadata(
-    val source: String,
-    val topic: String,
-    val documentId: String? = null
+data class ChatHistoryResponse(
+    val data: ChatHistoryData
+)
+
+@Serializable
+data class ChatHistoryData(
+    val chat: ChatData
+)
+
+@Serializable
+data class ChatData(
+    val userId: String,
+    val messages: List<ChatMessage>,
+    val createdAt: String,
+    val updatedAt: String,
+    val metadata: Map<String, String>
 )
 
 @Serializable
 data class ChatMessage(
     val role: String,
     val content: String,
-    val timestamp: String
+    val timestamp: String,
+    @SerialName("_id") val id: String? = null
 )
 
 @Serializable
-data class ChatSession(
-    val sessionId: String,
+data class SendChatMessageRequest(
     val userId: String,
-    val messages: List<ChatMessage>,
-    val createdAt: String,
-    val updatedAt: String,
-    val metadata: ChatMetadata
-)
-
-@Serializable
-data class CreateSessionRequest(
-    val userId: String,
-    val metadata: ChatMetadata
-)
-
-@Serializable
-data class SendMessageRequest(
     val message: String
 )
 
 @Serializable
-data class ChatSessionResponse(
-    val data: SessionData
+data class SendChatMessageResponse(
+    val data: ChatMessageResponseData
 )
 
 @Serializable
-data class SessionData(
-    val session: ChatSession
+data class ChatMessageResponseData(
+    val response: ChatMessage
 )
 
 @Serializable
-data class MessageResponse(
-    val data: MessageData
-)
-
-@Serializable
-data class MessageData(
-    val response: String
-)
-
-@Serializable
-data class DeleteSessionResponse(
+data class DeleteChatHistoryResponse(
     val message: String
 )
