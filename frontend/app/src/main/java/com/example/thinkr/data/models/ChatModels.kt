@@ -26,8 +26,7 @@ data class ChatData(
 data class ChatMessage(
     val role: String,
     val content: String,
-    val timestamp: String,
-    @SerialName("_id") val id: String? = null
+    val timestamp: String
 )
 
 @Serializable
