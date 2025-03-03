@@ -26,6 +26,12 @@
     - Modified Sections: 4.6
     - Rationale: Google authenticator is already used on the frontend, so doing it again on the backend was unneccessary.
 
+- Frontend design changes:
+    - landing screen only has the Google sign in button
+    - payment screen allows users to start their free trial
+    - document details screen was renamed to document upload screen, minor changes to the document upload screen design
+    - loading page was removed, instead the document options screen has two different views, one when all study materials are ready, and one when the study materials are still being generated.
+
 ## 2. Project Description
 
 Thinkr is an Android mobile app that is geared towards helping students study through AI-generated multiple-choice quizzes and notes. Students can upload a document, and quizzes and flashcards are automatically generated for that document, then they can view those quizzes and flashcards after. They may also ask a chatbot questions about the document uploaded. Students are also able to view quizzes and flashcards created by other users that are similar to theirs for extra study material.
@@ -120,13 +126,9 @@ Note: Users and Students will be used synonymously in this document.
 
 ### **3.5. Non-Functional Requirements**
 
-1. **Quiz/flashcard generation performance**
+**Quiz/flashcard generation performance**
     - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents must take no longer than 10 seconds.
     - **Justification**: This is relevant to user experience as faster response times keep them more engaged with our app and can proceed with their studying quicker. Slow response times may result in users not wanting to interact with our app as much.
-
-2. **Responsive UI/UX**
-    - **Description**: Use loading animations for the time that the app is waiting for.
-    - **Justification**: Loading animations should be used when to promote engaging and intuitive user experiences. These should be used when a user is uploading their document or waiting for a chat reply.
 
 ## 4. Designs Specification
 
