@@ -98,74 +98,22 @@ The system uses ChromaDB to store document embeddings with the following archite
 ### Chat
 
 **Endpoint: `/chat`**
-- Method: `POST`
-- Body: raw
+- Method: `GET`
+- Description: Retrieves the user's chat history or creates a new chat if one doesn't exist
+- Params:
 ```json
-{
    "userId": "user google id",
-   "metadata": {
-      "source": "web",
-      "topic": "general",
-      "documentId": "optional_specific_document.pdf"
-   }
-}
 ```
 - Response:
 ```json
 {
    "data": {
-      "session": {
-         "sessionId": "unique-session-id",
-         "userId": "user google id",
+      "chat": {
+         "userId": "user123",
          "messages": [
             {
                "role": "system",
                "content": "You are a helpful assistant that provides accurate information based on the context provided.",
-               "timestamp": "2023-07-10T12:34:56.789Z"
-            }
-         ],
-         "createdAt": "2023-07-10T12:34:56.789Z",
-         "updatedAt": "2023-07-10T12:34:56.789Z",
-         "metadata": {
-            "source": "web",
-            "topic": "general",
-            "documentId": "optional_specific_document.pdf"
-         }
-      }
-   }
-}
-```
-
-**Endpoint: `/chat/:sessionId/message`**
-- Method: `POST`
-- Body: raw
-```json
-{
-   "message": "What is artificial intelligence?"
-}
-```
-- Response:
-```json
-{
-   "data": {
-      "response": "Artificial intelligence (AI) refers to the simulation of human intelligence in machines..."
-   }
-}
-```
-
-**Endpoint: `/chat/:sessionId`**
-- Method: `GET`
-- Response:
-```json
-{
-   "data": {
-      "session": {
-         "sessionId": "unique-session-id",
-         "userId": "user google id",
-         "messages": [
-            {
-               "role": "system",
-               "content": "You are a helpful assistant...",
                "timestamp": "2023-07-10T12:34:56.789Z"
             },
             {
@@ -175,27 +123,54 @@ The system uses ChromaDB to store document embeddings with the following archite
             },
             {
                "role": "assistant",
-               "content": "Artificial intelligence (AI) refers to...",
+               "content": "Artificial intelligence (AI) refers to the simulation of human intelligence in machines...",
                "timestamp": "2023-07-10T12:35:15.456Z"
             }
          ],
          "createdAt": "2023-07-10T12:34:56.789Z",
          "updatedAt": "2023-07-10T12:35:15.456Z",
          "metadata": {
-            "source": "web",
-            "topic": "general"
+            "type": "general"
          }
       }
    }
 }
 ```
 
-**Endpoint: `/chat/:sessionId`**
-- Method: `DELETE`
+**Endpoint: `/chat/message`**
+- Method: `POST`
+- Description: Sends a message to the user's chat and gets an AI response
+- Body:
+```json
+{
+   "userId": "user123",
+   "message": "What can you tell me about the documents I uploaded?"
+}
+```
 - Response:
 ```json
 {
-   "message": "Chat session deleted successfully"
+   "data": {
+      "response": {
+         "role": "assistant",
+         "content": "Based on the documents you've uploaded, I can see that you have several files related to machine learning. One document discusses neural networks and their applications in image recognition...",
+         "timestamp": "2023-07-10T12:36:25.789Z"
+      }
+   }
+}
+```
+
+**Endpoint: `/chat/history`**
+- Method: `DELETE`
+- Description: Deletes the user's chat history
+- Params:
+```json
+   "userId": "user google id",
+```
+- Response:
+```json
+{
+   "message": "Chat history cleared successfully"
 }
 ```
 
