@@ -346,6 +346,26 @@ Query: ${query}
 
 Answer:`;
     }
+
+    /**
+     * Get relevant context from user documents based on a query
+     */
+    public async getRelevantContext(query: string, userId: string): Promise<string> {
+        try {
+            await this.initVectorStore(`user_${userId}`);
+            
+            if (!this.vectorStore) {
+                return "No documents found to provide context.";
+            }
+            
+            const results = await this.vectorStore.similaritySearch(query, 5);
+            
+            return results.map(doc => doc.pageContent).join('\n\n');
+        } catch (error) {
+            console.error('Error getting context from RAG:', error);
+            return "Unable to retrieve context from your documents.";
+        }
+    }
 }
 
 export default RAGService;
