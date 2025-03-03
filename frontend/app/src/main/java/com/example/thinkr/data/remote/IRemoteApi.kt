@@ -1,17 +1,15 @@
 package com.example.thinkr.data.remote
 
 import com.example.thinkr.data.models.AuthResponse
-import com.example.thinkr.data.models.ChatMetadata
-import com.example.thinkr.data.models.ChatSessionResponse
-import com.example.thinkr.data.models.DeleteSessionResponse
+import com.example.thinkr.data.models.ChatHistoryResponse
+import com.example.thinkr.data.models.DeleteChatHistoryResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.FlashcardItem
-import com.example.thinkr.data.models.MessageResponse
 import com.example.thinkr.data.models.QuizItem
-import com.example.thinkr.data.models.UploadResponse
+import com.example.thinkr.data.models.SendChatMessageResponse
 import com.example.thinkr.data.models.SubscriptionResponse
 import com.example.thinkr.data.models.SuggestedMaterials
-import com.example.thinkr.data.models.SuggestedMaterialsResponse
+import com.example.thinkr.data.models.UploadResponse
 
 interface IRemoteApi {
     suspend fun login(
@@ -41,23 +39,18 @@ interface IRemoteApi {
         userId: String
     ): SubscriptionResponse
 
-    suspend fun createChatSession(
+    suspend fun getChatHistory(
+        userId: String
+    ): ChatHistoryResponse
+
+    suspend fun sendChatMessage(
         userId: String,
-        metadata: ChatMetadata
-    ): ChatSessionResponse
-
-    suspend fun sendMessage(
-        sessionId: String,
         message: String
-    ): MessageResponse
+    ): SendChatMessageResponse
 
-    suspend fun getChatSession(
-        sessionId: String
-    ): ChatSessionResponse
-
-    suspend fun deleteChatSession(
-        sessionId: String
-    ): DeleteSessionResponse
+    suspend fun deleteChatHistory(
+        userId: String
+    ): DeleteChatHistoryResponse
 
     suspend fun getFlashcards(
         userId: String,

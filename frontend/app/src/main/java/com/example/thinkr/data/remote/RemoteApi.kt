@@ -1,23 +1,20 @@
 package com.example.thinkr.data.remote
 
-import android.util.Log
 import com.example.thinkr.data.models.AuthResponse
-import com.example.thinkr.data.models.ChatMetadata
-import com.example.thinkr.data.models.ChatSessionResponse
-import com.example.thinkr.data.models.CreateSessionRequest
-import com.example.thinkr.data.models.DeleteSessionResponse
+import com.example.thinkr.data.models.ChatHistoryResponse
+import com.example.thinkr.data.models.DeleteChatHistoryResponse
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.FlashcardItem
 import com.example.thinkr.data.models.FlashcardsResponse
 import com.example.thinkr.data.models.LoginRequest
-import com.example.thinkr.data.models.MessageResponse
 import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.QuizResponse
-import com.example.thinkr.data.models.SendMessageRequest
-import com.example.thinkr.data.models.UploadResponse
+import com.example.thinkr.data.models.SendChatMessageRequest
+import com.example.thinkr.data.models.SendChatMessageResponse
 import com.example.thinkr.data.models.SubscriptionResponse
 import com.example.thinkr.data.models.SuggestedMaterials
 import com.example.thinkr.data.models.SuggestedMaterialsResponse
+import com.example.thinkr.data.models.UploadResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -114,38 +111,27 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         return Json.decodeFromString(responseBody)
     }
 
-    override suspend fun createChatSession(
-        userId: String,
-        metadata: ChatMetadata
-    ): ChatSessionResponse {
-        val response = client.post(urlString = BASE_URL + CHAT) {
-            contentType(ContentType.Application.Json)
-            setBody(CreateSessionRequest(userId, metadata))
+    override suspend fun getChatHistory(userId: String): ChatHistoryResponse {
+        val response = client.get(urlString = BASE_URL + CHAT) {
+            parameter("userId", userId)
         }
         val responseBody = response.bodyAsText()
         return Json.decodeFromString(responseBody)
     }
 
-    override suspend fun sendMessage(
-        sessionId: String,
-        message: String
-    ): MessageResponse {
-        val response = client.post(urlString = "$BASE_URL$CHAT/$sessionId$MESSAGE") {
+    override suspend fun sendChatMessage(userId: String, message: String): SendChatMessageResponse {
+        val response = client.post(urlString = BASE_URL + CHAT + MESSAGE) {
             contentType(ContentType.Application.Json)
-            setBody(SendMessageRequest(message))
+            setBody(SendChatMessageRequest(userId, message))
         }
         val responseBody = response.bodyAsText()
         return Json.decodeFromString(responseBody)
     }
 
-    override suspend fun getChatSession(sessionId: String): ChatSessionResponse {
-        val response = client.get(urlString = "$BASE_URL$CHAT/$sessionId")
-        val responseBody = response.bodyAsText()
-        return Json.decodeFromString(responseBody)
-    }
-
-    override suspend fun deleteChatSession(sessionId: String): DeleteSessionResponse {
-        val response = client.delete(urlString = "$BASE_URL$CHAT/$sessionId")
+    override suspend fun deleteChatHistory(userId: String): DeleteChatHistoryResponse {
+        val response = client.delete(urlString = BASE_URL + CHAT + HISTORY) {
+            parameter("userId", userId)
+        }
         val responseBody = response.bodyAsText()
         return Json.decodeFromString(responseBody)
     }
@@ -198,5 +184,6 @@ class RemoteApi(private val client: HttpClient) : IRemoteApi {
         private const val CHAT = "/chat"
         private const val MESSAGE = "/message"
         private const val SUGGESTED_MATERIALS = "/suggestedMaterials"
+        private const val HISTORY = "/history"
     }
 }

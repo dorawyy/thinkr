@@ -1,10 +1,8 @@
 package com.example.thinkr.ui.chat
 
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thinkr.data.models.ChatMetadata
 import com.example.thinkr.data.repositories.chat.ChatRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,48 +14,15 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
     private val _state = MutableStateFlow(ChatState())
     val state: StateFlow<ChatState> = _state.asStateFlow()
 
-    init {
-        // TODO: Remove this and replace it with the messages received from the backend
-        _state.update { currentState ->
-            currentState.copy(
-                messages = listOf(
-                    Message(
-                        id = "1",
-                        content = mutableStateOf("Hello there!"),
-                        timestamp = System.currentTimeMillis() - 3600000,
-                        isSender = false
-                    ),
-                    Message(
-                        id = "2",
-                        content = mutableStateOf("Hi! How are you?"),
-                        timestamp = System.currentTimeMillis() - 3500000,
-                        isSender = true
-                    ),
-                    Message(
-                        id = "3",
-                        content = mutableStateOf("I'm doing great, thanks for asking. How about you?"),
-                        timestamp = System.currentTimeMillis() - 3400000,
-                        isSender = false
-                    )
-                )
-            )
-        }
-    }
-
-    fun createChatSession(userId: String, documentId: String? = null) {
+    fun loadChatHistory(userId: String) {
         viewModelScope.launch {
-            val metadata = ChatMetadata(
-                source = "mobile",
-                topic = "general",
-                documentId = documentId
-            )
+            _state.update { it.copy(userId = userId, isLoading = true) }
 
-            chatRepository.createChatSession(userId, metadata)
-                .onSuccess { session ->
+            chatRepository.getChatHistory(userId)
+                .onSuccess { chatData ->
                     _state.update { currentState ->
                         currentState.copy(
-                            sessionId = session.sessionId,
-                            messages = session.messages
+                            messages = chatData.messages
                                 .filter { it.role != SYSTEM }
                                 .map { chatMessage ->
                                     Message(
@@ -66,45 +31,26 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                                         timestamp = parseTimestamp(chatMessage.timestamp),
                                         isSender = chatMessage.role == USER
                                     )
-                                }
+                                },
+                            isLoading = false
                         )
                     }
                 }
                 .onFailure { error ->
-                    // Handle error
                     error.printStackTrace()
-                }
-        }
-    }
-
-    fun loadChatSession(sessionId: String) {
-        viewModelScope.launch {
-            chatRepository.getChatSession(sessionId)
-                .onSuccess { session ->
                     _state.update { currentState ->
                         currentState.copy(
-                            sessionId = session.sessionId,
-                            messages = session.messages
-                                .filter { it.role != SYSTEM }
-                                .map { chatMessage ->
-                                    Message(
-                                        id = chatMessage.timestamp,
-                                        content = mutableStateOf(chatMessage.content),
-                                        timestamp = parseTimestamp(chatMessage.timestamp),
-                                        isSender = chatMessage.role == USER
-                                    )
-                                }
+                            isLoading = false,
+                            error = error.message ?: "Failed to load chat history"
                         )
                     }
-                }
-                .onFailure { error ->
-                    error.printStackTrace()
                 }
         }
     }
 
     fun onSendMessage(content: String) {
-        if (content.isBlank() || _state.value.sessionId.isEmpty()) return
+        val userId = _state.value.userId
+        if (content.isBlank() || userId.isEmpty()) return
 
         val newMessage = Message(
             id = System.currentTimeMillis().toString(),
@@ -120,18 +66,36 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
         }
 
         viewModelScope.launch {
-            chatRepository.sendMessage(_state.value.sessionId, content)
+            chatRepository.sendMessage(userId, content)
                 .onSuccess { response ->
-                    onReceiveMessage(response)
+                    onReceiveMessage(response.content)
                 }
                 .onFailure { error ->
-                    // Handle error
                     error.printStackTrace()
                 }
         }
     }
 
-    fun onReceiveMessage(content: String) {
+    fun clearChatHistory() {
+        val userId = _state.value.userId
+        if (userId.isEmpty()) return
+
+        viewModelScope.launch {
+            chatRepository.clearChatHistory(userId)
+                .onSuccess { _ ->
+                    _state.update { currentState ->
+                        currentState.copy(
+                            messages = emptyList()
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    error.printStackTrace()
+                }
+        }
+    }
+
+    private fun onReceiveMessage(content: String) {
         val contentStream = mutableStateOf("")
         if (content.isBlank()) return
 
@@ -154,27 +118,6 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                 contentStream.value += char
                 kotlinx.coroutines.delay(MESSAGE_STREAM_DELAY)
             }
-        }
-    }
-
-    fun deleteChatSession() {
-        val sessionId = _state.value.sessionId
-        if (sessionId.isEmpty()) return
-
-        viewModelScope.launch {
-            chatRepository.deleteChatSession(sessionId)
-                .onSuccess { _ ->
-                    _state.update { currentState ->
-                        currentState.copy(
-                            sessionId = "",
-                            messages = emptyList()
-                        )
-                    }
-                }
-                .onFailure { error ->
-                    // Handle error
-                    error.printStackTrace()
-                }
         }
     }
 
