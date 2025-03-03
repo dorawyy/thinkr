@@ -1,6 +1,10 @@
 # M3 - Requirements and Design
 
 ## 1. Change History
+- Coupled the view quizzes and view flashcards use case into one
+    - Date of Modification: Mar 2
+    - Modified Sections: 3.1, 3.3, 4.6
+    - Rationale: it made more sense to combine these two use cases as a way to generalize them. Both of their purposes relates to study materials in general.
 - Added new feature that allows users to view suggested quizzes and flashcards that are created by other users, algorithm recommends quizzes and flashcards most similar to what a user has been studying
     - Date of Modification: Feb 28
     - Modified Sections: 3.1, 3.3, 4.4, 4.6, 4.8
