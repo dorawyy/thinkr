@@ -538,3 +538,5 @@ Note: Users and Students will be used synonymously in this document.
     - Instantiated and worked on the algorithm implementation design including constraints, logics, and architecture
     - Created sequence diagrams for functional requirements 4-7 (Conversational AI, Document Parser, RAG Service, Review Flashcards)
     - Planned and designed the Gen AI orchestrator for efficient document processing and response generation
+    - Integrated backend with the Retrieval-Augmented Generation (RAG) service for AI-driven document interaction, ChatService for persistent conversation feature, and a Suggested Materials feature for recommending similar study resources based on document embeddings stored in ChromaDB. 
+    - Involved in designing and linking the database (MongoDB for user data and chat history, ChromaDB for vector storage), integrating document similarity search, ensuring persistent vector storage, and implementing OpenAI embeddings.
