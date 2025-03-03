@@ -14,7 +14,6 @@ data class ChatHistoryData(
 
 @Serializable
 data class ChatData(
-    val userId: String,
     val messages: List<ChatMessage>,
     val createdAt: String,
     val updatedAt: String,

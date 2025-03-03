@@ -16,7 +16,7 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
 
     fun loadChatHistory(userId: String) {
         viewModelScope.launch {
-            _state.update { it.copy(userId = userId) }
+            _state.update { it.copy(userId = userId, isLoading = true) }
 
             chatRepository.getChatHistory(userId)
                 .onSuccess { chatData ->
@@ -31,12 +31,19 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                                         timestamp = parseTimestamp(chatMessage.timestamp),
                                         isSender = chatMessage.role == USER
                                     )
-                                }
+                                },
+                            isLoading = false
                         )
                     }
                 }
                 .onFailure { error ->
                     error.printStackTrace()
+                    _state.update { currentState ->
+                        currentState.copy(
+                            isLoading = false,
+                            error = error.message ?: "Failed to load chat history"
+                        )
+                    }
                 }
         }
     }

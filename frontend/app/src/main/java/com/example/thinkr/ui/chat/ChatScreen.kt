@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -83,18 +84,18 @@ fun ChatScreen(
                     )
                 }
             },
-//            actions = {
-//                TextButton(
-//                    onClick = {
-//                        viewModel.clearChatHistory()
-//                        navController.popBackStack()
-//                    }
-//                ) {
-//                    Text(
-//                        text = "Delete chat"
-//                    )
-//                }
-//            }
+            actions = {
+                TextButton(
+                    onClick = {
+                        viewModel.clearChatHistory()
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text(
+                        text = "Delete chat"
+                    )
+                }
+            }
         )
 
         // Messages List
