@@ -175,6 +175,7 @@ fun AnimatedCard(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(8.dp)
             .background(Color.White)
             .pointerInput(Unit) {
                 detectDragGestures(

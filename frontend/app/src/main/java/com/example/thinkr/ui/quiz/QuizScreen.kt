@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -156,7 +158,7 @@ fun QuizScreen(
                 )
             } else {
                 Text(
-                    text = "Swipe vertically to go through questions.",
+                    text = "Swipe vertically around the edges to go through questions.",
                     textAlign = TextAlign.Center
                 )
             }
@@ -166,7 +168,7 @@ fun QuizScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedCardDeck(
@@ -189,24 +191,26 @@ fun MultipleChoiceQuizCard(
     correctAnswerKey: String,
     revealAnswer: Boolean = false,
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
     ) {
         // Question
-        Text(
-            text = question,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            textAlign = TextAlign.Center
-        )
+        item {
+            Text(
+                text = question,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                textAlign = TextAlign.Center
+            )
+        }
 
         // Choices
-        choices.forEach { (key, choice) ->
+        items(choices.entries.toList()) { (key, choice) ->
             val isSelected = quizState.selectedAnswers[questionIndex] == key
             val isCorrect = key == correctAnswerKey
             val backgroundColor = when {
