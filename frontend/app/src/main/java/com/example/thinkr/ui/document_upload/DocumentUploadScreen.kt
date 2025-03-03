@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.R
 import kotlinx.coroutines.launch
@@ -91,10 +90,6 @@ fun DocumentUploadScreen(
                     .background(Color.Gray)
             )
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text("Selected File: ${selectedUri.lastPathSegment}", fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 

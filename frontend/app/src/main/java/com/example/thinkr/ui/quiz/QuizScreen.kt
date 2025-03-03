@@ -84,7 +84,6 @@ fun QuizScreen(
                     }
                 }
             )
-
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -153,6 +152,11 @@ fun QuizScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                Text(
+                    text = "Swipe vertically to go through questions.",
                     textAlign = TextAlign.Center
                 )
             }

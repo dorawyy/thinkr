@@ -148,11 +148,7 @@ fun HomeScreenContent(
                         .fillMaxWidth()
                         .padding(vertical = 12.dp)
                 ) {
-                    Text(
-                        text = "Add",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Text(text = "Add")
                 }
             }
 

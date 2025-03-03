@@ -2,7 +2,9 @@ package com.example.thinkr.ui.flashcards
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -66,9 +69,7 @@ fun FlashcardsScreen(
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
                 title = { Text("Flashcards") },
                 navigationIcon = {
@@ -82,7 +83,15 @@ fun FlashcardsScreen(
                     }
                 }
             )
-
+            Text(
+                text = "Swipe vertically to go through cards.",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Swipe horizontally on the card to flip it.",
+                textAlign = TextAlign.Center
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
