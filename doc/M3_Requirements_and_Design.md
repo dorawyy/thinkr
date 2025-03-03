@@ -117,8 +117,8 @@ Note: Users and Students will be used synonymously in this document.
 ### **3.5. Non-Functional Requirements**
 
 **Quiz/flashcard generation performance**
-    - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents must take no longer than 10 seconds.
-    - **Justification**: This is relevant to user experience as faster response times keep them more engaged with our app and can proceed with their studying quicker. Slow response times may result in users not wanting to interact with our app as much.
+    - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents and retrieve them must take no longer than 11.3 seconds.
+    - **Justification**: According to [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf), the average speed index for content loading in the United States Technology category is 11.3 seconds. So we based our non functional requirements on this industry benchmark which is a reasonable assumption for content generation tasks. This is also relevant to user experience as slow response times may result in users not wanting to interact with our app as much.
 
 ## 4. Designs Specification
 
