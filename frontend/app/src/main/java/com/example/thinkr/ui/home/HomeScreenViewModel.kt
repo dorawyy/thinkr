@@ -1,11 +1,14 @@
 package com.example.thinkr.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.User
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +46,21 @@ class HomeScreenViewModel(private val docRepository: DocRepository, private val 
                 // Handle file selected action
                 navController.navigate(Route.DocumentUpload.createRoute(action.selectedUri))
             }
+        }
+    }
+
+    fun checkUser(account: GoogleSignInAccount?) {
+        if (account == null && userRepository.getUser() == null) {
+            Log.w("HomeScreenViewModel", "User not signed in")
+        } else if (userRepository.getUser() == null) {
+            userRepository.setUser(
+                User(
+                    email = account!!.email ?: "",
+                    name = account.displayName ?: "",
+                    googleId = account.id ?: "",
+                    subscribed = false
+                )
+            )
         }
     }
 
