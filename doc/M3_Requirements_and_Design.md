@@ -1,7 +1,10 @@
 # M3 - Requirements and Design
 
 ## 1. Change History
-- Coupled the view quizzes and view flashcards use case into one
+- Replaced second non functinal requirement with optimizing the similarity search for the suggested materials feature
+    - Date of Modification: Mar 2
+    - Modified Sections: 3.5, 4.7
+    - Rationale: the old UI responsiveness cannot be tested quantitatively and with this newly added feature, it made more sense to optimize it as it is computationally heavy since every document has to be compared with every other document in the database.
     - Date of Modification: Mar 2
     - Modified Sections: 3.1, 3.3, 4.6
     - Rationale: it made more sense to combine these two use cases as a way to generalize them. Both of their purposes relates to study materials in general.
@@ -123,6 +126,9 @@ Note: Users and Students will be used synonymously in this document.
 **Quiz/flashcard generation performance**
     - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents and retrieve them must take no longer than 11.3 seconds.
     - **Justification**: According to [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf), the average speed index for content loading in the United States Technology category is 11.3 seconds. So we based our non functional requirements on this industry benchmark which is a reasonable assumption for content generation tasks. This is also relevant to user experience as slow response times may result in users not wanting to interact with our app as much.
+**View Suggested Materials Similarity Search performance**
+    - **Description**: The amount of time it takes to perform similarity search between a user's documents with other existing documents to output suggested materials must take no longer than 11.3 seconds.
+    - **Justification**: As with the first non functional requirement, this non functional requirement is also speed based so we based it on [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf). According to this source, the average speed index for content loading in the United States Technology category is 11.3 seconds. So calculating the similarities and fetching the already-generated materials should take no longer than 11.3 seconds.
 
 ## 4. Designs Specification
 
@@ -427,14 +433,15 @@ Note: Users and Students will be used synonymously in this document.
 
 ### **4.7. Non-Functional Requirements Design**
 1. [**[Quiz/flashcard generation performance]**](#nfr1)
-    - **Validation**: We will implement a fan out pattern for extracting text from files by multithreading text extraction for each page (extract multiple pages at the same time). Also, while the user is providing information about the document, we will start uploading the document in the background so that the back-end can start parsing earlier to make quiz/flashcard generation appear a lot faster.
-2. [**[Responsive UI/UX]**](#nfr1)
-    - **Validation**: We will create loading animations for different front-end components, specifically for when the user is waiting for the document to be uploaded and parsed, or waiting for a reply from the back-end.
+    - **Validation**: We will leverage AWS Textract's async document processing APIs to maximize the speed at which documents are processed into text. Our retrival endpoints will also use batch calling to make retrieving multiple documents/flashcards/quizzes faster.
+2. [**[View Suggested Materials Similarity Search performance]**](#nfr1)
+    - **Validation**: For calculating similarity, we compare every single one of a user's document to every other document that exists in the database, which takes n^2 time and would be really slow if scaled. So to mitigate this, we will multithread calls for 
+    fetching similar documents and start fetching the next one before the current process finishes, which would speed up the request time.
 
 ### **4.8. Main Project Complexity Design**
 
 **Calculating Documents Similarity**
-- **Description**: This feature (use case #7) suggests study materials (flashcards and quizzes) to users based on similarity between their documents and other users' documents. The core of this feature is the similarity calculation between users' documents to determine what flashcards and quizzes to show to a user that are similar to what they usually study.
+- **Description**: This feature (use case #6) suggests study materials (flashcards and quizzes) to users based on similarity between their documents and other users' documents. The core of this feature is the similarity calculation between users' documents to determine what flashcards and quizzes to show to a user that are similar to what they usually study.
 - **Why complex?**: Vector similarity calculation requires multidimensional embedding comparison across potentially hundreds of documents. Cosine similarity computation between high-dimensional vectors is computationally intensive and must be optimized to maintain acceptable performance at scale. We are comparing a user's documents to every other user's documents in the system to find the most similar materials.
 - **Design**:
    - **Input**: 
