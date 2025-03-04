@@ -1,20 +1,22 @@
 package com.example.thinkr.ui.chat
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinkr.data.repositories.chat.ChatRepository
+import com.example.thinkr.data.repositories.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
+class ChatViewModel(private val chatRepository: ChatRepository, private val userRepository: UserRepository) : ViewModel() {
     private val _state = MutableStateFlow(ChatState())
     val state: StateFlow<ChatState> = _state.asStateFlow()
 
-    fun loadChatHistory(userId: String) {
+    private fun loadChatHistory(userId: String) {
         viewModelScope.launch {
             _state.update { it.copy(userId = userId, isLoading = true) }
 
@@ -128,6 +130,10 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
         } catch (e: Exception) {
             System.currentTimeMillis()
         }
+    }
+
+    fun getChatHistory() {
+        userRepository.getUser()?.googleId?.let { loadChatHistory(userId = it) }
     }
 
     companion object {

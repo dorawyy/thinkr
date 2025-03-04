@@ -30,6 +30,10 @@ class DocumentOptionsViewModel(private val docRepository: DocRepository, private
         }
     }
 
+    fun isPremium(): Boolean {
+        return userRepository.getUser()!!.subscribed
+    }
+
     private fun onReady() {
         _state.update { it.copy(isReady = true) }
     }
