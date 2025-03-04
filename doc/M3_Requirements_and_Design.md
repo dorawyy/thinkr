@@ -31,10 +31,10 @@
     - Rationale: Google authenticator is already used on the frontend, so doing it again on the backend was unneccessary.
 
 - Frontend design changes:
-    - landing screen only has the Google sign in button
-    - payment screen allows users to start their free trial
-    - document details screen was renamed to document upload screen, minor changes to the document upload screen design
-    - loading page was removed, instead the document options screen has two different views, one when all study materials are ready, and one when the study materials are still being generated.
+    - landing screen only has the Google sign in button [Date: Feb 25]
+    - payment screen allows users to start their free trial [Date: Feb 25]
+    - document details screen was renamed to document upload screen, minor changes to the document upload screen design [Date: Feb 27]
+    - loading page was removed, instead the document options screen has two different views, one when all study materials are ready, and one when the study materials are still being generated [Date: Feb 28]
 
 ## 2. Project Description
 
@@ -515,7 +515,7 @@ Note: Users and Students will be used synonymously in this document.
     - Approximately 60 hours
 - **Parshan Javanrood**: 
     - Designed and implemented multiple UI screens to enhance user experience. Developed the Chat UI with a streaming effect for received messages, a Document Options screen with a loading effect during processing, an animated Flashcards deck with swipe-to-reveal answers, and a Quiz interface with scrolling, answer selection, and a timer that vibrates when time runs out. Also built a Document Upload screen for seamless file submission. Integrated with the backend by implementing a server polling mechanism to sync document processing status and handle requests for flashcards, quizzes, and documents.
-    - Hours spent: 61 hours
+    - Hours spent: 60 hours
 
 
 ### M3
