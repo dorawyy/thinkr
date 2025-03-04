@@ -1,9 +1,12 @@
 package com.example.thinkr.ui.landing
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.thinkr.data.models.User
 import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.user.UserRepository
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,5 +69,16 @@ class LandingScreenViewModel(
                 }
             )
         }
+    }
+
+    fun checkSignedIn(navigateToHome: () -> Unit) {
+        if (userRepository.getUser() != null) {
+            _state.update { it.copy(isAuthenticated = true) }
+            navigateToHome()
+        }
+    }
+
+    fun userSignedOut(): Boolean {
+        return userRepository.isSignedOut()
     }
 }

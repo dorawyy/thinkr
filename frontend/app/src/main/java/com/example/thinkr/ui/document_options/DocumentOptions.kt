@@ -93,17 +93,23 @@ fun DocumentOptionsScreen(
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(32.dp))
         }
+
+        val chatAIOption = if (viewModel.isPremium()) Pair("Chat with Thinkr AI") {
+            navController.navigate(Route.Chat.createRoute(documentItem))
+        } else Pair("Chat with Thinkr AI: Get Premium!") {
+            navController.navigate(Route.Payment)
+        }
+
         // Option buttons with staggered animation
-        val options: List<Pair<String, () -> Unit>> = listOf(
+        val options: List<Pair<String, () ->
+        Unit>> = listOf(
             Pair("Take Quiz") {
                 navController.navigate(Route.Quiz.createRoute(documentItem))
             },
             Pair("Review Flashcards") {
                 navController.navigate(Route.Flashcards.createRoute(documentItem))
             },
-            Pair("Chat with Thinkr AI") {
-                navController.navigate(Route.Chat.createRoute(documentItem))
-            }
+            chatAIOption
         )
 
         options.forEachIndexed { index, (title, onClick) ->

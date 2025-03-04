@@ -88,7 +88,8 @@ fun HomeScreen(
         state = state,
         navController = navController,
         onAction = { action -> viewModel.onAction(action, navController) },
-        onSignOut = { showDialog = true }
+        onSignOut = { showDialog = true },
+        viewModel
     )
 }
 
@@ -97,7 +98,8 @@ fun HomeScreenContent(
     state: State<HomeScreenState>,
     navController: NavController,
     onAction: (HomeScreenAction) -> Unit,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    viewModel: HomeScreenViewModel
 ) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -136,7 +138,7 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onSignOut) {
+                TextButton(onClick = { onSignOut(); viewModel.signOut() }) {
                     Text(text = "Sign out")
                 }
                 TextButton(onClick = { onAction(HomeScreenAction.ProfileButtonClicked) }) {
@@ -186,7 +188,11 @@ fun HomeScreenContent(
                                     .padding(vertical = 4.dp)
                                     .clickable {
                                         val flashcardJson = Json.encodeToString(flashcardSet)
-                                        navController.navigate(Route.Flashcards.createRoute(flashcardSuggestion = flashcardJson))
+                                        navController.navigate(
+                                            Route.Flashcards.createRoute(
+                                                flashcardSuggestion = flashcardJson
+                                            )
+                                        )
                                     }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {

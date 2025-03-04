@@ -6,4 +6,5 @@ interface IUserRepository {
     fun setUser(user: User)
     fun getUser(): User?
     fun delUser()
+    fun subscribeUser()
 }

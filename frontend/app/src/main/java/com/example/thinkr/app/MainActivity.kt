@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
@@ -56,8 +55,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            val account = remember { GoogleSignIn.getLastSignedInAccount(this) }
-            val startDestination = remember { if (account != null) Route.Home else Route.Landing }
+            val startDestination = Route.Landing
 
             ThinkrTheme {
                 Column(modifier = Modifier.padding(start = 24.dp, top = 48.dp, end = 24.dp)) {
@@ -80,7 +78,6 @@ class MainActivity : ComponentActivity() {
 
                             composable<Route.Home> {
                                 val viewModel = koinViewModel<HomeScreenViewModel>()
-                                viewModel.checkUser(account)
 
                                 HomeScreen(
                                     navController = navController,
@@ -133,8 +130,6 @@ class MainActivity : ComponentActivity() {
 
                                 ProfileScreen(
                                     profileViewModel = viewModel,
-                                    paymentViewModel = paymentViewModel,
-                                    account = account!!,
                                     isSubscribed = isPremium,
                                     onPressBack = { navController.navigate(Route.Home) },
                                     onSelectPremium = { navController.navigate(Route.Payment) }
@@ -147,7 +142,6 @@ class MainActivity : ComponentActivity() {
 
                                 PaymentScreen(
                                     paymentViewModel = paymentViewModel,
-                                    account = account!!,
                                     onConfirm = { navController.navigate(Route.Profile) },
                                     onBack = { navController.navigate(Route.Profile) }
                                 )
@@ -237,7 +231,6 @@ class MainActivity : ComponentActivity() {
                                 val viewModel = koinViewModel<ChatViewModel>()
 
                                 ChatScreen(
-                                    account = account!!,
                                     navController = navController,
                                     viewModel = viewModel
                                 )

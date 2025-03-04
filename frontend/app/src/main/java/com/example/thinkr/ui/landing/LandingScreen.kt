@@ -3,7 +3,9 @@ package com.example.thinkr.ui.landing
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,12 +36,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.thinkr.R
 import com.example.thinkr.app.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -74,6 +78,15 @@ fun LandingScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.checkSignedIn(navigateToHome)
+    }
+
+    if (GoogleSignIn.getLastSignedInAccount(LocalContext.current) != null && !viewModel.userSignedOut()) {
+        GoogleSignIn.getLastSignedInAccount(LocalContext.current)
+            ?.let { viewModel.onGoogleSignInResult(it, onSignOut) }
+    }
+
     LaunchedEffect(state.value.isAuthenticated) {
         if (state.value.isAuthenticated) {
             navigateToHome()
@@ -91,6 +104,13 @@ fun LandingScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "App Logo",
+            modifier = Modifier
+                .height(100.dp)
+                .padding(bottom = 20.dp)
+        )
         Text(text = "Welcome to Thinkr")
 //        Spacer(modifier = Modifier.height(20.dp))
 //        OutlinedTextField(
