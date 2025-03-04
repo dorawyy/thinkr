@@ -126,6 +126,7 @@ Note: Users and Students will be used synonymously in this document.
 **Quiz/flashcard generation performance**
     - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents and retrieve them must take no longer than 11.3 seconds.
     - **Justification**: According to [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf), the average speed index for content loading in the United States Technology category is 11.3 seconds. So we based our non functional requirements on this industry benchmark which is a reasonable assumption for content generation tasks. This is also relevant to user experience as slow response times may result in users not wanting to interact with our app as much.
+
 **View Suggested Materials Similarity Search performance**
     - **Description**: The amount of time it takes to perform similarity search between a user's documents with other existing documents to output suggested materials must take no longer than 11.3 seconds.
     - **Justification**: As with the first non functional requirement, this non functional requirement is also speed based so we based it on [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf). According to this source, the average speed index for content loading in the United States Technology category is 11.3 seconds. So calculating the similarities and fetching the already-generated materials should take no longer than 11.3 seconds.
@@ -434,6 +435,7 @@ Note: Users and Students will be used synonymously in this document.
 ### **4.7. Non-Functional Requirements Design**
 1. [**[Quiz/flashcard generation performance]**](#nfr1)
     - **Validation**: We will leverage AWS Textract's async document processing APIs to maximize the speed at which documents are processed into text. Our retrival endpoints will also use batch calling to make retrieving multiple documents/flashcards/quizzes faster.
+
 2. [**[View Suggested Materials Similarity Search performance]**](#nfr1)
     - **Validation**: For calculating similarity, we compare every single one of a user's document to every other document that exists in the database, which takes n^2 time and would be really slow if scaled. So to mitigate this, we will multithread calls for 
     fetching similar documents and start fetching the next one before the current process finishes, which would speed up the request time.
