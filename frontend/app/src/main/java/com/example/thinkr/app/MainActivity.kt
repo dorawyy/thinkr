@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            val startDestination = Route.Home
+            val startDestination = Route.Landing
 
             ThinkrTheme {
                 Column(modifier = Modifier.padding(start = 24.dp, top = 48.dp, end = 24.dp)) {

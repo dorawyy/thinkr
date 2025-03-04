@@ -133,9 +133,7 @@ class ChatViewModel(private val chatRepository: ChatRepository, private val user
     }
 
     fun getChatHistory() {
-        viewModelScope.launch {
-            userRepository.getUser()?.googleId?.let { loadChatHistory(userId = it) }
-        }
+        userRepository.getUser()?.googleId?.let { loadChatHistory(userId = it) }
     }
 
     companion object {

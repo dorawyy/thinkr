@@ -53,7 +53,9 @@ fun ChatScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    viewModel.getChatHistory()
+    LaunchedEffect(Unit) {
+        viewModel.getChatHistory()
+    }
 
     // Scroll to bottom when new message is added
     LaunchedEffect(chatState.messages.size) {
