@@ -1,13 +1,14 @@
 # M3 - Requirements and Design
 
 ## 1. Change History
+- Fixed use case diagram to be more generalized and fixed sequence diagram and dependency diagram logic
+    - Date of Modification: Mar 2
+    - Modified Sections: 3.1, 4.6
+    - Rationale: use case diagram now reflects the newly changed use cases, sequence diagrams now are fixed with correct logic including database fetching, dependency diagram now correctly uses the named interfaces.
 - Replaced second non functinal requirement with optimizing the similarity search for the suggested materials feature
     - Date of Modification: Mar 2
     - Modified Sections: 3.5, 4.7
     - Rationale: the old UI responsiveness cannot be tested quantitatively and with this newly added feature, it made more sense to optimize it as it is computationally heavy since every document has to be compared with every other document in the database.
-    - Date of Modification: Mar 2
-    - Modified Sections: 3.1, 3.3, 4.6
-    - Rationale: it made more sense to combine these two use cases as a way to generalize them. Both of their purposes relates to study materials in general.
 - Added new feature that allows users to view suggested quizzes and flashcards that are created by other users, algorithm recommends quizzes and flashcards most similar to what a user has been studying
     - Date of Modification: Feb 28
     - Modified Sections: 3.1, 3.3, 4.4, 4.6, 4.8
@@ -124,11 +125,15 @@ Note: Users and Students will be used synonymously in this document.
 ### **3.5. Non-Functional Requirements**
 
 **Quiz/flashcard generation performance**
+
     - **Description**: The amount of time it takes to generate a quiz or a flashcard via documents and retrieve them must take no longer than 11.3 seconds.
+
     - **Justification**: According to [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf), the average speed index for content loading in the United States Technology category is 11.3 seconds. So we based our non functional requirements on this industry benchmark which is a reasonable assumption for content generation tasks. This is also relevant to user experience as slow response times may result in users not wanting to interact with our app as much.
 
 **View Suggested Materials Similarity Search performance**
+    
     - **Description**: The amount of time it takes to perform similarity search between a user's documents with other existing documents to output suggested materials must take no longer than 11.3 seconds.
+    
     - **Justification**: As with the first non functional requirement, this non functional requirement is also speed based so we based it on [Source](https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf). According to this source, the average speed index for content loading in the United States Technology category is 11.3 seconds. So calculating the similarities and fetching the already-generated materials should take no longer than 11.3 seconds.
 
 ## 4. Designs Specification
