@@ -503,7 +503,22 @@ Note: Users and Students will be used synonymously in this document.
        ```
 
 ## 5. Contributions
+### M4
+- **Ray Ho**: 
+    - Set up backend with standard API patterns, MongoDB schemas for user data, flashcards, documents, and quizzes, and features including user login, document management (uploading to MongoDB, S3, ChromaDB, and text extraction via AWS Textract), flashcard/quiz generation, and subscription handling, deployed on AWS EC2.
+    - Around 50 hours
+- **Anthony Ji**: 
+    - Integrated backend with the Retrieval-Augmented Generation (RAG) service for AI-driven document interaction, ChatService for persistent conversation feature, and a Suggested Materials feature for recommending similar study resources based on document embeddings stored in ChromaDB. Also involved in designing and linking the database (MongoDB for user data and chat history, ChromaDB for vector storage), integrating document similarity search, ensuring persistent vector storage, and implementing OpenAI embeddings.
+    - 50 hours
+- **Jaiden Siu**:
+    - Designed and implemented Android application including architectural design, UI implementation, and network calls with Jetpack Compose and Ktor HTTP client following best practices for scalability, reusability, and testability across all features. This includes features such as Google sign in / authentication, chat, documents, flashcards, quizzes, and subscription. Worked closely with backend engineers/teammates to align with REST APIs to resolve bugs, and iterate on implementation.
+    - Approximately 60 hours
+- **Parshan Javanrood**: 
+    - Designed and implemented multiple UI screens to enhance user experience. Developed the Chat UI with a streaming effect for received messages, a Document Options screen with a loading effect during processing, an animated Flashcards deck with swipe-to-reveal answers, and a Quiz interface with scrolling, answer selection, and a timer that vibrates when time runs out. Also built a Document Upload screen for seamless file submission. Integrated with the backend by implementing a server polling mechanism to sync document processing status and handle requests for flashcards, quizzes, and documents.
+    - Hours spent: 61 hours
 
+
+### M3
 - **Ray Ho**
     - Writing requirement specifications (actors, functional and non-functional requirements)
     - Creating the use case diagram
