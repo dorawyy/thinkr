@@ -271,47 +271,28 @@ Note: Users and Students will be used synonymously in this document.
 
     ```java
     /**
-     * Creates a new chat session.
+    * Gets or creates a chat for a user
     *
     * @param userId The Google ID of the user
-    * @param metadata Optional metadata including source, topic, and optional documentId
-    * @return New chat session data
+    * @return Chat session data including message history
     */
-    ChatSession createChatSession(String userId, Map<String, Object> metadata);
+    ChatSessionDTO getOrCreateUserChat(String userId);
 
     /**
-    * Sends a message to an existing chat session and gets an AI response.
+    * Sends a message and gets an AI response
     *
-    * @param sessionId The unique ID of the chat session
+    * @param userId The Google ID of the user
     * @param message The user's message text
     * @return AI-generated response
     */
-    String sendChatMessage(String sessionId, String message);
+    ChatMessage sendMessage(String userId, String message);
 
     /**
-    * Retrieves a specific chat session with its message history.
-    *
-    * @param sessionId The unique ID of the chat session
-    * @return Chat session data including message history
-    */
-    ChatSession getChatSession(String sessionId);
-
-    /**
-    * Deletes a chat session.
-    *
-    * @param sessionId The unique ID of the chat session to delete
-    * @return True if deletion was successful
-    */
-    boolean deleteChatSession(String sessionId);
-
-    /**
-    * Gets all chat sessions for a user, optionally filtered by document.
+    * Clears chat history for a user
     *
     * @param userId The Google ID of the user
-    * @param documentId Optional document ID to filter by
-    * @return List of chat sessions
     */
-    List<ChatSession> getUserChatSessions(String userId, String documentId);
+    void clearChatHistory(String userId);
     ```
 
 5. **RAGService**
