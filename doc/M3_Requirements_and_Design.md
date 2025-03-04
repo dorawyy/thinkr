@@ -3,31 +3,31 @@
 ## 1. Change History
 - Fixed use case diagram to be more generalized and fixed sequence diagram and dependency diagram logic
     - Date of Modification: Mar 2
-    - Modified Sections: 3.1, 4.6
+    - Modified Sections: 3.1, 4.6, 4.7
     - Rationale: use case diagram now reflects the newly changed use cases, sequence diagrams now are fixed with correct logic including database fetching, dependency diagram now correctly uses the named interfaces.
-- Replaced second non functinal requirement with optimizing the similarity search for the suggested materials feature
+- Replaced second non functional requirement with optimizing the similarity search for the suggested materials feature
     - Date of Modification: Mar 2
-    - Modified Sections: 3.5, 4.7
+    - Modified Sections: 3.5, 4.8
     - Rationale: the old UI responsiveness cannot be tested quantitatively and with this newly added feature, it made more sense to optimize it as it is computationally heavy since every document has to be compared with every other document in the database.
 - Added new feature that allows users to view suggested quizzes and flashcards that are created by other users, algorithm recommends quizzes and flashcards most similar to what a user has been studying
     - Date of Modification: Feb 28
-    - Modified Sections: 3.1, 3.3, 4.4, 4.6, 4.8
+    - Modified Sections: 3.1, 3.3, 4.4, 4.7, 4.9
     - Rationale: new feature to showcase a complex algorithm that calculates document similarity with cosine similarity between a user's document and every other document that exists in the app.
 - On document upload, flashcards and quizzes are generated as a background process for that document, so users can only create quizzes and flashcards from a document upload directly.
     - Date of Modification: Feb 26
-    - Modified Sections: 3.1, 3.3, 4.4, 4.6
+    - Modified Sections: 3.1, 3.3, 4.4, 4.7
     - Rationale: this allows users to still browse the application while their study materials are generating as the processing of the documents are now unblocking; improves user experience.
 - DocumentParser and DocumentSummarizer are no longer separate components but merged with DocumentService
     - Date of Modification: Feb 26
-    - Modified Sections: 3.3, 4.4, 4.6
+    - Modified Sections: 3.3, 4.4, 4.7
     - Rationale: There was no reason to decouple these functionalities together as they are very similar; text extraction or document text processing shouldn't be its own interface, but is just one part of the document upload processing.
 - Coupled StudyResourceDB and UserDB into a single MongoDB database and defined MongoDB schemas for app resources
     - Date of Modification: Feb 25
-    - Modified Sections: 4.2, 4.6
+    - Modified Sections: 4.2, 4.7
     - Rationale: There was no point in separating StudyResourcesDB and UserDB into two separate databases, it made more sense to keep them in one database but as separate collections in MongoDB to make finding user's owned documents easier and lessens complexity with a single DB. We defined the schemas to be able to represent application data in the database for flashcards, quizzes, documents, users, and chat so that data is saved.
 - Google Authenticator is now only on the frontend and no longer used in the backend
     - Date of Modification: Feb 25
-    - Modified Sections: 4.6
+    - Modified Sections: 4.7
     - Rationale: Google authenticator is already used on the frontend, so doing it again on the backend was unneccessary.
 
 - Frontend design changes:
@@ -418,7 +418,7 @@ Note: Users and Students will be used synonymously in this document.
 
 ![Dependency Diagram](./image/design-diagram.jpg)
 
-### **4.6. Functional Requirements Sequence Diagram**
+### **4.7. Functional Requirements Sequence Diagram**
 1. [**[Setup Account]**](#fr1)\
 ![Account Setup Diagram](./image/user-sign-in-sequence-diagram.jpg)
 
@@ -437,7 +437,7 @@ Note: Users and Students will be used synonymously in this document.
 6. [**[View Suggested Study Materials From other users]**](#fr1)\
 ![View Suggested](./image/get-suggested-sequence-diagram.jpg)
 
-### **4.7. Non-Functional Requirements Design**
+### **4.8. Non-Functional Requirements Design**
 1. [**[Quiz/flashcard generation performance]**](#nfr1)
     - **Validation**: We will leverage AWS Textract's async document processing APIs to maximize the speed at which documents are processed into text. Our retrival endpoints will also use batch calling to make retrieving multiple documents/flashcards/quizzes faster.
 
@@ -445,7 +445,7 @@ Note: Users and Students will be used synonymously in this document.
     - **Validation**: For calculating similarity, we compare every single one of a user's document to every other document that exists in the database, which takes n^2 time and would be really slow if scaled. So to mitigate this, we will multithread calls for 
     fetching similar documents and start fetching the next one before the current process finishes, which would speed up the request time.
 
-### **4.8. Main Project Complexity Design**
+### **4.9. Main Project Complexity Design**
 
 **Calculating Documents Similarity**
 - **Description**: This feature (use case #6) suggests study materials (flashcards and quizzes) to users based on similarity between their documents and other users' documents. The core of this feature is the similarity calculation between users' documents to determine what flashcards and quizzes to show to a user that are similar to what they usually study.
