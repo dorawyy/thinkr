@@ -30,11 +30,12 @@
     - Modified Sections: 4.7
     - Rationale: Google authenticator is already used on the frontend, so doing it again on the backend was unneccessary.
 
-- Frontend design changes:
-    - landing screen only has the Google sign in button [Date: Feb 25]
+- Frontend design changes [Modified section 3.4]:
+    - landing screen only has the Google sign in button [Date: Feb 25] 
     - payment screen allows users to start their free trial [Date: Feb 25]
     - document details screen was renamed to document upload screen, minor changes to the document upload screen design [Date: Feb 27]
     - loading page was removed, instead the document options screen has two different views, one when all study materials are ready, and one when the study materials are still being generated [Date: Feb 28]
+    - Rationale: these were design changes that made more sense UI/UX wise so we tweaked the frontend design to match those changes to better fit our app
 
 ## 2. Project Description
 
