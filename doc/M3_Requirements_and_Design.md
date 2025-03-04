@@ -60,8 +60,8 @@ Note: Users and Students will be used synonymously in this document.
     - **Main success scenario**:
         1. Users are able to create accounts and are able to log in to the account they just created.
     - **Failure scenario(s)**:
-        1a. Users create an account and are unable to log into the account that they tried to create.
-            1a1. An error message is displayed on the screen telling them login was unsuccessful.
+        - 1a. Users create an account and are unable to log into the account that they tried to create.
+            - 1a1. An error message is displayed on the screen telling them login was unsuccessful. 
 
 2. **Subscribe** 
     - **Description**: Users can upgrade to premium status for additional features.
@@ -69,8 +69,8 @@ Note: Users and Students will be used synonymously in this document.
     - **Main success scenario**:
         1. User successfully obtains premium status.
     - **Failure scenario(s)**:
-        1a. Subscription update fails.
-            1a1. System shows an error message explaining the failure.
+        - 1a. Subscription update fails.
+            - 1a1. System shows an error message explaining the failure.
 
 3. **Upload Documents**
     - **Description**: Users can upload documents (PDF or image) to the application for processing and generates a quiz and a flashcard set based on the documents uploaded.
@@ -79,10 +79,10 @@ Note: Users and Students will be used synonymously in this document.
         1. User successfully uploads the document.
         2. System processes the document and generates study materials.
     - **Failure scenario(s)**:
-        1a. File upload fails to be uploaded.
-            1a1. If the upload failed due to network errors, show a message asking user to check their connection.
-            1a2. If the format of the document is not supported, show a message asking user to check their file format.
-            1a3. UI tells user to try again and reupload their document.
+        - 1a. File upload fails to be uploaded.
+            - 1a1. If the upload failed due to network errors, show a message asking user to check their connection.
+            - 1a2. If the format of the document is not supported, show a message asking user to check their file format.
+            - 1a3. UI tells user to try again and reupload their document.
 
 4. **Chat with AI**
     - **Description**: Premium users can chat with the AI about the documents they have uploaded.
@@ -91,10 +91,10 @@ Note: Users and Students will be used synonymously in this document.
         1. The AI returns context-aware responses in the chat.
         2. The AI understands the information of the uploaded documents.
     - **Failure scenario(s)**:
-        1a. App fails to return a response because of the Network Error.
-            1a1. Show a message asking user to check their connection.
-        2b. User's message exceeds the context length limit.
-            2b1. Disable the send button, and user cannot send until they shorten their input.
+        - 1a. App fails to return a response because of the Network Error.
+            - 1a1. Show a message asking user to check their connection.
+        - 2b. User's message exceeds the context length limit.
+            - 2b1. Disable the send button, and user cannot send until they shorten their input.
 
 5. **View Generated Flashcards and Quizzes**
     - **Description**: Users can browse and interact with AI-generated flashcards and quizzes based on the documents uploaded.
@@ -103,10 +103,10 @@ Note: Users and Students will be used synonymously in this document.
         1. User can use the flashcards that were generated after they uploaded a document
         2. User can use the quiz that was generated after they uploaded a document
     - **Failure scenario(s)**:
-        1a. Flashcards are not generated due to errors.
-            1a1. Asks user to re-upload their document and try again.
-        2a. Quiz is not generated due to errors.
-            2a1. Asks user to re-upload their document and try again.
+        - 1a. Flashcards are not generated due to errors.
+            - 1a1. Asks user to re-upload their document and try again.
+        - 2a. Quiz is not generated due to errors.
+            - 2a1. Asks user to re-upload their document and try again.
 
 6. **View Suggested Study Materials From other users**
     - **Description**: Users can retrieve suggested flashcards and quizzes that other users have created based on similarity between two user's uploaded documents
@@ -114,9 +114,9 @@ Note: Users and Students will be used synonymously in this document.
     - **Main success scenario**:
         1. User can retrieve flashcards and quizzes from other users based on document similarity and use them
     - **Failure scenario(s)**:
-        1a. No quizzes or flashcards are retrieved.
-            1a1. Tells user that no quizzes or flashcards can be retrieved because we could not find any quizzes or flashcards similar to theirs.
-            1a2. UI tells the user to try to upload documents again later.
+        - 1a. No quizzes or flashcards are retrieved.
+            - 1a1. Tells user that no quizzes or flashcards can be retrieved because we could not find any quizzes or flashcards similar to theirs.
+            - 1a2. UI tells the user to try to upload documents again later.
 
 ### **3.4. Screen Mockups**
 
