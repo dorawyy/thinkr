@@ -112,4 +112,8 @@ class HomeScreenViewModel(private val docRepository: DocRepository, private val 
             }
         }
     }
+
+    fun signOut() {
+        userRepository.delUser()
+    }
 }

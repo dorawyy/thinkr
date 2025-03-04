@@ -4,6 +4,7 @@ import com.example.thinkr.data.models.User
 
 class UserRepository : IUserRepository {
     private var _signedInUser: User? = null
+    private var _signedOut: Boolean = false
     override fun setUser(user: User) {
         _signedInUser = user
     }
@@ -26,5 +27,10 @@ class UserRepository : IUserRepository {
 
     override fun delUser() {
         _signedInUser = null
+        _signedOut = true
+    }
+
+    fun isSignedOut(): Boolean {
+        return _signedOut
     }
 }

@@ -78,6 +78,15 @@ fun LandingScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.checkSignedIn(navigateToHome)
+    }
+
+    if (GoogleSignIn.getLastSignedInAccount(LocalContext.current) != null && !viewModel.userSignedOut()) {
+        GoogleSignIn.getLastSignedInAccount(LocalContext.current)
+            ?.let { viewModel.onGoogleSignInResult(it, onSignOut) }
+    }
+
     LaunchedEffect(state.value.isAuthenticated) {
         if (state.value.isAuthenticated) {
             navigateToHome()
