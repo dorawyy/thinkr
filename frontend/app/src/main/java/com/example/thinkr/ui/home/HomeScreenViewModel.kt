@@ -2,19 +2,23 @@ package com.example.thinkr.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.User
+import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class HomeScreenViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository) : ViewModel() {
+class HomeScreenViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository, private val authRepository: AuthRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
 
@@ -53,14 +57,28 @@ class HomeScreenViewModel(private val docRepository: DocRepository, private val 
         if (account == null && userRepository.getUser() == null) {
             Log.w("HomeScreenViewModel", "User not signed in")
         } else if (userRepository.getUser() == null) {
-            userRepository.setUser(
-                User(
-                    email = account!!.email ?: "",
+            viewModelScope.launch {
+                authRepository.login(
+                    googleId = account!!.id!!,
                     name = account.displayName ?: "",
-                    googleId = account.id ?: "",
-                    subscribed = false
+                    email = account.email ?: ""
+                ).fold(
+                    onSuccess = {
+                        userRepository.setUser(it.data.user.copy())
+                    },
+                    onFailure = { exception ->
+                        Log.e("HomeScreenViewModel", "Error logging in", exception)
+                        userRepository.setUser(
+                            User(
+                                email = account.email ?: "",
+                                name = account.displayName ?: "",
+                                googleId = account.id ?: "",
+                                subscribed = false
+                            )
+                        )
+                    }
                 )
-            )
+            }
         }
     }
 
@@ -74,6 +92,9 @@ class HomeScreenViewModel(private val docRepository: DocRepository, private val 
                     )
                 )
             }
+        } else {
+            delay(1000)
+            getDocuments()
         }
     }
 

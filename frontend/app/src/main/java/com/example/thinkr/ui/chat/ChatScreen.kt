@@ -39,14 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    account: GoogleSignInAccount,
     navController: NavController,
     viewModel: ChatViewModel = koinViewModel()
 ) {
@@ -55,9 +53,7 @@ fun ChatScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        account.id?.let { viewModel.loadChatHistory(userId = it) }
-    }
+    viewModel.getChatHistory()
 
     // Scroll to bottom when new message is added
     LaunchedEffect(chatState.messages.size) {
@@ -124,7 +120,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()  // Adjusts for the navigation bar
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

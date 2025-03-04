@@ -18,7 +18,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PaymentScreen(
     paymentViewModel: PaymentViewModel = koinViewModel(),
-    account: GoogleSignInAccount,
     onConfirm: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -39,7 +38,7 @@ fun PaymentScreen(
             )
             TextButton(
                 onClick = {
-                    paymentViewModel.subscribeUser(account.id!!)
+                    paymentViewModel.subscribeUser()
                     onConfirm()
                 }
             ) {

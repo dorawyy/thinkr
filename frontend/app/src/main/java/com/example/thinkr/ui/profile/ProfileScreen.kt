@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.thinkr.ui.payment.PaymentViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import org.koin.androidx.compose.koinViewModel
@@ -26,22 +27,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel(),
-    paymentViewModel: PaymentViewModel = koinViewModel(),
-    account: GoogleSignInAccount,
     isSubscribed: Boolean,
     onPressBack: () -> Unit,
     onSelectPremium: () -> Unit
 ) {
     val profileState by profileViewModel.state.collectAsState()
-    val paymentState by paymentViewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) {
-        profileViewModel.updateProfileInfo(
-            username = account.displayName ?: "Invalid name",
-            email = account.email ?: "Invalid email"
-        )
-        account.id?.let { paymentViewModel.getSubscriptionStatus(it) }
-    }
+    profileViewModel.getProfile()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -76,10 +68,10 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = if (isSubscribed) "Premium" else "Regular",
+                text = if (profileViewModel.isPremium() || isSubscribed) "Premium" else "Regular",
                 textAlign = TextAlign.Center
             )
-            if (!isSubscribed) {
+            if (!profileViewModel.isPremium() && !isSubscribed) {
                 TextButton(onClick = onSelectPremium) {
                     Text(text = "Get Premium Plan")
                 }

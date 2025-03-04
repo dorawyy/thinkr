@@ -20,6 +20,10 @@ class UserRepository : IUserRepository {
         )
     }
 
+    override fun subscribeUser() {
+        _signedInUser = _signedInUser?.copy(subscribed = true)
+    }
+
     override fun delUser() {
         _signedInUser = null
     }
