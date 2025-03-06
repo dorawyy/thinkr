@@ -15,8 +15,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.thinkr.MockKTestRunner"
     }
 
     buildTypes {
@@ -28,15 +27,25 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
     }
 }
 
@@ -65,4 +74,7 @@ dependencies {
     api(libs.koin.core)
     implementation(libs.play.services.auth)
     implementation(libs.bundles.ktor)
+    androidTestImplementation(libs.bundles.testing) {
+        exclude(group = "net.bytebuddy")
+    }
 }
