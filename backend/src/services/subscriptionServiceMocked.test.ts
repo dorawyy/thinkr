@@ -18,7 +18,7 @@ import { UserDTO } from '../interfaces';
 
 const { mockFindOne, mockUpdateOne } = require('../db/mongo/models/User');
 
-describe('SubscriptionService', () => {
+describe('SubscriptionServiceMocked', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });

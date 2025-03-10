@@ -25,7 +25,7 @@ import { AuthPayload } from '../interfaces';
 
 const { mockFindOne, mockSave } = require('../db/mongo/models/User');
 
-describe('UserAuthService', () => {
+describe('UserAuthServiceMocked', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
