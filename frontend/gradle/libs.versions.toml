@@ -13,6 +13,7 @@ kotlinSerialization = "1.7.3"
 koin = "4.0.0"
 playServicesAuth = "19.2.0"
 ktor = "3.0.0"
+mockk = "1.13.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,10 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+# MockK
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -61,4 +66,14 @@ ktor = [
     "ktor-client-auth",
     "ktor-client-logging",
     "ktor-serialization-kotlinx-json",
+]
+testing = [
+    "mockk",
+    "mockk-android",
+    "mockk-agent",
+    "junit",
+    "androidx-junit",
+    "androidx-espresso-core",
+    "androidx-ui-test-junit4",
+    "androidx-ui-test-manifest"
 ]
