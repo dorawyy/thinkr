@@ -23,7 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -112,11 +111,7 @@ fun LandingScreen(
         }
         Text(
             text = state.value.error ?: "",
-            color = if (state.value.error != null) {
-                MaterialTheme.colorScheme.error
-            } else {
-                Color.Transparent
-            },
+            color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(top = 8.dp)
         )
         if (state.value.isLoading) {
