@@ -4,6 +4,7 @@ data class PaymentScreenState(
     val cardNumber: String = "cardNumber",
     val cardExpiration: String = "expiry",
     val cardCvc: String = "cvc",
-    val cardBillingAddress: String = "billingAddress",// TODO: could probably break this down
-    val isSubscribed: Boolean = false
+    val cardBillingAddress: String = "billingAddress",// TODO: could probably break this down,
+    val isSubscribed: Boolean = false,
+    val errorMessage: String = ""
 )

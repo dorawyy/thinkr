@@ -140,8 +140,7 @@ class MainActivity : ComponentActivity() {
 
                                 PaymentScreen(
                                     paymentViewModel = paymentViewModel,
-                                    onConfirm = { navController.navigate(Route.Profile) },
-                                    onBack = { navController.navigate(Route.Profile) }
+                                    navToProfile = { navController.navigate(Route.Profile) }
                                 )
                             }
 
