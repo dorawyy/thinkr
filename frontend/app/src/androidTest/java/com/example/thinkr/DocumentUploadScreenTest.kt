@@ -12,9 +12,11 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.printToLog
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.thinkr.app.Route
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.document_upload.DocumentUploadScreen
@@ -29,6 +31,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
@@ -44,7 +48,12 @@ class DocumentUploadScreenTest {
         val docRepository = mockk<DocRepository>(relaxed = true)
         val userRepository = mockk<UserRepository>(relaxed = true)
         val navController = mockk<NavController>(relaxed = true)
-        val uri = Uri.EMPTY
+
+        // Mock the Context to return our mocked ContentResolver
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val tempFile = File.createTempFile("testFile", ".txt", context.cacheDir)
+        FileOutputStream(tempFile).use { it.write("content".toByteArray()) }
+        val uri = Uri.fromFile(tempFile)
 
         val viewModel = DocumentUploadViewModel(
             docRepository = docRepository,
@@ -92,7 +101,7 @@ class DocumentUploadScreenTest {
         composeTestRule.onNodeWithText("Upload").performClick()
 
         // Verify navigation to home screen
-        verify { navController.navigate("home") }
+        verify { navController.navigate(Route.Home) }
     }
 
     @Test
@@ -267,7 +276,7 @@ class DocumentUploadScreenTest {
         composeTestRule.onNode(hasContentDescription("Back")).performClick()
 
         // Verify navigation to home screen
-        verify { navController.navigate("home") }
+        verify { navController.navigate(Route.Home) }
     }
 
     @Test
