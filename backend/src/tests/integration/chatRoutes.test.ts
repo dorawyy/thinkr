@@ -1,111 +1,460 @@
-import request from 'supertest';
-import express from 'express';
-import { ChatSessionDTO, ChatMessage } from '../../interfaces';
-import { TestResult } from './testInterfaces';
-import chatRouter from '../../routes/chatRoutes';
-import { mockChatSession, testApp as baseTestApp } from './setupIntegration';
+import { Request, Response } from 'express';
+import { getUserChat, sendMessage, clearChatHistory } from '../../controllers/chatController';
+import { Result, ChatSessionDTO, ChatMessage } from '../../interfaces';
 
-// Create express app just for testing
-const testApp = express();
-testApp.use(express.json());
-testApp.use('/', chatRouter); // Mount at root for testing
+// Mock ChatSession model
+jest.mock('../../db/mongo/models/Chat', () => {
+  const mockFindOne = jest.fn();
+  const mockCreate = jest.fn();
+  const mockFindOneAndUpdate = jest.fn();
 
-// Longer timeout for tests
-jest.setTimeout(30000); // Increase timeout
-
-// Override controller responses for testing
-jest.mock('../../controllers/chatController', () => {
-  const originalModule = jest.requireActual('../../controllers/chatController');
-  
   return {
-    ...originalModule,
-    getOrCreateChatSession: jest.fn().mockImplementation((req, res) => {
-      return res.status(200).json({
-        success: true,
-        data: {
-          chat: {
-            sessionId: 'mock-session-id',
-            googleId: req.query.userId,
-            messages: [
-              {
-                role: 'system',
-                content: 'You are a helpful assistant.',
-                timestamp: new Date().toISOString(),
-              }
-            ],
-            metadata: { type: 'general' },
-          }
-        }
-      });
-    }),
-    sendMessage: jest.fn().mockImplementation((req, res) => {
-      return res.status(200).json({
-        success: true,
-        data: {
-          response: {
-            role: 'assistant',
-            content: 'This is a mock response to: ' + req.body.message,
-            timestamp: new Date().toISOString(),
-          }
-        }
-      });
-    }),
-    clearChatHistory: jest.fn().mockImplementation((req, res) => {
-      return res.status(200).json({
-        message: 'Chat history cleared successfully'
-      });
-    })
+    __esModule: true,
+    findOne: mockFindOne,
+    create: mockCreate,
+    findOneAndUpdate: mockFindOneAndUpdate,
+    default: {
+      findOne: mockFindOne,
+      create: mockCreate,
+      findOneAndUpdate: mockFindOneAndUpdate
+    }
   };
 });
 
-describe('Chat Routes Integration (Happy Path)', () => {
+// Mock RAGService
+jest.mock('../../services/RAGService', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => ({
+      initVectorStore: jest.fn().mockResolvedValue(undefined),
+      getRelevantContext: jest.fn().mockResolvedValue('Relevant context from documents')
+    }))
+  };
+});
+
+// Mock ChatOpenAI
+jest.mock('@langchain/openai', () => {
+  return {
+    ChatOpenAI: jest.fn().mockImplementation(() => ({
+      invoke: jest.fn().mockResolvedValue({
+        content: 'This is a response from the AI assistant.'
+      })
+    }))
+  };
+});
+
+// Import mocks after they're defined
+const ChatSession = require('../../db/mongo/models/Chat').default;
+
+// Mock UUID generation
+jest.mock('uuid', () => ({
+  v4: jest.fn().mockReturnValue('mock-uuid-value')
+}));
+
+// Interface tests for Chat Controller
+describe('Chat Controller', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let jsonSpy: jest.Mock;
+  let statusSpy: jest.Mock;
+  
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
+    
+    // Setup mock response with spies
+    jsonSpy = jest.fn().mockReturnThis();
+    statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
+    
+    mockResponse = {
+      status: statusSpy,
+      json: jsonSpy
+    };
+
+    // Mock Date for consistent timestamps
+    jest.spyOn(global, 'Date').mockImplementation(() => {
+      return {
+        toISOString: () => '2023-01-01T12:00:00.000Z',
+      } as unknown as Date;
+    });
   });
 
-  // Test for getting or creating a chat session
-  it('should get or create a chat session for a user', async () => {
-    const response = await request(testApp)
-      .get('/')
-      .query({ userId: 'test-user-id' })
-      .expect(200);
+  // Interface GET /chat
+  describe('getUserChat', () => {
+    // Input: Valid userId with existing chat
+    // Expected status code: 200
+    // Expected behavior: Returns user's existing chat session
+    // Expected output: Chat session object with messages
+    it('should get an existing chat session', async () => {
+      // Mock data
+      const userId = 'user123';
+      const mockChatSession = {
+        sessionId: 'session-123',
+        googleId: userId,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that provides accurate information based on the context provided.',
+            timestamp: '2023-01-01T10:00:00.000Z'
+          }
+        ],
+        createdAt: '2023-01-01T10:00:00.000Z',
+        updatedAt: '2023-01-01T10:00:00.000Z',
+        metadata: { type: 'general' }
+      };
+      
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+      
+      // Setup mocks
+      ChatSession.findOne.mockResolvedValue(mockChatSession);
+      
+      // Call controller
+      await getUserChat(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(ChatSession.findOne).toHaveBeenCalledWith({ googleId: userId });
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: { 
+          chat: expect.objectContaining({
+            messages: expect.any(Array),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+            metadata: expect.any(Object)
+          }) 
+        }
+      });
+    });
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.chat).toBeDefined();
-    expect(result.data.chat.messages).toBeInstanceOf(Array);
-    expect(result.data.chat.messages.length).toBeGreaterThan(0);
-    expect(result.data.chat.messages[0].role).toBe('system');
+    // Input: Valid userId with no existing chat
+    // Expected status code: 200
+    // Expected behavior: Creates new chat session for user
+    // Expected output: New chat session object with system message
+    it('should create a new chat session if none exists', async () => {
+      // Mock data
+      const userId = 'user123';
+      const newChatSession = {
+        sessionId: 'mock-uuid-value',
+        googleId: userId,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that provides accurate information based on the context provided.',
+            timestamp: '2023-01-01T12:00:00.000Z'
+          }
+        ],
+        createdAt: '2023-01-01T12:00:00.000Z',
+        updatedAt: '2023-01-01T12:00:00.000Z',
+        metadata: { type: 'general' }
+      };
+      
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+      
+      // Setup mocks
+      ChatSession.findOne.mockResolvedValue(null);
+      ChatSession.create.mockResolvedValue(newChatSession);
+      
+      // Call controller
+      await getUserChat(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(ChatSession.findOne).toHaveBeenCalledWith({ googleId: userId });
+      expect(ChatSession.create).toHaveBeenCalledWith(expect.objectContaining({
+        sessionId: 'mock-uuid-value',
+        googleId: userId,
+        messages: expect.any(Array),
+        metadata: { type: 'general' }
+      }));
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: { 
+          chat: expect.objectContaining({
+            messages: expect.any(Array),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+            metadata: expect.any(Object)
+          }) 
+        }
+      });
+    });
+
+    // Input: Missing userId
+    // Expected status code: 400
+    // Expected behavior: Validation error, no chat retrieval
+    // Expected output: Error message
+    // Input: Missing userId
+    // Expected status code: 400
+    // Expected behavior: Validation error, no clearing occurs
+    // Expected output: Error message
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: {}
+      };
+      
+      // Call controller
+      await getUserChat(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'User ID is required'
+      });
+      expect(ChatSession.findOne).not.toHaveBeenCalled();
+    });
+
+    // Input: Valid userId but database error occurs
+    // Expected status code: 500
+    // Expected behavior: Chat retrieval fails
+    // Expected output: Error message
+    it('should return 500 when database operation fails', async () => {
+      // Mock data
+      const userId = 'user123';
+      
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+      
+      // Setup mock to throw error
+      ChatSession.findOne.mockRejectedValue(new Error('Database error'));
+      
+      // Call controller
+      await getUserChat(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
 
-  // Test for sending a message
-  it('should send a message and get a response', async () => {
-    const response = await request(testApp)
-      .post('/message')
-      .send({
-        userId: 'test-user-id',
-        message: 'Hello, assistant!',
-      })
-      .expect(200);
+  // Interface POST /chat/message
+  describe('sendMessage', () => {
+    // Input: Valid userId and message
+    // Expected status code: 200
+    // Expected behavior: Message sent to AI, response generated and saved
+    // Expected output: AI response message
+    it('should send a message and get a response', async () => {
+      // Mock data
+      const userId = 'user123';
+      const userMessage = 'Hello, assistant!';
+      const mockChatSession: Partial<ChatSessionDTO> = {
+        userId,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that provides accurate information based on the context provided.',
+            timestamp: '2023-01-01T10:00:00.000Z'
+          }
+        ],
+        createdAt: '2023-01-01T10:00:00.000Z',
+        updatedAt: '2023-01-01T10:00:00.000Z',
+        metadata: { type: 'general' }
+      };
+      
+      // Setup request
+      mockRequest = {
+        body: { userId, message: userMessage }
+      };
+      
+      // Setup mocks for existing chat
+      ChatSession.findOne.mockResolvedValue({
+        sessionId: 'session-123',
+        googleId: userId,
+        messages: mockChatSession.messages,
+        createdAt: mockChatSession.createdAt,
+        updatedAt: mockChatSession.updatedAt,
+        metadata: mockChatSession.metadata
+      });
+      
+      // Setup mock for updating chat
+      ChatSession.findOneAndUpdate.mockResolvedValue({});
+      
+      // Call controller
+      await sendMessage(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(ChatSession.findOneAndUpdate).toHaveBeenCalledWith(
+        { googleId: userId },
+        {
+          $push: {
+            messages: {
+              $each: expect.arrayContaining([
+                expect.objectContaining({
+                  role: 'user',
+                  content: userMessage
+                }),
+                expect.objectContaining({
+                  role: 'assistant',
+                  content: 'This is a response from the AI assistant.'
+                })
+              ])
+            }
+          },
+          $set: expect.any(Object)
+        }
+      );
+      
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: { 
+          response: expect.objectContaining({
+            role: 'assistant',
+            content: 'This is a response from the AI assistant.',
+            timestamp: expect.any(String)
+          }) 
+        }
+      });
+    });
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.response).toBeDefined();
-    expect(result.data.response.role).toBe('assistant');
-    expect(result.data.response.content).toContain('Hello, assistant!');
+    // Input: Missing userId or message
+    // Expected status code: 400
+    // Expected behavior: Validation error, no message sent
+    // Expected output: Error message
+    it('should return 400 when required fields are missing', async () => {
+      // Test missing userId
+      mockRequest = {
+        body: { message: 'Hello' }
+      };
+      
+      await sendMessage(mockRequest as Request, mockResponse as Response);
+      
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'User ID and message are required'
+      });
+      
+      // Test missing message
+      mockRequest = {
+        body: { userId: 'user123' }
+      };
+      
+      await sendMessage(mockRequest as Request, mockResponse as Response);
+      
+      expect(statusSpy).toHaveBeenCalledWith(400);
+    });
+
+    // Input: Valid input but error during processing
+    // Expected status code: 500
+    // Expected behavior: Message sending fails
+    // Expected output: Error message
+    // Input: Valid userId but database error occurs
+    // Expected status code: 500
+    // Expected behavior: History clearing fails
+    // Expected output: Error message
+    it('should return 500 when an error occurs', async () => {
+      // Mock data
+      const userId = 'user123';
+      const userMessage = 'Hello, assistant!';
+      
+      // Setup request
+      mockRequest = {
+        body: { userId, message: userMessage }
+      };
+      
+      // Setup mock to throw error
+      ChatSession.findOne.mockRejectedValue(new Error('Database error'));
+      
+      // Call controller
+      await sendMessage(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
 
-  // Test for clearing chat history
-  it('should clear chat history for a user', async () => {
-    const response = await request(testApp)
-      .delete('/history')
-      .query({ userId: 'test-user-id' })
-      .expect(200);
+  // Interface DELETE /chat/history
+  describe('clearChatHistory', () => {
+    // Input: Valid userId
+    // Expected status code: 200
+    // Expected behavior: Chat history is cleared, only system message remains
+    // Expected output: Success message
+    it('should clear chat history successfully', async () => {
+      // Mock data
+      const userId = 'user123';
+      
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+      
+      // Setup mocks
+      ChatSession.findOneAndUpdate.mockResolvedValue({});
+      
+      // Call controller
+      await clearChatHistory(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(ChatSession.findOneAndUpdate).toHaveBeenCalledWith(
+        { googleId: userId },
+        {
+          $set: {
+            messages: expect.arrayContaining([
+              expect.objectContaining({
+                role: 'system',
+                content: 'You are a helpful assistant that provides accurate information based on the context provided.'
+              })
+            ]),
+            updatedAt: expect.any(Object)
+          }
+        },
+        { upsert: true }
+      );
+      
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Chat history cleared successfully'
+      });
+    });
 
-    // Response will be like "Chat history cleared successfully"
-    expect(response.body.message).toContain('successfully');
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: {}
+      };
+      
+      // Call controller
+      await clearChatHistory(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'User ID is required'
+      });
+      expect(ChatSession.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when an error occurs', async () => {
+      // Mock data
+      const userId = 'user123';
+      
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+      
+      // Setup mock to throw error
+      ChatSession.findOneAndUpdate.mockRejectedValue(new Error('Database error'));
+      
+      // Call controller
+      await clearChatHistory(mockRequest as Request, mockResponse as Response);
+      
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
-}); 
+});

@@ -21,6 +21,7 @@ jest.mock('../../db/mongo/models/User', () => {
 // Import mocks after they're defined
 const User = require('../../db/mongo/models/User').default;
 
+// Interface tests for Subscription Controller
 describe('Subscription Controller', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
@@ -41,7 +42,12 @@ describe('Subscription Controller', () => {
     };
   });
 
+  // Interface POST /subscription
   describe('subscribe', () => {
+    // Input: Valid userId
+    // Expected status code: 200
+    // Expected behavior: User found and subscription updated
+    // Expected output: Updated user with subscribed=true
     it('should subscribe a user successfully', async () => {
       // Mock data
       const userId = 'test-user-123';
@@ -81,6 +87,10 @@ describe('Subscription Controller', () => {
       });
     });
 
+    // Input: Missing userId
+    // Expected status code: 400
+    // Expected behavior: Validation error, no database calls
+    // Expected output: Error message
     it('should return 400 when userId is missing', async () => {
       // Setup request with missing userId
       mockRequest = {
@@ -99,6 +109,10 @@ describe('Subscription Controller', () => {
       expect(User.updateOne).not.toHaveBeenCalled();
     });
 
+    // Input: Valid userId but database error occurs
+    // Expected status code: 500
+    // Expected behavior: Database operation fails
+    // Expected output: Error message
     it('should return 500 when database operation fails', async () => {
       // Mock data
       const userId = 'test-user-123';
@@ -121,6 +135,10 @@ describe('Subscription Controller', () => {
       });
     });
 
+    // Input: Valid userId but user doesn't exist
+    // Expected status code: 500
+    // Expected behavior: User not found in database
+    // Expected output: Internal server error message
     it('should return 500 when user is not found', async () => {
       // Mock data
       const userId = 'test-user-123';
@@ -144,7 +162,12 @@ describe('Subscription Controller', () => {
     });
   });
 
+  // Interface DELETE /subscription
   describe('unsubscribe', () => {
+    // Input: Valid userId
+    // Expected status code: 200
+    // Expected behavior: User found and subscription updated
+    // Expected output: Updated user with subscribed=false
     it('should unsubscribe a user successfully', async () => {
       // Mock data
       const userId = 'test-user-123';
@@ -225,7 +248,12 @@ describe('Subscription Controller', () => {
     });
   });
 
+  // Interface GET /subscription
   describe('getSubscriptionStatus', () => {
+    // Input: Valid userId
+    // Expected status code: 200
+    // Expected behavior: User found and subscription status retrieved
+    // Expected output: User object with subscription status
     it('should get subscription status successfully', async () => {
       // Mock data
       const userId = 'test-user-123';
