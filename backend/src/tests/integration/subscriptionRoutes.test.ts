@@ -1,108 +1,324 @@
-import request from 'supertest';
-import express from 'express';
-import { UserDTO } from '../../interfaces';
-import { TestResult } from './testInterfaces';
-import subscriptionRouter from '../../routes/subscriptionRoutes';
-import { mockUser, testApp as baseTestApp } from './setupIntegration';
+import { Request, Response } from 'express';
+import { subscribe, unsubscribe, getSubscriptionStatus } from '../../controllers/subscriptionController';
+import { Result, UserDTO } from '../../interfaces';
 
-// Create express app just for testing
-const testApp = express();
-testApp.use(express.json());
-testApp.use('/', subscriptionRouter); // Mount at root for testing
+// Mock User model
+jest.mock('../../db/mongo/models/User', () => {
+  const mockFindOne = jest.fn();
+  const mockUpdateOne = jest.fn();
 
-// Longer timeout for tests
-jest.setTimeout(10000);
+  return {
+    __esModule: true,
+    findOne: mockFindOne,
+    updateOne: mockUpdateOne,
+    default: {
+      findOne: mockFindOne,
+      updateOne: mockUpdateOne
+    }
+  };
+});
 
-describe('Subscription Routes Integration (Happy Path)', () => {
+// Import mocks after they're defined
+const User = require('../../db/mongo/models/User').default;
+
+describe('Subscription Controller', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let jsonSpy: jest.Mock;
+  let statusSpy: jest.Mock;
+
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
+
+    // Setup mock response with spies
+    jsonSpy = jest.fn().mockReturnThis();
+    statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
+
+    mockResponse = {
+      status: statusSpy,
+      json: jsonSpy
+    };
   });
 
-  // Test for subscribing a user
-  it('should subscribe a user successfully', async () => {
-    // Mock finding the user
-    mockUser.findOne.mockResolvedValue({
-      googleId: 'user-id-123',
-      name: 'Test User',
-      email: 'test@example.com',
-      subscribed: false,
-    });
-    
-    // Mock updating the user
-    mockUser.updateOne.mockResolvedValue({ modifiedCount: 1 });
+  describe('subscribe', () => {
+    it('should subscribe a user successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const mockUser = {
+        email: 'test@example.com',
+        name: 'Test User',
+        googleId: userId,
+        subscribed: false
+      };
 
-    const response = await request(testApp)
-      .post('/')
-      .send({ userId: 'user-id-123' })
-      .expect(200);
+      // Setup request
+      mockRequest = {
+        body: { userId }
+      };
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.email).toBe('test@example.com');
-    expect(result.data.name).toBe('Test User');
-    expect(result.data.googleId).toBe('user-id-123');
-    expect(result.data.subscribed).toBe(true);
+      // Setup mocks
+      User.findOne.mockResolvedValue(mockUser);
+      User.updateOne.mockResolvedValue({ modifiedCount: 1 });
 
-    // Verify update was called
-    expect(mockUser.updateOne).toHaveBeenCalledWith(
-      { googleId: 'user-id-123' },
-      { subscribed: true }
-    );
-  });
+      // Call controller
+      await subscribe(mockRequest as Request, mockResponse as Response);
 
-  // Test for unsubscribing a user
-  it('should unsubscribe a user successfully', async () => {
-    // Mock finding the user
-    mockUser.findOne.mockResolvedValue({
-      googleId: 'user-id-123',
-      name: 'Test User',
-      email: 'test@example.com',
-      subscribed: true,
-    });
-    
-    // Mock updating the user
-    mockUser.updateOne.mockResolvedValue({ modifiedCount: 1 });
-
-    const response = await request(testApp)
-      .delete('/')
-      .query({ userId: 'user-id-123' })
-      .expect(200);
-
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.subscribed).toBe(false);
-
-    // Verify update was called
-    expect(mockUser.updateOne).toHaveBeenCalledWith(
-      { googleId: 'user-id-123' },
-      { subscribed: false }
-    );
-  });
-
-  // Test for getting subscription status
-  it('should get subscription status for a user', async () => {
-    // Mock finding the user
-    mockUser.findOne.mockResolvedValue({
-      googleId: 'user-id-123',
-      name: 'Test User',
-      email: 'test@example.com',
-      subscribed: true,
+      // Assertions
+      expect(User.findOne).toHaveBeenCalledWith({ googleId: userId });
+      expect(User.updateOne).toHaveBeenCalledWith(
+        { googleId: userId },
+        { subscribed: true }
+      );
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: {
+          email: mockUser.email,
+          name: mockUser.name,
+          googleId: mockUser.googleId,
+          subscribed: true
+        }
+      });
     });
 
-    const response = await request(testApp)
-      .get('/')
-      .query({ userId: 'user-id-123' })
-      .expect(200);
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        body: {}
+      };
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.subscribed).toBe(true);
-    
-    // Verify find was called
-    expect(mockUser.findOne).toHaveBeenCalledWith({ googleId: 'user-id-123' });
+      // Call controller
+      await subscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(User.findOne).not.toHaveBeenCalled();
+      expect(User.updateOne).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when database operation fails', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+
+      // Setup request
+      mockRequest = {
+        body: { userId }
+      };
+
+      // Setup mock to throw error
+      User.findOne.mockRejectedValue(new Error('Database error'));
+
+      // Call controller
+      await subscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
+
+    it('should return 500 when user is not found', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+
+      // Setup request
+      mockRequest = {
+        body: { userId }
+      };
+
+      // Setup mock to return null (user not found)
+      User.findOne.mockResolvedValue(null);
+
+      // Call controller
+      await subscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
-}); 
+
+  describe('unsubscribe', () => {
+    it('should unsubscribe a user successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const mockUser = {
+        email: 'test@example.com',
+        name: 'Test User',
+        googleId: userId,
+        subscribed: true
+      };
+
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Setup mocks
+      User.findOne.mockResolvedValue(mockUser);
+      User.updateOne.mockResolvedValue({ modifiedCount: 1 });
+
+      // Call controller
+      await unsubscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(User.findOne).toHaveBeenCalledWith({ googleId: userId });
+      expect(User.updateOne).toHaveBeenCalledWith(
+        { googleId: userId },
+        { subscribed: false }
+      );
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: {
+          email: mockUser.email,
+          name: mockUser.name,
+          googleId: mockUser.googleId,
+          subscribed: false
+        }
+      });
+    });
+
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: {}
+      };
+
+      // Call controller
+      await unsubscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(User.findOne).not.toHaveBeenCalled();
+      expect(User.updateOne).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when database operation fails', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Setup mock to throw error
+      User.findOne.mockRejectedValue(new Error('Database error'));
+
+      // Call controller
+      await unsubscribe(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
+  });
+
+  describe('getSubscriptionStatus', () => {
+    it('should get subscription status successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const mockUser = {
+        email: 'test@example.com',
+        name: 'Test User',
+        googleId: userId,
+        subscribed: true
+      };
+
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Setup mocks
+      User.findOne.mockResolvedValue(mockUser);
+
+      // Call controller
+      await getSubscriptionStatus(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(User.findOne).toHaveBeenCalledWith({ googleId: userId });
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: {
+          email: mockUser.email,
+          name: mockUser.name,
+          googleId: mockUser.googleId,
+          subscribed: mockUser.subscribed
+        }
+      });
+    });
+
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: {}
+      };
+
+      // Call controller
+      await getSubscriptionStatus(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(User.findOne).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when database operation fails', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Setup mock to throw error
+      User.findOne.mockRejectedValue(new Error('Database error'));
+
+      // Call controller
+      await getSubscriptionStatus(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
+
+    it('should return 500 when user is not found', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+
+      // Setup request
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Setup mock to return null (user not found)
+      User.findOne.mockResolvedValue(null);
+
+      // Call controller
+      await getSubscriptionStatus(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
+  });
+});

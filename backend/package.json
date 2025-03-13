@@ -12,7 +12,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage --testPathIgnorePatterns=src/tests/nonfunctional",
     "test:nfr": "jest --no-coverage src/tests/nonfunctional",
-    "test:unmocked": "jest --no-coverage src/tests/unmocked",
+    "test:unmocked": "jest --no-coverage src/tests/integration",
     "test:mocked": "jest --no-coverage src/tests/mocked",
     "test:integration": "jest --config jest.integration.config.js"
   },
