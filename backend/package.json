@@ -9,7 +9,7 @@
     "lint": "prettier --check ./src",
     "lint:apply": "prettier --write ./src",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest --silent --no-coverage",
+    "test": "jest --silent --no-coverage --testPathIgnorePatterns=src/tests/nonfunctional",
     "test:coverage": "jest --coverage --silent --testPathIgnorePatterns=src/tests/nonfunctional",
     "test:nfr": "jest --no-coverage src/tests/nonfunctional",
     "test:unmocked": "jest --no-coverage --silent src/tests/unmocked",
