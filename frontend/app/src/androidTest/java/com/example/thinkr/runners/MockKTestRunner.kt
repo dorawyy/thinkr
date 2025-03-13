@@ -1,4 +1,4 @@
-package com.example.thinkr
+package com.example.thinkr.runners
 
 import android.app.Application
 import android.content.Context
