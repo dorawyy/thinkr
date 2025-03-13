@@ -2,6 +2,7 @@ package com.example.thinkr
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -13,11 +14,15 @@ import androidx.compose.ui.test.printToLog
 import androidx.navigation.NavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.example.thinkr.app.Route
+import com.example.thinkr.data.models.User
+import com.example.thinkr.data.remote.RemoteApi
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.document_upload.DocumentUploadScreen
 import com.example.thinkr.ui.document_upload.DocumentUploadViewModel
+import io.ktor.client.HttpClient
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -29,6 +34,7 @@ import org.junit.runner.RunWith
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Thread.sleep
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -309,5 +315,74 @@ class DocumentUploadScreenTest {
         // Verify the input is limited
         // Note: Due to the nature of the compose test, we can't directly verify the field values
         // In a real test, you might want to use a state verification approach
+    }
+
+    /**
+     * End-to-end test for the document upload screen
+     * No mocking, real network calls
+     */
+    @Test
+    fun documentUploadScreen_e2e() {
+        // Setup mocks
+        val remoteApi = RemoteApi(HttpClient())
+        val docRepository = DocRepository(remoteApi)
+        val userRepository = UserRepository()
+        userRepository.setUser(User(
+            email = "test_user@gmail.com",
+            name = "Test User",
+            googleId = "112119816049214759635",
+            subscribed = false
+
+        ))
+        val navController = mockk<NavController>(relaxed = true)
+
+        // Mock the Context to return our mocked ContentResolver
+        val testContext = InstrumentationRegistry.getInstrumentation().context // Test package context
+        val resId = com.example.thinkr.test.R.raw.test_document
+        val inputStream = testContext.resources.openRawResource(resId)
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val tempFile = File.createTempFile("test_document", ".pdf", context.cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+
+        val uri = Uri.fromFile(tempFile)
+
+        val viewModel = DocumentUploadViewModel(
+            docRepository = docRepository,
+            userRepository = userRepository
+        )
+
+        // Setup content
+        composeTestRule.setContent {
+            DocumentUploadScreen(
+                navController = navController,
+                selectedUri = uri,
+                viewModel = viewModel
+            )
+        }
+
+        // Debug the composition tree
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+
+        // Verify initial screen state
+        composeTestRule.onNodeWithText("Upload Document").assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription("Logo")).assertIsDisplayed()
+
+        // Enter document name and context
+        composeTestRule.onNodeWithText("Name").performTextInput("Test Document")
+        composeTestRule.onNodeWithText("Context").performTextInput("This is a test document context")
+
+        // Click upload button
+        composeTestRule.onNodeWithText("Upload").performClick()
+
+        composeTestRule.waitForIdle()
+
+        sleep(3_000)
+
+        // Verify navigation to home screen
+        verify { navController.navigate(Route.Home) }
     }
 }
