@@ -83,4 +83,5 @@ dependencies {
     androidTestImplementation(libs.bundles.testing) {
         exclude(group = "net.bytebuddy")
     }
+    implementation(libs.ktor.ktor.client.core)
 }

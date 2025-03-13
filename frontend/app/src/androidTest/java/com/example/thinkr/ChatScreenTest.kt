@@ -2,6 +2,7 @@ package com.example.thinkr
 
 import android.os.SystemClock.sleep
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -16,12 +17,20 @@ import androidx.navigation.NavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.thinkr.data.models.ChatData
 import com.example.thinkr.data.models.ChatMessage
+import com.example.thinkr.data.models.User
+import com.example.thinkr.data.remote.HttpClientFactory
+import com.example.thinkr.data.remote.RemoteApi
 import com.example.thinkr.data.repositories.chat.ChatRepository
+import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.chat.ChatMessageItem
 import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.chat.ChatViewModel
 import com.example.thinkr.ui.chat.Message
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -31,6 +40,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 class ChatScreenTest {
@@ -193,7 +203,7 @@ class ChatScreenTest {
     }
 
     @Test
-    fun ChatScreen_clearChatHistory_clearsMessages() {
+    fun chatScreen_clearChatHistory_clearsMessages() {
         // Setup mocks
         val chatRepository = mockk<ChatRepository>(relaxed = true)
         val userRepository = mockk<UserRepository>(relaxed = true)
@@ -350,5 +360,66 @@ class ChatScreenTest {
 
         // Verify no message was sent (no repository call)
         verify(exactly = 0) { runTest { chatRepository.sendMessage(any(), any()) } }
+    }
+
+    /**
+     * End-to-end test for the chat screen
+     * No mocking, real network calls
+     */
+    @Test
+    fun chatScreen_e2e() {
+        val remoteApi = RemoteApi(HttpClient() {
+            install(ContentNegotiation) {
+                json()
+            }
+        })
+        val userRepository = UserRepository()
+        userRepository.setUser(
+            User(
+                email = "test_user@gmail.com",
+                name = "Test User",
+                googleId = "112119816049214759635",
+                subscribed = true
+            )
+        )
+        val chatRepository = ChatRepository(remoteApi)
+
+        val navController = mockk<NavController>(relaxed = true)
+
+        val viewModel = ChatViewModel(
+            chatRepository = chatRepository,
+            userRepository = userRepository
+        )
+
+        // Setup content
+        composeTestRule.setContent {
+            ChatScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+
+        // Wait for chat history to load
+        composeTestRule.waitForIdle()
+        sleep(5_000)
+
+        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+
+        var lenOfMessages = viewModel.state.value.messages.size
+        println("Initial number of messages: $lenOfMessages")
+
+        // Enter message text
+        composeTestRule.onNodeWithText("Type a message").performTextInput("What is Quantum Computing?")
+
+        // Send message
+        composeTestRule.onNode(hasContentDescription("Send Message")).performClick()
+
+        // Wait for response
+        composeTestRule.waitForIdle()
+        sleep(5_000)
+
+        println("Number of messages after sending message: ${viewModel.state.value.messages.size}")
+        // Verify message was added
+        assert(viewModel.state.value.messages.size == lenOfMessages + 2)
     }
 }
