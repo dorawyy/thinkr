@@ -32,14 +32,16 @@ class PaymentViewModel(
         _state.update { it.copy(cardBillingAddress = cardBillingAddress) }
     }
 
-    fun subscribeUser() {
+    fun subscribeUser(onSuccess: () -> Unit) {
         val userId = userRepository.getUser()?.googleId ?: return
         viewModelScope.launch {
             val result = subscriptionRepository.subscribe(userId)
             result.onSuccess { response ->
                 _state.update { it.copy(isSubscribed = response.data.subscribed) }
                 userRepository.subscribeUser()
+                onSuccess()
             }.onFailure { error ->
+                _state.update { it.copy(errorMessage = "Error: please try again") }
                 error.printStackTrace()
             }
         }

@@ -1,6 +1,5 @@
 package com.example.thinkr.ui.profile
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinkr.data.repositories.user.UserRepository
@@ -13,13 +12,6 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
     private val _state = MutableStateFlow(ProfileScreenState())
     val state = _state.asStateFlow()
 
-    fun updateProfileInfo(
-        username: String,
-        email: String
-    ) {
-        _state.update { it.copy(username = username, email = email) }
-    }
-
     fun isPremium(): Boolean {
         return userRepository.getUser()?.subscribed ?: false
     }
@@ -31,5 +23,12 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
                 email = userRepository.getUser()?.email ?: "Invalid email"
             )
         }
+    }
+
+    private fun updateProfileInfo(
+        username: String,
+        email: String
+    ) {
+        _state.update { it.copy(username = username, email = email) }
     }
 }
