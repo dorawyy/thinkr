@@ -14,7 +14,8 @@
     "test:nfr": "jest --no-coverage src/tests/nonfunctional",
     "test:unmocked": "jest --no-coverage src/tests/integration",
     "test:mocked": "jest --no-coverage src/tests/mocked",
-    "test:integration": "jest --config jest.integration.config.js"
+    "test:integration": "jest src/tests/integration",
+    "test:unit": "jest src/tests/unit"
   },
   "keywords": [],
   "author": "",

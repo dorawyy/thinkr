@@ -1,188 +1,291 @@
-import request from 'supertest';
-import express from 'express';
-import { FlashCardDTO, QuizDTO } from '../../interfaces';
-import { TestResult } from './testInterfaces';
-import studyRouter from '../../routes/studyRoutes';
-import { mockFlashcardSet, mockQuizSet, testApp as baseTestApp } from './setupIntegration';
+import { Request, Response } from 'express';
+import { retrieveFlashcards, retrieveQuizzes, getSuggestedMaterials } from '../../controllers/studyController';
+import { Result } from '../../interfaces';
 
-// Create express app just for testing
-const testApp = express();
-testApp.use(express.json());
-testApp.use('/', studyRouter); // Mount at root level
-
-// Longer timeout for tests
-jest.setTimeout(30000);
-
-// Mock studyService
+// Mock StudyService
 jest.mock('../../services/studyService', () => {
   return {
     __esModule: true,
     default: {
-      retrieveFlashcards: jest.fn().mockImplementation(async (userId, documentId) => {
-        if (documentId) {
-          return {
-            userId,
-            documentId,
-            flashcards: [
-              { front: 'Term 1', back: 'Definition 1' },
-              { front: 'Term 2', back: 'Definition 2' },
-            ],
-          };
-        } else {
-          return [
-            {
-              userId,
-              documentId: 'doc1',
-              flashcards: [
-                { front: 'Term 1', back: 'Definition 1' },
-                { front: 'Term 2', back: 'Definition 2' },
-              ],
-            },
-          ];
+      retrieveFlashcards: jest.fn().mockImplementation(async (documentId, userId) => {
+        if (userId === 'error-user') {
+          throw new Error('Database error');
         }
+        return [
+          { front: 'Question 1', back: 'Answer 1' },
+          { front: 'Question 2', back: 'Answer 2' }
+        ];
       }),
-      retrieveQuizzes: jest.fn().mockImplementation(async (userId, documentId) => {
-        if (documentId) {
-          return {
-            userId,
-            documentId,
-            quiz: [
-              {
-                question: 'Question 1?',
-                answer: 'A',
-                options: { A: 'Option A', B: 'Option B', C: 'Option C', D: 'Option D' },
-              },
-            ],
-          };
-        } else {
-          return [
-            {
-              userId,
-              documentId: 'doc1',
-              quiz: [
-                {
-                  question: 'Question 1?',
-                  answer: 'A',
-                  options: { A: 'Option A', B: 'Option B', C: 'Option C', D: 'Option D' },
-                },
-              ],
-            },
-          ];
+      retrieveQuizzes: jest.fn().mockImplementation(async (documentId, userId) => {
+        if (userId === 'error-user') {
+          throw new Error('Database error');
         }
-      }),
-      getSuggestedMaterials: jest.fn().mockResolvedValue({
-        flashcards: [
-          {
-            userId: 'test-user',
-            documentId: 'doc2',
-            flashcards: [{ front: 'Term 3', back: 'Definition 3' }],
+        return [
+          { 
+            question: 'Quiz Question 1', 
+            options: ['Option A', 'Option B', 'Option C', 'Option D'],
+            answer: 'Option A'
           },
-        ],
-        quizzes: [
-          {
-            userId: 'test-user',
-            documentId: 'doc2',
-            quiz: [
-              {
-                question: 'Question 2?',
-                answer: 'B',
-                options: { A: 'Option A', B: 'Option B', C: 'Option C', D: 'Option D' },
-              },
-            ],
-          },
-        ],
+          { 
+            question: 'Quiz Question 2', 
+            options: ['Option A', 'Option B', 'Option C', 'Option D'],
+            answer: 'Option C'
+          }
+        ];
       }),
-    },
+      getSuggestedMaterials: jest.fn().mockImplementation(async (userId, limit) => {
+        if (userId === 'error-user') {
+          throw new Error('Database error');
+        }
+        return [
+          { id: 'doc1', title: 'Document 1', type: 'pdf' },
+          { id: 'doc2', title: 'Document 2', type: 'text' }
+        ];
+      })
+    }
   };
 });
 
-describe('Study Routes Integration (Happy Path)', () => {
+// Import mocks after they're defined
+const studyService = require('../../services/studyService').default;
+
+describe('Study Controller', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let jsonSpy: jest.Mock;
+  let statusSpy: jest.Mock;
+
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
+
+    // Setup mock response with spies
+    jsonSpy = jest.fn().mockReturnThis();
+    statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
+
+    mockResponse = {
+      status: statusSpy,
+      json: jsonSpy
+    };
   });
 
-  // Test for retrieving flashcards
-  it('should retrieve flashcards for a user', async () => {
-    const response = await request(testApp)
-      .get('/flashcards')
-      .query({ userId: 'test-user' })
-      .expect(200);
+  describe('retrieveFlashcards', () => {
+    it('should retrieve flashcards successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const documentId = 'doc-123';
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeInstanceOf(Array);
-    expect(result.data.length).toBe(1);
-    expect(result.data[0].userId).toBe('test-user');
-    expect(result.data[0].documentId).toBe('doc1');
-    expect(result.data[0].flashcards).toBeInstanceOf(Array);
-    expect(result.data[0].flashcards.length).toBe(2);
-    expect(result.data[0].flashcards[0].front).toBe('Term 1');
-    expect(result.data[0].flashcards[0].back).toBe('Definition 1');
+      // Setup request
+      mockRequest = {
+        query: { userId, documentId }
+      };
+
+      // Call controller
+      await retrieveFlashcards(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(studyService.retrieveFlashcards).toHaveBeenCalledWith(documentId, userId);
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: [
+          { front: 'Question 1', back: 'Answer 1' },
+          { front: 'Question 2', back: 'Answer 2' }
+        ]
+      });
+    });
+
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: { documentId: 'doc-123' }
+      };
+
+      // Call controller
+      await retrieveFlashcards(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(studyService.retrieveFlashcards).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when service operation fails', async () => {
+      // Setup request with error-triggering userId
+      mockRequest = {
+        query: { userId: 'error-user', documentId: 'doc-123' }
+      };
+
+      // Call controller with console.error mocked to prevent test output noise
+      const originalConsoleError = console.error;
+      console.error = jest.fn();
+      
+      await retrieveFlashcards(mockRequest as Request, mockResponse as Response);
+      
+      // Restore console.error
+      console.error = originalConsoleError;
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
 
-  // Test for retrieving flashcards for a specific document
-  it('should retrieve flashcards for a specific document', async () => {
-    const response = await request(testApp)
-      .get('/flashcards')
-      .query({ userId: 'test-user', documentId: 'doc1' })
-      .expect(200);
+  describe('retrieveQuizzes', () => {
+    it('should retrieve quizzes successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const documentId = 'doc-123';
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.userId).toBe('test-user');
-    expect(result.data.documentId).toBe('doc1');
-    expect(result.data.flashcards).toBeInstanceOf(Array);
-    expect(result.data.flashcards.length).toBe(2);
+      // Setup request
+      mockRequest = {
+        query: { userId, documentId }
+      };
+
+      // Call controller
+      await retrieveQuizzes(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(studyService.retrieveQuizzes).toHaveBeenCalledWith(documentId, userId);
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: [
+          { 
+            question: 'Quiz Question 1', 
+            options: ['Option A', 'Option B', 'Option C', 'Option D'],
+            answer: 'Option A'
+          },
+          { 
+            question: 'Quiz Question 2', 
+            options: ['Option A', 'Option B', 'Option C', 'Option D'],
+            answer: 'Option C'
+          }
+        ]
+      });
+    });
+
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: { documentId: 'doc-123' }
+      };
+
+      // Call controller
+      await retrieveQuizzes(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(studyService.retrieveQuizzes).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when service operation fails', async () => {
+      // Setup request with error-triggering userId
+      mockRequest = {
+        query: { userId: 'error-user', documentId: 'doc-123' }
+      };
+
+      // Call controller with console.error mocked to prevent test output noise
+      const originalConsoleError = console.error;
+      console.error = jest.fn();
+      
+      await retrieveQuizzes(mockRequest as Request, mockResponse as Response);
+      
+      // Restore console.error
+      console.error = originalConsoleError;
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
 
-  // Test for retrieving quizzes
-  it('should retrieve quizzes for a user', async () => {
-    const response = await request(testApp)
-      .get('/quiz')
-      .query({ userId: 'test-user' })
-      .expect(200);
+  describe('getSuggestedMaterials', () => {
+    it('should get suggested materials successfully', async () => {
+      // Mock data
+      const userId = 'test-user-123';
+      const limit = 5;
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeInstanceOf(Array);
-    expect(result.data.length).toBe(1);
-    expect(result.data[0].userId).toBe('test-user');
-    expect(result.data[0].documentId).toBe('doc1');
-    expect(result.data[0].quiz).toBeInstanceOf(Array);
-    expect(result.data[0].quiz.length).toBe(1);
-    expect(result.data[0].quiz[0].question).toBe('Question 1?');
-    expect(result.data[0].quiz[0].answer).toBe('A');
-  });
+      // Setup request
+      mockRequest = {
+        query: { userId, limit: limit.toString() }
+      };
 
-  // Test for retrieving quizzes for a specific document
-  it('should retrieve quizzes for a specific document', async () => {
-    const response = await request(testApp)
-      .get('/quiz')
-      .query({ userId: 'test-user', documentId: 'doc1' })
-      .expect(200);
+      // Call controller
+      await getSuggestedMaterials(mockRequest as Request, mockResponse as Response);
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.userId).toBe('test-user');
-    expect(result.data.documentId).toBe('doc1');
-    expect(result.data.quiz).toBeInstanceOf(Array);
-    expect(result.data.quiz.length).toBe(1);
-  });
+      // Assertions
+      expect(studyService.getSuggestedMaterials).toHaveBeenCalledWith(userId, limit);
+      expect(statusSpy).toHaveBeenCalledWith(200);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        data: [
+          { id: 'doc1', title: 'Document 1', type: 'pdf' },
+          { id: 'doc2', title: 'Document 2', type: 'text' }
+        ]
+      });
+    });
 
-  // Test for retrieving suggested materials
-  it('should retrieve suggested materials for a user', async () => {
-    const response = await request(testApp)
-      .get('/suggestedMaterials')
-      .query({ userId: 'test-user' })
-      .expect(200);
+    it('should use default limit when not provided', async () => {
+      // Mock data
+      const userId = 'test-user-123';
 
-    const result = response.body as TestResult;
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data.flashcards).toBeDefined();
-    expect(result.data.quizzes).toBeDefined();
+      // Setup request without limit
+      mockRequest = {
+        query: { userId }
+      };
+
+      // Call controller
+      await getSuggestedMaterials(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(studyService.getSuggestedMaterials).toHaveBeenCalledWith(userId, 5); // Default limit
+      expect(statusSpy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 400 when userId is missing', async () => {
+      // Setup request with missing userId
+      mockRequest = {
+        query: { limit: '10' }
+      };
+
+      // Call controller
+      await getSuggestedMaterials(mockRequest as Request, mockResponse as Response);
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(400);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'You must provide a userId identifier'
+      });
+      expect(studyService.getSuggestedMaterials).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 when service operation fails', async () => {
+      // Setup request with error-triggering userId
+      mockRequest = {
+        query: { userId: 'error-user' }
+      };
+
+      // Call controller with console.error mocked to prevent test output noise
+      const originalConsoleError = console.error;
+      console.error = jest.fn();
+      
+      await getSuggestedMaterials(mockRequest as Request, mockResponse as Response);
+      
+      // Restore console.error
+      console.error = originalConsoleError;
+
+      // Assertions
+      expect(statusSpy).toHaveBeenCalledWith(500);
+      expect(jsonSpy).toHaveBeenCalledWith({
+        message: 'Internal server error'
+      });
+    });
   });
 }); 
