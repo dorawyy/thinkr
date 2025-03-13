@@ -9,9 +9,11 @@
     "lint": "prettier --check ./src",
     "lint:apply": "prettier --write ./src",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest --no-coverage --testPathIgnorePatterns=src/tests/nonfunctional",
-    "test:coverage": "jest --coverage --testPathIgnorePatterns=src/tests/nonfunctional",
-    "test:nfr": "jest --no-coverage src/tests/nonfunctional"
+    "test": "jest --silent --no-coverage",
+    "test:coverage": "jest --coverage --silent --testPathIgnorePatterns=src/tests/nonfunctional",
+    "test:nfr": "jest --no-coverage src/tests/nonfunctional",
+    "test:unmocked": "jest --no-coverage --silent src/tests/unmocked",
+    "test:mocked": "jest --no-coverage --silent src/tests/mocked"
   },
   "keywords": [],
   "author": "",
