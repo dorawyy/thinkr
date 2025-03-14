@@ -13,12 +13,11 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
     jest.setTimeout(15000);
 
     it(`should generate quiz/flashcards in less than ${MAX_ALLOWED_TIME} seconds`, async () => {
-        const userId = 'test-user-123';
-        const documentId = 'test-document-123'; // You may need to use a real document ID
+        const userId = '321';
+        const documentId = 'test_doc';
         const startTime = Date.now();
 
         try {
-            // Based on your studyRoutes.ts, we should use the /quiz endpoint
             const response = await axios.get(
                 `${API_URL}/study/quiz`,
                 {
@@ -42,13 +41,11 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
            -----------------------------------------------`
             );
 
-            // Extract only what we need from the response
             const statusCode = response.status;
             
             expect(statusCode).toBe(200);
             expect(duration).toBeLessThanOrEqual(MAX_ALLOWED_TIME);
         } catch (error) {
-            // Handle errors properly
             console.error('Error during quiz generation test:', 
                 error instanceof Error ? error.message : 'Unknown error');
             throw error;
