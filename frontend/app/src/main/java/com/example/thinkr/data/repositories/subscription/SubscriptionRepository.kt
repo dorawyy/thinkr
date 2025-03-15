@@ -13,7 +13,11 @@ class SubscriptionRepository(
         return try {
             val response = subscriptionApi.subscribe(userId)
             Result.success(response)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Result.failure(e)
+        } catch (e: ResponseException) {
+            Result.failure(e)
+        } catch (e: SerializationException) {
             Result.failure(e)
         }
     }
@@ -27,8 +31,6 @@ class SubscriptionRepository(
         } catch (e: ResponseException) {
             Result.failure(e)
         } catch (e: SerializationException) {
-            Result.failure(e)
-        } catch (e: Exception) {
             Result.failure(e)
         }
     }

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
-import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.User
 import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.doc.DocRepository
@@ -121,9 +120,6 @@ class HomeScreenViewModel(
                 e.printStackTrace()
             } catch (e: SerializationException) {
                 Log.e("HomeScreenViewModel", "Parsing error getting suggested materials", e)
-                e.printStackTrace()
-            } catch (e: Exception) {
-                Log.e("HomeScreenViewModel", "Unexpected error getting suggested materials", e)
                 e.printStackTrace()
             }
         }
