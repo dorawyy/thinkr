@@ -11,12 +11,15 @@ import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class HomeScreenViewModel(
     private val docRepository: DocRepository,
@@ -110,8 +113,17 @@ class HomeScreenViewModel(
                     limit = 1
                 )
                 _state.update { it.copy(suggestedMaterials = suggestedMaterials) }
+            } catch (e: IOException) {
+                Log.e("HomeScreenViewModel", "Network error getting suggested materials", e)
+                e.printStackTrace()
+            } catch (e: ResponseException) {
+                Log.e("HomeScreenViewModel", "API error getting suggested materials", e)
+                e.printStackTrace()
+            } catch (e: SerializationException) {
+                Log.e("HomeScreenViewModel", "Parsing error getting suggested materials", e)
+                e.printStackTrace()
             } catch (e: Exception) {
-                Log.e("HomeScreenViewModel", "Error getting suggested materials", e)
+                Log.e("HomeScreenViewModel", "Unexpected error getting suggested materials", e)
                 e.printStackTrace()
             }
         }
