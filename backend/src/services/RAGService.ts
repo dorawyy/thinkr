@@ -344,11 +344,11 @@ class RAGService {
                 return 'No documents found to provide context.';
             }
 
-            const results = await this.vectorStore.similaritySearch(query, 5);
-
-            return results
+            const results = (await this.vectorStore.similaritySearch(query, 5))
                 .map((doc: { pageContent: string }): string => doc.pageContent)
                 .join('\n\n');
+
+            return results;
         } catch (error) {
             console.error('Error getting context from RAG:', error);
             return 'Unable to retrieve context from your documents.';
