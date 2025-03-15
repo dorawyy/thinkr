@@ -18,15 +18,12 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
         const startTime = Date.now();
 
         try {
-            const response = await axios.get(
-                `${API_URL}/study/quiz`,
-                {
-                    params: {
-                        userId: userId,
-                        documentId: documentId
-                    }
-                }
-            );
+            const response = await axios.get(`${API_URL}/study/quiz`, {
+                params: {
+                    userId: userId,
+                    documentId: documentId,
+                },
+            });
 
             const endTime = Date.now();
             const duration = (endTime - startTime) / 1000;
@@ -42,13 +39,15 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
             );
 
             const statusCode = response.status;
-            
+
             expect(statusCode).toBe(200);
             expect(duration).toBeLessThanOrEqual(MAX_ALLOWED_TIME);
         } catch (error) {
-            console.error('Error during quiz generation test:', 
-                error instanceof Error ? error.message : 'Unknown error');
+            console.error(
+                'Error during quiz generation test:',
+                error instanceof Error ? error.message : 'Unknown error'
+            );
             throw error;
         }
     });
-}); 
+});
