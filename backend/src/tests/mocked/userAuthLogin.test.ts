@@ -46,7 +46,7 @@ describe('User Auth Controller', () => {
         };
     });
 
-    describe('userAuthLogin', () => {
+    describe('MOCKED POST /auth/login', () => {
         // Input: Valid googleId, name, and email for a new user
         // Expected status code: 200
         // Expected behavior: User created via userAuthService

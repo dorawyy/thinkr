@@ -72,7 +72,7 @@ describe('Document Routes (Mocked)', () => {
         jest.clearAllMocks();
     });
 
-    describe('POST /upload', () => {
+    describe('MOCKED POST /document/upload', () => {
         // Input: Missing userId, documentName, or file
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -116,7 +116,7 @@ describe('Document Routes (Mocked)', () => {
         });
     });
 
-    describe('DELETE /delete', () => {
+    describe('MOCKED DELETE /document/delete', () => {
         // Input: Missing userId or documentId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -153,7 +153,7 @@ describe('Document Routes (Mocked)', () => {
         });
     });
 
-    describe('GET /retrieve', () => {
+    describe('MOCKED GET /document/retrieve', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls

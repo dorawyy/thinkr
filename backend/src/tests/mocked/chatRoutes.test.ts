@@ -37,7 +37,7 @@ describe('Chat Routes (Mocked)', () => {
         jest.clearAllMocks();
     });
 
-    describe('GET /', () => {
+    describe('MOCKED GET /chat', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -66,7 +66,7 @@ describe('Chat Routes (Mocked)', () => {
         });
     });
 
-    describe('POST /message', () => {
+    describe('MOCKED POST /chat/message', () => {
         // Input: Missing userId or message
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -108,7 +108,7 @@ describe('Chat Routes (Mocked)', () => {
         });
     });
 
-    describe('DELETE /history', () => {
+    describe('MOCKED DELETE /chat/history', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls

@@ -40,7 +40,7 @@ describe('Subscription Controller', () => {
         };
     });
 
-    describe('subscribe', () => {
+    describe('UNMOCKED POST /subscription', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: User found and subscription updated
@@ -141,7 +141,7 @@ describe('Subscription Controller', () => {
         });
     });
 
-    describe('unsubscribe', () => {
+    describe('UNMOCKED DELETE /subscription', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: User found and subscription updated
@@ -221,7 +221,7 @@ describe('Subscription Controller', () => {
         });
     });
 
-    describe('getSubscriptionStatus', () => {
+    describe('UNMOCKED GET /subscription', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: User found and subscription status retrieved

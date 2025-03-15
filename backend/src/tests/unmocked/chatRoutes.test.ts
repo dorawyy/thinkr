@@ -76,7 +76,7 @@ describe('Chat Controller', () => {
         });
     });
 
-    describe('getUserChat', () => {
+    describe('UNMOCKED GET /chat', () => {
         // Input: Valid userId with existing chat
         // Expected status code: 200
         // Expected behavior: Returns user's existing chat session
@@ -218,7 +218,7 @@ describe('Chat Controller', () => {
         });
     });
 
-    describe('sendMessage', () => {
+    describe('UNMOCKED POST /chat/message', () => {
         // Input: Valid userId and message
         // Expected status code: 200
         // Expected behavior: Message sent to AI, response generated and saved
@@ -340,7 +340,7 @@ describe('Chat Controller', () => {
         });
     });
 
-    describe('clearChatHistory', () => {
+    describe('UNMOCKED DELETE /chat/history', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: Chat history is cleared, only system message remains

@@ -84,7 +84,7 @@ describe('Study Controller', () => {
         };
     });
 
-    describe('retrieveFlashcards', () => {
+    describe('UNMOCKED GET /study/flashcards', () => {
         // Input: Valid userId and documentId
         // Expected status code: 200
         // Expected behavior: StudyService.retrieveFlashcards called
@@ -162,7 +162,7 @@ describe('Study Controller', () => {
         });
     });
 
-    describe('retrieveQuizzes', () => {
+    describe('UNMOCKED GET /study/quiz', () => {
         // Input: Valid userId and documentId
         // Expected status code: 200
         // Expected behavior: StudyService.retrieveQuizzes called
@@ -258,7 +258,7 @@ describe('Study Controller', () => {
         });
     });
 
-    describe('getSuggestedMaterials', () => {
+    describe('UNMOCKED /study/suggestedMaterials', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: StudyService.getSuggestedMaterials called

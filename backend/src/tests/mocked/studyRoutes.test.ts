@@ -35,7 +35,7 @@ describe('Study Routes (Mocked)', () => {
         jest.clearAllMocks();
     });
 
-    describe('GET /study/flashcards', () => {
+    describe('MOCKED GET /study/flashcards', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -64,7 +64,7 @@ describe('Study Routes (Mocked)', () => {
         });
     });
 
-    describe('GET /study/quiz', () => {
+    describe('MOCKED GET /study/quiz', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -91,7 +91,7 @@ describe('Study Routes (Mocked)', () => {
         });
     });
 
-    describe('GET /study/suggestedMaterials', () => {
+    describe('MOCKED GET /study/suggestedMaterials', () => {
         // Input: Valid userId with custom limit
         // Expected status code: 200
         // Expected behavior: StudyService.getSuggestedMaterials called with custom limit

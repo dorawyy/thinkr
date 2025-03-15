@@ -70,7 +70,7 @@ describe('User Auth Controller', () => {
         };
     });
 
-    describe('userAuthLogin', () => {
+    describe('UNMOCKED POST /auth/login', () => {
         // Input: Valid googleId, name, and email
         // Expected status code: 200
         // Expected behavior: User created or retrieved via userAuthService

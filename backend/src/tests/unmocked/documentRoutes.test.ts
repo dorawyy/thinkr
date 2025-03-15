@@ -87,7 +87,7 @@ describe('Document Controller', () => {
         });
     });
 
-    describe('uploadDocuments', () => {
+    describe('UNMOCKED POST /document/upload', () => {
         // Input: Valid userId, documentName, and file
         // Expected status code: 200
         // Expected behavior: Document is uploaded to S3 and saved in database
@@ -252,7 +252,7 @@ describe('Document Controller', () => {
         });
     });
 
-    describe('deleteDocument', () => {
+    describe('UNMOCKED DELETE /document', () => {
         // Input: Valid userId and documentId
         // Expected status code: 200
         // Expected behavior: Document is deleted from S3 and database, study materials removed
@@ -359,7 +359,7 @@ describe('Document Controller', () => {
         });
     });
 
-    describe('getDocuments', () => {
+    describe('UNMOCKED GET /document/retrieve', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: Retrieves all documents for the user

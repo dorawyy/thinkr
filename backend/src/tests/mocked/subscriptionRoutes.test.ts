@@ -31,7 +31,7 @@ describe('Subscription Routes (Mocked)', () => {
         jest.clearAllMocks();
     });
 
-    describe('POST /', () => {
+    describe('MOCKED POST /subscription', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -60,7 +60,7 @@ describe('Subscription Routes (Mocked)', () => {
         });
     });
 
-    describe('DELETE /', () => {
+    describe('MOCKED DELETE /subscription', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -89,7 +89,7 @@ describe('Subscription Routes (Mocked)', () => {
         });
     });
 
-    describe('GET /', () => {
+    describe('MOCKED GET /subscription', () => {
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
