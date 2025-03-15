@@ -32,7 +32,10 @@ export const uploadDocuments = async (
         } as Result);
 
         // generate activities as a background job
-        StudyService.generateStudyActivities(docs.documentId, userId as string);
+        void StudyService.generateStudyActivities(
+            docs.documentId,
+            userId as string
+        );
     } catch (error) {
         console.error('Error uploading documents:', error);
 
