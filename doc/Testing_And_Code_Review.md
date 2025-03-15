@@ -16,19 +16,19 @@
 
 | **Interface**                 | **Describe Group Location, No Mocks**                | **Describe Group Location, With Mocks**            | **Mocked Components**              |
 | ----------------------------- | ---------------------------------------------------- | -------------------------------------------------- | ---------------------------------- |
-| **POST /auth/login** | [`backend/src/tests/unmocked/userAuthRoutes.test.ts:82`](#) | [`backend/src/tests/mocked/userAuthLogin.test.ts:40`](#) | MongoDB |
-| **GET /chat** | [`backend/src/tests/unmocked/chatRoutes.test.ts:107`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:26`](#) | MongoDB, LangChain OpenAI |
-| **POST /chat/message** | [`backend/src/tests/unmocked/chatRoutes.test.ts:188`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:45`](#) | MongoDB, LangChain OpenAI |
-| **DELETE /chat/history** | [`backend/src/tests/unmocked/chatRoutes.test.ts:269`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:78`](#) | MongoDB |
-| **POST /document/upload** | [`backend/src/tests/unmocked/documentRoutes.test.ts:107`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:89`](#) | MongoDB, AWS S3, AWS Textract |
-| **DELETE /document/delete** | [`backend/src/tests/unmocked/documentRoutes.test.ts:187`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:132`](#) | MongoDB, AWS S3 |
-| **GET /document/retrieve** | [`backend/src/tests/unmocked/documentRoutes.test.ts:248`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:167`](#) | MongoDB |
-| **GET /study/quiz** | [`backend/src/tests/unmocked/studyRoutes.test.ts:82`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:50`](#) | MongoDB |
-| **GET /study/flashcards** | [`backend/src/tests/unmocked/studyRoutes.test.ts:38`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:26`](#) | MongoDB |
-| **GET /study/suggestedMaterials** | [`backend/src/tests/unmocked/studyRoutes.test.ts:126`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:74`](#) | MongoDB, Vector Database (ChromaDB) |
-| **POST /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:53`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:26`](#) | MongoDB |
-| **DELETE /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:126`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:55`](#) | MongoDB |
-| **GET /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:187`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:81`](#) | MongoDB |
+| **POST /auth/login** | [backend/src/tests/unmocked/userAuthRoutes.test.ts:82](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/userAuthRoutes.test.ts#L82) | [backend/src/tests/mocked/userAuthLogin.test.ts:40](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/userAuthLogin.test.ts#L40) | MongoDB |
+| **GET /chat** | [backend/src/tests/unmocked/chatRoutes.test.ts:107](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/chatRoutes.test.ts#L107) | [backend/src/tests/mocked/chatRoutes.test.ts:26](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/chatRoutes.test.ts#L26) | MongoDB, LangChain OpenAI |
+| **POST /chat/message** | [backend/src/tests/unmocked/chatRoutes.test.ts:188](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/chatRoutes.test.ts#L188) | [backend/src/tests/mocked/chatRoutes.test.ts:45](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/chatRoutes.test.ts#L45) | MongoDB, LangChain OpenAI |
+| **DELETE /chat/history** | [backend/src/tests/unmocked/chatRoutes.test.ts:269](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/chatRoutes.test.ts#L269) | [backend/src/tests/mocked/chatRoutes.test.ts:78](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/chatRoutes.test.ts#L78) | MongoDB |
+| **POST /document/upload** | [backend/src/tests/unmocked/documentRoutes.test.ts:107](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/documentRoutes.test.ts#L107) | [backend/src/tests/mocked/documentRoutes.test.ts:89](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/documentRoutes.test.ts#L89) | MongoDB, AWS S3, AWS Textract |
+| **DELETE /document/delete** | [backend/src/tests/unmocked/documentRoutes.test.ts:187](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/documentRoutes.test.ts#L187) | [backend/src/tests/mocked/documentRoutes.test.ts:132](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/documentRoutes.test.ts#L132) | MongoDB, AWS S3 |
+| **GET /document/retrieve** | [backend/src/tests/unmocked/documentRoutes.test.ts:248](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/documentRoutes.test.ts#L248) | [backend/src/tests/mocked/documentRoutes.test.ts:167](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/documentRoutes.test.ts#L167) | MongoDB |
+| **GET /study/quiz** | [backend/src/tests/unmocked/studyRoutes.test.ts:82](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/studyRoutes.test.ts#L82) | [backend/src/tests/mocked/studyRoutes.test.ts:50](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/studyRoutes.test.ts#L50) | MongoDB |
+| **GET /study/flashcards** | [backend/src/tests/unmocked/studyRoutes.test.ts:38](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/studyRoutes.test.ts#L38) | [backend/src/tests/mocked/studyRoutes.test.ts:26](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/studyRoutes.test.ts#L26) | MongoDB |
+| **GET /study/suggestedMaterials** | [backend/src/tests/unmocked/studyRoutes.test.ts:126](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/studyRoutes.test.ts#L126) | [backend/src/tests/mocked/studyRoutes.test.ts:74](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/studyRoutes.test.ts#L74) | MongoDB, Vector Database (ChromaDB) |
+| **POST /subscription** | [backend/src/tests/unmocked/subscriptionRoutes.test.ts:53](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/subscriptionRoutes.test.ts#L53) | [backend/src/tests/mocked/subscriptionRoutes.test.ts:26](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/subscriptionRoutes.test.ts#L26) | MongoDB |
+| **DELETE /subscription** | [backend/src/tests/unmocked/subscriptionRoutes.test.ts:126](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/subscriptionRoutes.test.ts#L126) | [backend/src/tests/mocked/subscriptionRoutes.test.ts:55](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/subscriptionRoutes.test.ts#L55) | MongoDB |
+| **GET /subscription** | [backend/src/tests/unmocked/subscriptionRoutes.test.ts:187](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/unmocked/subscriptionRoutes.test.ts#L187) | [backend/src/tests/mocked/subscriptionRoutes.test.ts:81](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/mocked/subscriptionRoutes.test.ts#L81) | MongoDB |
 
 
 #### 2.1.2. Commit Hash Where Tests Run
@@ -53,7 +53,8 @@
 
 ### 2.2. GitHub Actions Configuration Location
 
-`~/.github/workflows/backend-ci.yml`
+`~/.github/workflows/backend-ci.yml` 
+
 `~/.github/workflows/frontend-ci.yml`
 
 ### 2.3. Jest Coverage Report Screenshots With Mocks
@@ -72,8 +73,8 @@ _(Placeholder for Jest coverage screenshot without mocks)_
 
 | **Non-Functional Requirement**  | **Location in Git**                              |
 | ------------------------------- | ------------------------------------------------ |
-| **Document Similarity Search Performance**          | [`backend\src\tests\nonfunctional\similaritySearchPerformance.test.ts`](#) |
-| **Document Upload and Study Material Generation Performance** | [`backend\src\tests\nonfunctional\quizGenerationPerformance.test.ts`](#) |
+| **Document Similarity Search Performance**          | [`backend\src\tests\nonfunctional\similaritySearchPerformance.test.ts`](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/nonfunctional/similaritySearchPerformance.test.ts) |
+| **Document Upload and Study Material Generation Performance** | [`backend\src\tests\nonfunctional\quizGenerationPerformance.test.ts`](https://github.com/jaidensiu/thinkr/blob/master/backend/src/tests/nonfunctional/quizGenerationPerformance.test.ts) |
 
 ### 3.2. Test Verification and Logs
 
