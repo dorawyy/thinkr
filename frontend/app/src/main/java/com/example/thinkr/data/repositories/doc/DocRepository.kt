@@ -5,9 +5,12 @@ import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.SuggestedMaterials
 import com.example.thinkr.data.remote.document.DocumentApi
 import com.example.thinkr.data.remote.study.StudyApi
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class DocRepository(
     private val documentApi: DocumentApi,
@@ -53,11 +56,28 @@ class DocRepository(
                 documentContext = documentContext
             )
             return true
+        } catch (e: IOException) {
+            _uploadingDocuments.value = _uploadingDocuments.value.filter {
+                it.documentId != tempDocument.documentId
+            }
+            e.printStackTrace()
+        } catch (e: ResponseException) {
+            _uploadingDocuments.value = _uploadingDocuments.value.filter {
+                it.documentId != tempDocument.documentId
+            }
+            e.printStackTrace()
+        } catch (e: SerializationException) {
+            _uploadingDocuments.value = _uploadingDocuments.value.filter {
+                it.documentId != tempDocument.documentId
+            }
+            e.printStackTrace()
         } catch (e: Exception) {
-            _uploadingDocuments.value = _uploadingDocuments.value
-                .filter { it.documentId != tempDocument.documentId }
+            _uploadingDocuments.value = _uploadingDocuments.value.filter {
+                it.documentId != tempDocument.documentId
+            }
             e.printStackTrace()
         }
+
         return false
     }
 

@@ -9,14 +9,19 @@ import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import java.io.IOException
 
-class DocumentUploadViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository) : ViewModel() {
+class DocumentUploadViewModel(
+    private val docRepository: DocRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(DocumentUploadState())
 
     fun onBackPressed(navController: NavController) {
@@ -53,6 +58,33 @@ class DocumentUploadViewModel(private val docRepository: DocRepository, private 
                         ).show()
                     }
                 }
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
+            } catch (e: ResponseException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
+            } catch (e: SerializationException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -81,7 +113,8 @@ class DocumentUploadViewModel(private val docRepository: DocRepository, private 
                 val fileBytes = inputStream.readBytes()
                 inputStream.close()
 
-                val fileName = uri.lastPathSegment ?: "$userId-$documentName-${System.currentTimeMillis()}.pdf"
+                val fileName =
+                    uri.lastPathSegment ?: "$userId-$documentName-${System.currentTimeMillis()}.pdf"
 
                 val result = docRepository.uploadDocument(
                     fileBytes = fileBytes,
