@@ -16,19 +16,19 @@
 
 | **Interface**                 | **Describe Group Location, No Mocks**                | **Describe Group Location, With Mocks**            | **Mocked Components**              |
 | ----------------------------- | ---------------------------------------------------- | -------------------------------------------------- | ---------------------------------- |
-| **POST /auth/login** | None | [`backend/src/tests/mocked/userAuthLogin.test.ts`](#) | MongoDB |
-| **GET /chat** |                                               | ...                                                |                      |
-| **POST /chat message**                      | ...                                                  | ...                                                | ...                                |
-| **DELETE /chat/history**                           | ...                                                  | ...                                                | ...                                |
-| **POST /document/upload**                           | ...                                                  | ...                                                | ...                                |
-| **DELETE /document/delete**                           | ...                                                  | ...                                                | ...                                |
-| **GET /document/retrieve**                           | ...                                                  | ...                                                | ...                                |
-| **GET /study/quiz**                           | ...                                                  | ...                                                | ...                                |
-| **GET /study/flashcards**                            | ...                                                  | ...                                                | ...                                |
-| **GET /study/suggestedMaterials**                           | ...                                                  | ...                                                | ...                                |
-| **POST /subscription**                           | ...                                                  | ...                                                | ...                                |
-| **DELETE /subscription**                           | ...                                                  | ...                                                | ...                                |
-| **GET /subscription**                           | ...                                                  | ...                                                | ...                                |
+| **POST /auth/login** | [`backend/src/tests/unmocked/userAuthRoutes.test.ts:82`](#) | [`backend/src/tests/mocked/userAuthLogin.test.ts:40`](#) | MongoDB |
+| **GET /chat** | [`backend/src/tests/unmocked/chatRoutes.test.ts:107`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:26`](#) | MongoDB, LangChain OpenAI |
+| **POST /chat/message** | [`backend/src/tests/unmocked/chatRoutes.test.ts:188`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:45`](#) | MongoDB, LangChain OpenAI |
+| **DELETE /chat/history** | [`backend/src/tests/unmocked/chatRoutes.test.ts:269`](#) | [`backend/src/tests/mocked/chatRoutes.test.ts:78`](#) | MongoDB |
+| **POST /document/upload** | [`backend/src/tests/unmocked/documentRoutes.test.ts:107`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:89`](#) | MongoDB, AWS S3, AWS Textract |
+| **DELETE /document/delete** | [`backend/src/tests/unmocked/documentRoutes.test.ts:187`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:132`](#) | MongoDB, AWS S3 |
+| **GET /document/retrieve** | [`backend/src/tests/unmocked/documentRoutes.test.ts:248`](#) | [`backend/src/tests/mocked/documentRoutes.test.ts:167`](#) | MongoDB |
+| **GET /study/quiz** | [`backend/src/tests/unmocked/studyRoutes.test.ts:82`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:50`](#) | MongoDB |
+| **GET /study/flashcards** | [`backend/src/tests/unmocked/studyRoutes.test.ts:38`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:26`](#) | MongoDB |
+| **GET /study/suggestedMaterials** | [`backend/src/tests/unmocked/studyRoutes.test.ts:126`](#) | [`backend/src/tests/mocked/studyRoutes.test.ts:74`](#) | MongoDB, Vector Database (ChromaDB) |
+| **POST /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:53`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:26`](#) | MongoDB |
+| **DELETE /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:126`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:55`](#) | MongoDB |
+| **GET /subscription** | [`backend/src/tests/unmocked/subscriptionRoutes.test.ts:187`](#) | [`backend/src/tests/mocked/subscriptionRoutes.test.ts:81`](#) | MongoDB |
 
 
 #### 2.1.2. Commit Hash Where Tests Run
