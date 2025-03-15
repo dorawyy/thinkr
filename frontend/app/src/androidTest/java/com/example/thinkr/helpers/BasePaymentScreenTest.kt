@@ -7,15 +7,11 @@ import com.example.thinkr.ui.payment.PaymentScreen
 import com.example.thinkr.ui.payment.PaymentViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.junit.Before
 import org.junit.Rule
 
 open class BasePaymentScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
-
-    @Before
-    fun setUp() {}
 
     protected fun setUpPaymentScreenSubscribeSuccess() {
         val subscriptionRepository = mockk<SubscriptionRepository>(relaxed = true)
