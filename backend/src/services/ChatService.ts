@@ -48,7 +48,7 @@ class ChatService {
             userId: session.googleId,
             messages: session.messages.map((msg) => ({
                 role: msg.role as string,
-                content: msg.content as string,
+                content: msg.content,
                 timestamp:
                     msg.timestamp instanceof Date
                         ? msg.timestamp.toISOString()

@@ -208,7 +208,7 @@ class RAGService {
                 filter
             );
 
-            return (docs ?? []) as Document[];
+            return docs ?? ([] as Document<DocumentMetadata>[]);
         } catch (error) {
             console.error('Error fetching relevant documents:', error);
             throw new Error('Failed to fetch relevant documents');

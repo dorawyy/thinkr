@@ -140,7 +140,7 @@ class DocumentService {
             allKeys.map((key: string) => this.getDocument(key, userId))
         );
 
-        return documents as DocumentDTO[];
+        return documents;
     }
 
     /**

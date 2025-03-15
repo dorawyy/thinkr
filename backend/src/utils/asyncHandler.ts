@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
 const asyncHandler = (
-    fn: (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => Promise<void | Response>
+    fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {
-    return (req: Request, res: Response, next: NextFunction): void => {
-        Promise.resolve(fn(req, res, next)).catch(next);
+    return (_req: Request, _res: Response, _next: NextFunction): void => {
+        Promise.resolve(fn(_req, _res, _next)).catch(_next);
     };
 };
 
