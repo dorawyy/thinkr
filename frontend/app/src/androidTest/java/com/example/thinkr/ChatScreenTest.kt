@@ -1,8 +1,6 @@
 package com.example.thinkr
 
 import android.os.SystemClock.sleep
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -18,29 +16,22 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.thinkr.data.models.ChatData
 import com.example.thinkr.data.models.ChatMessage
 import com.example.thinkr.data.models.User
-import com.example.thinkr.data.remote.HttpClientFactory
-import com.example.thinkr.data.remote.RemoteApi
+import com.example.thinkr.data.remote.chat.ChatApi
 import com.example.thinkr.data.repositories.chat.ChatRepository
-import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
-import com.example.thinkr.ui.chat.ChatMessageItem
 import com.example.thinkr.ui.chat.ChatScreen
 import com.example.thinkr.ui.chat.ChatViewModel
-import com.example.thinkr.ui.chat.Message
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 class ChatScreenTest {
@@ -159,7 +150,10 @@ class ChatScreenTest {
         // Wait for message to be added
         sleep(1_000)
 
-        composeTestRule.onNode(hasText("AI response", substring = true, ignoreCase = true), useUnmergedTree = true).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNode(
+            hasText("AI response", substring = true, ignoreCase = true),
+            useUnmergedTree = true
+        ).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -368,7 +362,7 @@ class ChatScreenTest {
      */
     @Test
     fun chatScreen_e2e() {
-        val remoteApi = RemoteApi(HttpClient() {
+        val remoteApi = ChatApi(HttpClient {
             install(ContentNegotiation) {
                 json()
             }
@@ -409,7 +403,8 @@ class ChatScreenTest {
         println("Initial number of messages: $lenOfMessages")
 
         // Enter message text
-        composeTestRule.onNodeWithText("Type a message").performTextInput("What is Quantum Computing?")
+        composeTestRule.onNodeWithText("Type a message")
+            .performTextInput("What is Quantum Computing?")
 
         // Send message
         composeTestRule.onNode(hasContentDescription("Send Message")).performClick()

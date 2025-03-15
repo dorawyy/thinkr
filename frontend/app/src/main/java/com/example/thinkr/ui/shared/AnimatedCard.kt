@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun AnimatedCardDeck(
     cardSize: Dp = 300.dp,

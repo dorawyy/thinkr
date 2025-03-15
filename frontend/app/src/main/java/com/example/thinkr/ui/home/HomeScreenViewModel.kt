@@ -18,7 +18,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeScreenViewModel(private val docRepository: DocRepository, private val userRepository: UserRepository, private val authRepository: AuthRepository) : ViewModel() {
+class HomeScreenViewModel(
+    private val docRepository: DocRepository,
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
 

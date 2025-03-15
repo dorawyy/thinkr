@@ -3,19 +3,23 @@ package com.example.thinkr.data.repositories.doc
 import android.util.Log
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.SuggestedMaterials
-import com.example.thinkr.data.remote.RemoteApi
+import com.example.thinkr.data.remote.document.DocumentApi
+import com.example.thinkr.data.remote.study.StudyApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
+class DocRepository(
+    private val documentApi: DocumentApi,
+    private val studyApi: StudyApi
+) : IDocRepository {
     private val _uploadingDocuments = MutableStateFlow<List<Document>>(emptyList())
 
     override suspend fun getDocuments(
         userId: String,
         documentIds: List<String>?
     ): List<Document> {
-        return remoteApi.getDocuments(userId, documentIds)
+        return documentApi.getDocuments(userId, documentIds)
     }
 
     override fun getUploadingDocuments(): Flow<List<Document>> {
@@ -41,7 +45,7 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
         _uploadingDocuments.value += tempDocument
 
         try {
-            val response = remoteApi.uploadDocument(
+            val response = documentApi.uploadDocument(
                 fileBytes = fileBytes,
                 fileName = fileName,
                 userId = userId,
@@ -51,7 +55,7 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
             return true
         } catch (e: Exception) {
             _uploadingDocuments.value = _uploadingDocuments.value
-                .filter {it.documentId != tempDocument.documentId }
+                .filter { it.documentId != tempDocument.documentId }
             e.printStackTrace()
         }
         return false
@@ -62,7 +66,7 @@ class DocRepository(private val remoteApi: RemoteApi): IDocRepository {
         limit: Int?
     ): SuggestedMaterials {
         return try {
-            remoteApi.getSuggestedMaterials(userId, limit)
+            studyApi.getSuggestedMaterials(userId, limit)
         } catch (e: Exception) {
             Log.e("DocRepository", "Error fetching suggested materials", e)
             e.printStackTrace()

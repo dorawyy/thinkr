@@ -16,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.User
-import com.example.thinkr.data.remote.RemoteApi
+import com.example.thinkr.data.remote.document.DocumentApi
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.document_upload.DocumentUploadScreen
@@ -321,8 +321,8 @@ class DocumentUploadScreenTest {
      */
     @Test
     fun documentUploadScreen_e2e() {
-        val remoteApi = RemoteApi(HttpClient())
-        val docRepository = DocRepository(remoteApi)
+        val documentApi = DocumentApi(HttpClient())
+        val docRepository = DocRepository(documentApi)
         val userRepository = UserRepository()
         userRepository.setUser(
             User(
