@@ -1,6 +1,5 @@
 import request from 'supertest';
 import express from 'express';
-import { Result, FlashCardDTO, QuizDTO } from '../../interfaces';
 
 jest.mock('../../services/studyService', () => {
     const mockRetrieveFlashcards = jest.fn();

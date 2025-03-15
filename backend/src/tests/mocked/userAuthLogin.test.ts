@@ -10,7 +10,7 @@ jest.mock('../../db/mongo/models/User', () => {
         this.email = userData.email;
         this.name = userData.name;
         this.googleId = userData.googleId;
-        this.subscribed = userData.subscribed || false;
+        this.subscribed = userData.subscribed ?? false;
         this.save = mockSave;
     }
 

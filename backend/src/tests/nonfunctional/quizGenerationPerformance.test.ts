@@ -35,7 +35,7 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
                 `${API_URL}/document/upload`,
                 formData,
                 {
-                    headers: formData.getHeaders()
+                    headers: formData.getHeaders(),
                 }
             );
 
@@ -49,17 +49,21 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
                     {
                         params: {
                             userId: userId,
-                            documentId: documentId
-                        }
+                            documentId: documentId,
+                        },
                     }
                 );
 
                 expect(retrieveResponse.status).toBe(200);
-                
-                if (retrieveResponse.data.data.docs.activityGenerationComplete) {
+
+                if (
+                    retrieveResponse.data.data.docs.activityGenerationComplete
+                ) {
                     isGenerationComplete = true;
                 } else {
-                    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, POLL_INTERVAL)
+                    );
                 }
             }
 
@@ -75,40 +79,40 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
            ✧ Status:             ${duration <= MAX_ALLOWED_TIME ? 'PASSED ✅' : 'FAILED ❌'}
            -----------------------------------------------`
             );
-            
+
             expect(duration).toBeLessThanOrEqual(MAX_ALLOWED_TIME);
-            
+
             // Cleanup: Delete the test document
-            await axios.delete(
-                `${API_URL}/document/delete`,
-                {
-                    params: {
-                        userId: userId,
-                        documentId: documentId
-                    }
-                }
-            );
+            await axios.delete(`${API_URL}/document/delete`, {
+                params: {
+                    userId: userId,
+                    documentId: documentId,
+                },
+            });
         } catch (error) {
-            console.error('Error during quiz generation test:', 
-                error instanceof Error ? error.message : 'Unknown error');
-            
+            console.error(
+                'Error during quiz generation test:',
+                error instanceof Error ? error.message : 'Unknown error'
+            );
+
             if (documentId) {
                 try {
-                    await axios.delete(
-                        `${API_URL}/document/delete`,
-                        {
-                            params: {
-                                userId: userId,
-                                documentId: documentId
-                            }
-                        }
-                    );
+                    await axios.delete(`${API_URL}/document/delete`, {
+                        params: {
+                            userId: userId,
+                            documentId: documentId,
+                        },
+                    });
                 } catch (cleanupError) {
-                    console.error('Error during test cleanup:', 
-                        cleanupError instanceof Error ? cleanupError.message : 'Unknown error');
+                    console.error(
+                        'Error during test cleanup:',
+                        cleanupError instanceof Error
+                            ? cleanupError.message
+                            : 'Unknown error'
+                    );
                 }
             }
-            
+
             throw error;
         }
     });

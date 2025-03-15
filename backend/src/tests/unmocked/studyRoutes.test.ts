@@ -51,7 +51,7 @@ jest.mock('../../services/studyService', () => {
                 }),
             getSuggestedMaterials: jest
                 .fn()
-                .mockImplementation(async (userId, limit) => {
+                .mockImplementation(async (userId) => {
                     if (userId === 'error-user') {
                         throw new Error('Database error');
                     }
@@ -311,7 +311,7 @@ describe('Study Controller', () => {
             );
             expect(statusSpy).toHaveBeenCalledWith(200);
         });
-        
+
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: Validation error, no service calls

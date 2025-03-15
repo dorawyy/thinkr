@@ -53,8 +53,7 @@ class ChatService {
         userId: string,
         message: string
     ): Promise<ChatMessage> {
-        // Get the user's chat session
-        const session = await this.getOrCreateUserChat(userId);
+        await this.getOrCreateUserChat(userId);
 
         // Add the user message to the session
         const userMessage: ChatMessage = {
@@ -68,10 +67,8 @@ class ChatService {
             userId
         );
 
-        // Generate response using the context and chat history
-        const recentMessages = session.messages.slice(-5); // Use last 5 messages for context
         // Prepare prompt with context
-        let prompt = `Based on the following information:\n\n${context}\n\nAnd considering our conversation so far, please respond to: ${message}`;
+        const prompt = `Based on the following information:\n\n${context}\n\nAnd considering our conversation so far, please respond to: ${message}`;
 
         // Get AI response
         const aiResponse = await this.llm.invoke(prompt);
@@ -132,14 +129,14 @@ class ChatService {
         return {
             userId: session.userId,
             messages: session.messages.map((msg: any) => ({
-                role: msg.role,
-                content: msg.content,
+                role: msg.role as string,
+                content: msg.content as string,
                 timestamp: msg.timestamp,
             })),
             createdAt: session.createdAt,
             updatedAt: session.updatedAt,
             metadata: session.metadata,
-        };
+        } as ChatSessionDTO;
     }
 }
 

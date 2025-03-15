@@ -4,7 +4,7 @@ import {
     sendMessage,
     clearChatHistory,
 } from '../../controllers/chatController';
-import { ChatSessionDTO} from '../../interfaces';
+import { ChatSessionDTO } from '../../interfaces';
 
 jest.mock('../../db/mongo/models/Chat', () => {
     const mockFindOne = jest.fn();
@@ -291,7 +291,7 @@ describe('Chat Controller', () => {
                 },
             });
         });
-        
+
         // Input: Missing userId or message
         // Expected status code: 400
         // Expected behavior: Validation error, no message sent

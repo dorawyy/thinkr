@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import DocumentService from '../services/documentService';
-import { DocumentDTO, Result } from '../interfaces';
+import { Result } from '../interfaces';
 import StudyService from '../services/studyService';
 
 /**
@@ -23,8 +23,8 @@ export const uploadDocuments = async (
         const file = req.file as Express.Multer.File;
         const docs = await DocumentService.uploadDocument(
             file,
-            userId,
-            documentName
+            userId as string,
+            documentName as string
         );
 
         res.status(200).json({
@@ -32,7 +32,7 @@ export const uploadDocuments = async (
         } as Result);
 
         // generate activities as a background job
-        StudyService.generateStudyActivities(docs.documentId, userId);
+        StudyService.generateStudyActivities(docs.documentId, userId as string);
     } catch (error) {
         console.error('Error uploading documents:', error);
 
@@ -96,9 +96,9 @@ export const getDocuments = async (
             ? await DocumentService.getDocument(documentId, userId)
             : await DocumentService.getDocuments(userId);
 
-        const result: Result = {
+        const result = {
             data: { docs },
-        };
+        } as Result;
         res.status(200).json(result);
     } catch (error) {
         console.error('Error retrieving documents:', error);

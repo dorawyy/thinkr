@@ -3,7 +3,6 @@ import { Document } from '@langchain/core/documents';
 import { ChatOpenAI } from '@langchain/openai';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { ChromaClient } from 'chromadb';
 
 /**
  * Represents configuration options for RAGService
@@ -51,10 +50,10 @@ class RAGService {
 
         this.llm = new ChatOpenAI({
             openAIApiKey: config.openAIApiKey,
-            temperature: config.temperature || 0.7,
+            temperature: config.temperature ?? 0.7,
         });
 
-        this.maxContextLength = config.maxContextLength || 4000;
+        this.maxContextLength = config.maxContextLength ?? 4000;
         this.vectorStoreUrl = config.vectorStoreUrl;
     }
 
@@ -142,7 +141,7 @@ class RAGService {
                 ),
             };
 
-            await this.vectorStore!.addDocuments(docs, ids);
+            await this.vectorStore?.addDocuments(docs, ids);
 
             console.log(
                 `Text uploaded to Chroma DB in collection ${collectionName} for document: ${documentId}`
@@ -203,13 +202,13 @@ class RAGService {
             const filter = documentId ? { documentId: documentId } : undefined;
 
             // Fetch relevant documents with optional filter
-            const docs = await this.vectorStore!.similaritySearch(
+            const docs = await this.vectorStore?.similaritySearch(
                 query,
                 5, // Number of documents to retrieve
                 filter
             );
 
-            return docs;
+            return docs ?? [];
         } catch (error) {
             console.error('Error fetching relevant documents:', error);
             throw new Error('Failed to fetch relevant documents');
@@ -230,13 +229,13 @@ class RAGService {
             // For each document ID, we need to find all chunks
             for (const documentId of documentIds) {
                 // Get all chunks for this document
-                const results = await this.vectorStore!.collection!.get({
+                const results = await this.vectorStore?.collection?.get({
                     where: { documentId: { $eq: documentId } },
                 });
 
-                if (results.ids && results.ids.length > 0) {
+                if (results?.ids && results.ids.length > 0) {
                     // Delete all chunks for this document
-                    await this.vectorStore!.collection!.delete({
+                    await this.vectorStore?.collection?.delete({
                         ids: results.ids,
                     });
 
@@ -263,11 +262,11 @@ class RAGService {
         try {
             await this.initVectorStore(`user_${collectionName}`);
 
-            const results = await this.vectorStore!.collection!.get({
+            const results = await this.vectorStore?.collection?.get({
                 where: { documentId: { $eq: documentId } },
             });
 
-            const documents = results.documents as string[];
+            const documents = results?.documents as string[];
             return documents;
         } catch (error) {
             console.error('Error fetching documents from ChromaDB:', error);

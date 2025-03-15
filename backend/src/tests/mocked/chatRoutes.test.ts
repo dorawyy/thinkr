@@ -1,6 +1,5 @@
 import request from 'supertest';
 import express from 'express';
-import { Result, ChatSessionDTO, ChatMessage } from '../../interfaces';
 
 jest.mock('../../services/ChatService', () => {
     const mockGetOrCreateUserChat = jest.fn();

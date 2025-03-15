@@ -9,7 +9,7 @@ class SubscriptionService {
         userId: string,
         subscribe: boolean
     ): Promise<UserDTO> {
-        let user = await User.findOne({ googleId: userId });
+        const user = await User.findOne({ googleId: userId });
         if (!user) {
             throw new Error('Error: User not found');
         }
@@ -22,7 +22,7 @@ class SubscriptionService {
         );
 
         return {
-            email: user.email!,
+            email: user.email,
             name: user.name,
             googleId: user.googleId,
             subscribed: subscribe,
@@ -33,13 +33,13 @@ class SubscriptionService {
      * Updates subscriber status and returns the user information with updated status
      */
     public async getSubscriberStatus(userId: string): Promise<UserDTO> {
-        let user = await User.findOne({ googleId: userId });
+        const user = await User.findOne({ googleId: userId });
         if (!user) {
             throw new Error('Error: User not found');
         }
 
         return {
-            email: user.email!,
+            email: user.email,
             name: user.name,
             googleId: user.googleId,
             subscribed: user.subscribed,

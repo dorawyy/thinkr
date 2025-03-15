@@ -17,7 +17,7 @@ export const subscribe = async (req: Request, res: Response): Promise<void> => {
         }
 
         const user = await SubscriptionService.updateAndGetSubscriberStatus(
-            userId,
+            userId as string,
             true
         );
 

@@ -77,5 +77,5 @@ export interface ChatSessionDTO {
     messages: ChatMessage[];
     createdAt: string;
     updatedAt: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, string>;
 }

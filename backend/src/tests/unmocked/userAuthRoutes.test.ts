@@ -50,7 +50,6 @@ jest.mock('../../services/userAuthService', () => {
     };
 });
 
-const User = require('../../db/mongo/models/User').default;
 const userAuthService = require('../../services/userAuthService').default;
 
 describe('User Auth Controller', () => {

@@ -61,9 +61,7 @@ jest.mock('../../services/studyService', () => {
 
 const Document = require('../../db/mongo/models/Document').default;
 const StudyService = require('../../services/studyService').default;
-const {
-    TextractClient,
-} = require('@aws-sdk/client-textract');
+const { TextractClient } = require('@aws-sdk/client-textract');
 
 describe('Document Controller', () => {
     let mockRequest: Partial<Request>;

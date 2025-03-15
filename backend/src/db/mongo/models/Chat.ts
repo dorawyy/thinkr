@@ -21,7 +21,7 @@ export interface IChatSession extends Document {
     messages: IMessage[]; // Array of messages in this chat session
     createdAt: Date; // When the chat session was created
     updatedAt: Date; // When the chat session was last updated
-    metadata?: Record<string, any>; // Additional metadata about the chat
+    metadata?: Record<string, string>; // Additional metadata about the chat
 }
 
 /**
