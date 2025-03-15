@@ -4,9 +4,7 @@ import {
     retrieveQuizzes,
     getSuggestedMaterials,
 } from '../../controllers/studyController';
-import { Result } from '../../interfaces';
 
-// Mock StudyService
 jest.mock('../../services/studyService', () => {
     return {
         __esModule: true,
@@ -66,7 +64,6 @@ jest.mock('../../services/studyService', () => {
     };
 });
 
-// Import mocks after they're defined
 const studyService = require('../../services/studyService').default;
 
 describe('Study Controller', () => {
@@ -76,10 +73,8 @@ describe('Study Controller', () => {
     let statusSpy: jest.Mock;
 
     beforeEach(() => {
-        // Reset mocks
         jest.clearAllMocks();
 
-        // Setup mock response with spies
         jsonSpy = jest.fn().mockReturnThis();
         statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
 
@@ -90,23 +85,23 @@ describe('Study Controller', () => {
     });
 
     describe('retrieveFlashcards', () => {
+        // Input: Valid userId and documentId
+        // Expected status code: 200
+        // Expected behavior: StudyService.retrieveFlashcards called
+        // Expected output: Array of flashcards
         it('should retrieve flashcards successfully', async () => {
-            // Mock data
             const userId = 'test-user-123';
             const documentId = 'doc-123';
 
-            // Setup request
             mockRequest = {
                 query: { userId, documentId },
             };
 
-            // Call controller
             await retrieveFlashcards(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(studyService.retrieveFlashcards).toHaveBeenCalledWith(
                 documentId,
                 userId
@@ -120,19 +115,20 @@ describe('Study Controller', () => {
             });
         });
 
+        // Input: Missing userId
+        // Expected status code: 400
+        // Expected behavior: Validation error, no service calls
+        // Expected output: Error message
         it('should return 400 when userId is missing', async () => {
-            // Setup request with missing userId
             mockRequest = {
                 query: { documentId: 'doc-123' },
             };
 
-            // Call controller
             await retrieveFlashcards(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(400);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'You must provide a userId identifier',
@@ -140,13 +136,15 @@ describe('Study Controller', () => {
             expect(studyService.retrieveFlashcards).not.toHaveBeenCalled();
         });
 
+        // Input: Valid request but service operation fails
+        // Expected status code: 500
+        // Expected behavior: StudyService.retrieveFlashcards throws error
+        // Expected output: Error message
         it('should return 500 when service operation fails', async () => {
-            // Setup request with error-triggering userId
             mockRequest = {
                 query: { userId: 'error-user', documentId: 'doc-123' },
             };
 
-            // Call controller with console.error mocked to prevent test output noise
             const originalConsoleError = console.error;
             console.error = jest.fn();
 
@@ -155,10 +153,8 @@ describe('Study Controller', () => {
                 mockResponse as Response
             );
 
-            // Restore console.error
             console.error = originalConsoleError;
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Internal server error',
@@ -167,23 +163,23 @@ describe('Study Controller', () => {
     });
 
     describe('retrieveQuizzes', () => {
+        // Input: Valid userId and documentId
+        // Expected status code: 200
+        // Expected behavior: StudyService.retrieveQuizzes called
+        // Expected output: Array of quizzes
         it('should retrieve quizzes successfully', async () => {
-            // Mock data
             const userId = 'test-user-123';
             const documentId = 'doc-123';
 
-            // Setup request
             mockRequest = {
                 query: { userId, documentId },
             };
 
-            // Call controller
             await retrieveQuizzes(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(studyService.retrieveQuizzes).toHaveBeenCalledWith(
                 documentId,
                 userId
@@ -215,19 +211,20 @@ describe('Study Controller', () => {
             });
         });
 
+        // Input: Missing userId
+        // Expected status code: 400
+        // Expected behavior: Validation error, no service calls
+        // Expected output: Error message
         it('should return 400 when userId is missing', async () => {
-            // Setup request with missing userId
             mockRequest = {
                 query: { documentId: 'doc-123' },
             };
 
-            // Call controller
             await retrieveQuizzes(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(400);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'You must provide a userId identifier',
@@ -235,13 +232,15 @@ describe('Study Controller', () => {
             expect(studyService.retrieveQuizzes).not.toHaveBeenCalled();
         });
 
+        // Input: Valid request but service operation fails
+        // Expected status code: 500
+        // Expected behavior: StudyService.retrieveQuizzes throws error
+        // Expected output: Error message
         it('should return 500 when service operation fails', async () => {
-            // Setup request with error-triggering userId
             mockRequest = {
                 query: { userId: 'error-user', documentId: 'doc-123' },
             };
 
-            // Call controller with console.error mocked to prevent test output noise
             const originalConsoleError = console.error;
             console.error = jest.fn();
 
@@ -250,10 +249,8 @@ describe('Study Controller', () => {
                 mockResponse as Response
             );
 
-            // Restore console.error
             console.error = originalConsoleError;
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Internal server error',
@@ -262,23 +259,23 @@ describe('Study Controller', () => {
     });
 
     describe('getSuggestedMaterials', () => {
+        // Input: Valid userId
+        // Expected status code: 200
+        // Expected behavior: StudyService.getSuggestedMaterials called
+        // Expected output: Array of suggested materials
         it('should get suggested materials successfully', async () => {
-            // Mock data
             const userId = 'test-user-123';
             const limit = 5;
 
-            // Setup request
             mockRequest = {
                 query: { userId, limit: limit.toString() },
             };
 
-            // Call controller
             await getSuggestedMaterials(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(studyService.getSuggestedMaterials).toHaveBeenCalledWith(
                 userId,
                 limit
@@ -292,42 +289,43 @@ describe('Study Controller', () => {
             });
         });
 
+        // Input: Valid userId without limit parameter
+        // Expected status code: 200
+        // Expected behavior: StudyService.getSuggestedMaterials called with default limit
+        // Expected output: Array of suggested materials
         it('should use default limit when not provided', async () => {
-            // Mock data
             const userId = 'test-user-123';
 
-            // Setup request without limit
             mockRequest = {
                 query: { userId },
             };
 
-            // Call controller
             await getSuggestedMaterials(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(studyService.getSuggestedMaterials).toHaveBeenCalledWith(
                 userId,
                 5
-            ); // Default limit
+            );
             expect(statusSpy).toHaveBeenCalledWith(200);
         });
-
+        
+        // Input: Missing userId
+        // Expected status code: 400
+        // Expected behavior: Validation error, no service calls
+        // Expected output: Error message
         it('should return 400 when userId is missing', async () => {
-            // Setup request with missing userId
             mockRequest = {
                 query: { limit: '10' },
             };
 
-            // Call controller
             await getSuggestedMaterials(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(400);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'You must provide a userId identifier',
@@ -335,13 +333,15 @@ describe('Study Controller', () => {
             expect(studyService.getSuggestedMaterials).not.toHaveBeenCalled();
         });
 
+        // Input: Valid request but service operation fails
+        // Expected status code: 500
+        // Expected behavior: StudyService.getSuggestedMaterials throws error
+        // Expected output: Error message
         it('should return 500 when service operation fails', async () => {
-            // Setup request with error-triggering userId
             mockRequest = {
                 query: { userId: 'error-user' },
             };
 
-            // Call controller with console.error mocked to prevent test output noise
             const originalConsoleError = console.error;
             console.error = jest.fn();
 
@@ -350,10 +350,8 @@ describe('Study Controller', () => {
                 mockResponse as Response
             );
 
-            // Restore console.error
             console.error = originalConsoleError;
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Internal server error',

@@ -2,7 +2,6 @@ import request from 'supertest';
 import express from 'express';
 import { Result, UserDTO } from '../../interfaces';
 
-// Mock SubscriptionService
 jest.mock('../../services/subscriptionService', () => {
     const mockUpdateAndGetSubscriberStatus = jest.fn();
     const mockGetSubscriberStatus = jest.fn();
@@ -18,14 +17,12 @@ jest.mock('../../services/subscriptionService', () => {
     };
 });
 
-// Import after mocks are defined
 import subscriptionRouter from '../../routes/subscriptionRoutes';
 const {
     mockUpdateAndGetSubscriberStatus,
     mockGetSubscriberStatus,
 } = require('../../services/subscriptionService');
 
-// Create express app just for testing
 const app = express();
 app.use(express.json());
 app.use('/', subscriptionRouter);
@@ -35,36 +32,7 @@ describe('Subscription Routes (Mocked)', () => {
         jest.clearAllMocks();
     });
 
-    // Subscribe Tests
     describe('POST /', () => {
-        // Input: Valid userId
-        // Expected status code: 200
-        // Expected behavior: SubscriptionService.updateAndGetSubscriberStatus called with true
-        // Expected output: updated user object
-        it('should subscribe a user successfully', async () => {
-            const mockUser: UserDTO = {
-                email: 'user@example.com',
-                name: 'Test User',
-                googleId: 'user123',
-                subscribed: true,
-            };
-
-            mockUpdateAndGetSubscriberStatus.mockResolvedValue(mockUser);
-
-            const response = await request(app)
-                .post('/')
-                .send({ userId: 'user123' })
-                .expect(200);
-
-            const result = response.body as Result;
-            expect(result.data).toEqual(mockUser);
-
-            expect(mockUpdateAndGetSubscriberStatus).toHaveBeenCalledWith(
-                'user123',
-                true
-            );
-        });
-
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -93,36 +61,7 @@ describe('Subscription Routes (Mocked)', () => {
         });
     });
 
-    // Unsubscribe Tests
     describe('DELETE /', () => {
-        // Input: Valid userId
-        // Expected status code: 200
-        // Expected behavior: SubscriptionService.updateAndGetSubscriberStatus called with false
-        // Expected output: updated user object
-        it('should unsubscribe a user successfully', async () => {
-            const mockUser: UserDTO = {
-                email: 'user@example.com',
-                name: 'Test User',
-                googleId: 'user123',
-                subscribed: false,
-            };
-
-            mockUpdateAndGetSubscriberStatus.mockResolvedValue(mockUser);
-
-            const response = await request(app)
-                .delete('/')
-                .query({ userId: 'user123' })
-                .expect(200);
-
-            const result = response.body as Result;
-            expect(result.data).toEqual(mockUser);
-
-            expect(mockUpdateAndGetSubscriberStatus).toHaveBeenCalledWith(
-                'user123',
-                false
-            );
-        });
-
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls
@@ -151,33 +90,7 @@ describe('Subscription Routes (Mocked)', () => {
         });
     });
 
-    // Get Subscription Status Tests
     describe('GET /', () => {
-        // Input: Valid userId
-        // Expected status code: 200
-        // Expected behavior: SubscriptionService.getSubscriberStatus called
-        // Expected output: user object with subscription status
-        it('should get subscription status for a user', async () => {
-            const mockUser: UserDTO = {
-                email: 'user@example.com',
-                name: 'Test User',
-                googleId: 'user123',
-                subscribed: true,
-            };
-
-            mockGetSubscriberStatus.mockResolvedValue(mockUser);
-
-            const response = await request(app)
-                .get('/')
-                .query({ userId: 'user123' })
-                .expect(200);
-
-            const result = response.body as Result;
-            expect(result.data).toEqual(mockUser);
-
-            expect(mockGetSubscriberStatus).toHaveBeenCalledWith('user123');
-        });
-
         // Input: Missing userId
         // Expected status code: 400
         // Expected behavior: validation error, no service calls

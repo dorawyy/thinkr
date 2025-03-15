@@ -4,9 +4,8 @@ import {
     deleteDocument,
     getDocuments,
 } from '../../controllers/documentController';
-import { Result, DocumentDTO } from '../../interfaces';
+import { DocumentDTO } from '../../interfaces';
 
-// Mock Document model
 jest.mock('../../db/mongo/models/Document', () => {
     const mockFindOne = jest.fn();
     const mockFindOneAndUpdate = jest.fn();
@@ -28,7 +27,6 @@ jest.mock('../../db/mongo/models/Document', () => {
     };
 });
 
-// Mock AWS S3 and Textract clients
 jest.mock('@aws-sdk/client-s3', () => {
     return {
         S3Client: jest.fn().mockImplementation(() => ({
@@ -51,7 +49,6 @@ jest.mock('@aws-sdk/client-textract', () => {
     };
 });
 
-// Mock StudyService
 jest.mock('../../services/studyService', () => {
     return {
         __esModule: true,
@@ -62,17 +59,12 @@ jest.mock('../../services/studyService', () => {
     };
 });
 
-// Import mocks after they're defined
 const Document = require('../../db/mongo/models/Document').default;
 const StudyService = require('../../services/studyService').default;
-const { S3Client } = require('@aws-sdk/client-s3');
 const {
     TextractClient,
-    StartDocumentTextDetectionCommand,
-    GetDocumentTextDetectionCommand,
 } = require('@aws-sdk/client-textract');
 
-// Interface tests for Document Controller
 describe('Document Controller', () => {
     let mockRequest: Partial<Request>;
     let mockResponse: Partial<Response>;
@@ -80,10 +72,8 @@ describe('Document Controller', () => {
     let statusSpy: jest.Mock;
 
     beforeEach(() => {
-        // Reset mocks
         jest.clearAllMocks();
 
-        // Setup mock response with spies
         jsonSpy = jest.fn().mockReturnThis();
         statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
 
@@ -92,7 +82,6 @@ describe('Document Controller', () => {
             json: jsonSpy,
         };
 
-        // Reset environment date for consistent testing
         jest.spyOn(global, 'Date').mockImplementation(() => {
             return {
                 toISOString: () => '2023-01-01T12:00:00.000Z',
@@ -100,14 +89,12 @@ describe('Document Controller', () => {
         });
     });
 
-    // Interface POST /document/upload
     describe('uploadDocuments', () => {
         // Input: Valid userId, documentName, and file
         // Expected status code: 200
         // Expected behavior: Document is uploaded to S3 and saved in database
         // Expected output: DocumentDTO with uploaded document details
         it('should upload a document successfully', async () => {
-            // Mock data
             const userId = 'user123';
             const documentName = 'Test Document';
             const file = {
@@ -122,13 +109,11 @@ describe('Document Controller', () => {
                 documentName: documentName,
             };
 
-            // Setup request
             mockRequest = {
                 body: { userId, documentName },
                 file: file as Express.Multer.File,
             };
 
-            // Setup MongoDB mock
             Document.findOneAndUpdate.mockResolvedValue({
                 documentId: 'test.pdf',
                 userId: userId,
@@ -138,16 +123,13 @@ describe('Document Controller', () => {
                 activityGenerationComplete: false,
             });
 
-            // Mock Textract for text extraction (called during generateStudyActivities)
             const textractClient = new TextractClient({});
             const jobId = 'text-job-123';
 
-            // Mock the Textract job start
             (textractClient.send as jest.Mock).mockImplementationOnce(() => {
                 return Promise.resolve({ JobId: jobId });
             });
 
-            // Mock job status check - SUCCEEDED
             (textractClient.send as jest.Mock).mockImplementationOnce(() => {
                 return Promise.resolve({
                     JobStatus: 'SUCCEEDED',
@@ -158,13 +140,11 @@ describe('Document Controller', () => {
                 });
             });
 
-            // Call controller
             await uploadDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(Document.findOneAndUpdate).toHaveBeenCalledWith(
                 { documentId: 'test.pdf', userId: userId },
                 {
@@ -200,7 +180,6 @@ describe('Document Controller', () => {
         // Expected behavior: Validation error, no uploads occur
         // Expected output: Error message
         it('should return 400 when required fields are missing', async () => {
-            // Test missing userId
             mockRequest = {
                 body: { documentName: 'Test Document' },
                 file: { originalname: 'test.pdf' } as Express.Multer.File,
@@ -216,7 +195,6 @@ describe('Document Controller', () => {
                 message: 'Bad Request, missing userId or documentName or file',
             });
 
-            // Test missing documentName
             mockRequest = {
                 body: { userId: 'user123' },
                 file: { originalname: 'test.pdf' } as Express.Multer.File,
@@ -229,7 +207,6 @@ describe('Document Controller', () => {
 
             expect(statusSpy).toHaveBeenCalledWith(400);
 
-            // Test missing file
             mockRequest = {
                 body: { userId: 'user123', documentName: 'Test Document' },
                 file: undefined,
@@ -247,16 +224,7 @@ describe('Document Controller', () => {
         // Expected status code: 500
         // Expected behavior: S3 upload succeeds but database operation fails
         // Expected output: Error message
-        // Input: Valid request but error during deletion
-        // Expected status code: 500
-        // Expected behavior: Deletion operation fails
-        // Expected output: Error message
-        // Input: Valid userId but database error occurs
-        // Expected status code: 500
-        // Expected behavior: Document retrieval fails
-        // Expected output: Error message
         it('should return 500 when an error occurs', async () => {
-            // Mock data
             const userId = 'user123';
             const documentName = 'Test Document';
             const file = {
@@ -265,24 +233,20 @@ describe('Document Controller', () => {
                 mimetype: 'application/pdf',
             };
 
-            // Setup request
             mockRequest = {
                 body: { userId, documentName },
                 file: file as Express.Multer.File,
             };
 
-            // Setup MongoDB mock to throw error
             Document.findOneAndUpdate.mockRejectedValue(
                 new Error('Database error')
             );
 
-            // Call controller
             await uploadDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Failed to upload documents',
@@ -290,32 +254,26 @@ describe('Document Controller', () => {
         });
     });
 
-    // Interface DELETE /document/delete
     describe('deleteDocument', () => {
         // Input: Valid userId and documentId
         // Expected status code: 200
         // Expected behavior: Document is deleted from S3 and database, study materials removed
         // Expected output: Empty success response
         it('should delete a document successfully', async () => {
-            // Mock data
             const userId = 'user123';
             const documentId = 'test.pdf';
 
-            // Setup request
             mockRequest = {
                 query: { userId, documentId },
             };
 
-            // Setup mocks
             Document.deleteOne.mockResolvedValue({ deletedCount: 1 });
 
-            // Call controller
             await deleteDocument(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(Document.deleteOne).toHaveBeenCalledWith({
                 s3documentId: `${userId}-${documentId}`,
             });
@@ -332,7 +290,6 @@ describe('Document Controller', () => {
         // Expected behavior: Validation error, no deletion occurs
         // Expected output: Error message
         it('should return 400 when required parameters are missing', async () => {
-            // Test missing userId
             mockRequest = {
                 query: { documentId: 'test.pdf' },
             };
@@ -347,7 +304,6 @@ describe('Document Controller', () => {
                 message: 'Bad Request, userId and documentId are required',
             });
 
-            // Test missing documentId
             mockRequest = {
                 query: { userId: 'user123' },
             };
@@ -360,27 +316,25 @@ describe('Document Controller', () => {
             expect(statusSpy).toHaveBeenCalledWith(400);
         });
 
+        // Input: Valid request but error during deletion
+        // Expected status code: 500
+        // Expected behavior: Deletion operation fails
+        // Expected output: Error message
         it('should return 500 when an error occurs', async () => {
-            // Mock data
             const userId = 'user123';
             const documentId = 'test.pdf';
 
-            // Setup request
             mockRequest = {
                 query: { userId, documentId },
             };
 
-            // Setup mock to throw error after text extraction
-            // First, successfully start a text extraction job
             const textractClient = new TextractClient({});
             const jobId = 'text-job-123';
 
-            // Mock the Textract job start
             (textractClient.send as jest.Mock).mockImplementationOnce(() => {
                 return Promise.resolve({ JobId: jobId });
             });
 
-            // Mock successful job status check
             (textractClient.send as jest.Mock).mockImplementationOnce(() => {
                 return Promise.resolve({
                     JobStatus: 'SUCCEEDED',
@@ -393,16 +347,13 @@ describe('Document Controller', () => {
                 });
             });
 
-            // Then the document deletion fails
             Document.deleteOne.mockRejectedValue(new Error('Database error'));
 
-            // Call controller
             await deleteDocument(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Failed to delete documents',
@@ -410,30 +361,23 @@ describe('Document Controller', () => {
         });
     });
 
-    // Interface GET /document/retrieve
     describe('getDocuments', () => {
         // Input: Valid userId
         // Expected status code: 200
         // Expected behavior: Retrieves all documents for the user
         // Expected output: Array of DocumentDTO objects
         it('should retrieve all documents for a user', async () => {
-            // Mock data
             const userId = 'user123';
             const mockDocuments = [
                 { documentId: 'doc1.pdf', userId },
                 { documentId: 'doc2.pdf', userId },
             ];
 
-            // We don't need this anymore since we're using expect.objectContaining() below
-
-            // Setup request
             mockRequest = {
                 query: { userId },
             };
 
-            // Setup mocks
             Document.find.mockResolvedValue(mockDocuments);
-            // Mock the getDocument method calls for each document
             Document.findOne
                 .mockResolvedValueOnce({
                     documentId: 'doc1.pdf',
@@ -448,13 +392,11 @@ describe('Document Controller', () => {
                     name: 'Document 2',
                 });
 
-            // Call controller
             await getDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(Document.find).toHaveBeenCalledWith({ userId });
             expect(Document.findOne).toHaveBeenCalledTimes(2);
             expect(statusSpy).toHaveBeenCalledWith(200);
@@ -481,7 +423,6 @@ describe('Document Controller', () => {
         // Expected behavior: Retrieves specific document for the user
         // Expected output: Single DocumentDTO object
         it('should retrieve a specific document for a user', async () => {
-            // Mock data
             const userId = 'user123';
             const documentId = 'doc1.pdf';
 
@@ -492,23 +433,17 @@ describe('Document Controller', () => {
                 name: 'Document 1',
             };
 
-            // We don't need this anymore since we're using expect.objectContaining() below
-
-            // Setup request
             mockRequest = {
                 query: { userId, documentId },
             };
 
-            // Setup mocks
             Document.findOne.mockResolvedValue(mockDocument);
 
-            // Call controller
             await getDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(Document.findOne).toHaveBeenCalledWith({
                 documentId,
                 userId,
@@ -530,43 +465,39 @@ describe('Document Controller', () => {
         // Expected behavior: Validation error, no retrieval occurs
         // Expected output: Error message
         it('should return 400 when userId is missing', async () => {
-            // Setup request with missing userId
             mockRequest = {
                 query: {},
             };
 
-            // Call controller
             await getDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(400);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Bad Request, a userId is required',
             });
         });
 
+        // Input: Valid userId but database error occurs
+        // Expected status code: 500
+        // Expected behavior: Document retrieval fails
+        // Expected output: Error message
         it('should return 500 when an error occurs', async () => {
-            // Mock data
             const userId = 'user123';
 
-            // Setup request
             mockRequest = {
                 query: { userId },
             };
 
-            // Setup mock to throw error
             Document.find.mockRejectedValue(new Error('Database error'));
 
-            // Call controller
             await getDocuments(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(500);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'Failed to retrieve documents',

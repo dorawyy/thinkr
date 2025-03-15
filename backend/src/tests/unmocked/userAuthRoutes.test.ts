@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { userAuthLogin } from '../../controllers/userAuthController';
-import { Result, UserDTO, AuthPayload } from '../../interfaces';
+import { AuthPayload } from '../../interfaces';
 
-// Mock User model
 jest.mock('../../db/mongo/models/User', () => {
     const mockFindOne = jest.fn();
     const mockSave = jest.fn();
@@ -30,7 +29,6 @@ jest.mock('../../db/mongo/models/User', () => {
     };
 });
 
-// Mock userAuthService
 jest.mock('../../services/userAuthService', () => {
     return {
         __esModule: true,
@@ -52,7 +50,6 @@ jest.mock('../../services/userAuthService', () => {
     };
 });
 
-// Import mocks after they're defined
 const User = require('../../db/mongo/models/User').default;
 const userAuthService = require('../../services/userAuthService').default;
 
@@ -63,10 +60,8 @@ describe('User Auth Controller', () => {
     let statusSpy: jest.Mock;
 
     beforeEach(() => {
-        // Reset mocks
         jest.clearAllMocks();
 
-        // Setup mock response with spies
         jsonSpy = jest.fn().mockReturnThis();
         statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
 
@@ -77,26 +72,26 @@ describe('User Auth Controller', () => {
     });
 
     describe('userAuthLogin', () => {
+        // Input: Valid googleId, name, and email
+        // Expected status code: 200
+        // Expected behavior: User created or retrieved via userAuthService
+        // Expected output: User object with provided information
         it('should login a user successfully', async () => {
-            // Mock data
             const authPayload = {
                 googleId: 'test-user-123',
                 name: 'Test User',
                 email: 'test@example.com',
             };
 
-            // Setup request
             mockRequest = {
                 body: authPayload,
             };
 
-            // Call controller
             await userAuthLogin(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(userAuthService.findCreateUser).toHaveBeenCalledWith(
                 authPayload
             );
@@ -113,8 +108,11 @@ describe('User Auth Controller', () => {
             });
         });
 
+        // Input: Missing required fields (googleId, name, or email)
+        // Expected status code: 400
+        // Expected behavior: Validation error, no service calls
+        // Expected output: Error message
         it('should return 400 when required fields are missing', async () => {
-            // Setup request with missing fields
             mockRequest = {
                 body: {
                     googleId: 'test-user-123',
@@ -122,13 +120,11 @@ describe('User Auth Controller', () => {
                 },
             };
 
-            // Call controller
             await userAuthLogin(
                 mockRequest as Request,
                 mockResponse as Response
             );
 
-            // Assertions
             expect(statusSpy).toHaveBeenCalledWith(400);
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'googleId, name, or email is missing or invalid',
@@ -136,8 +132,11 @@ describe('User Auth Controller', () => {
             expect(userAuthService.findCreateUser).not.toHaveBeenCalled();
         });
 
+        // Input: Valid data but service throws error
+        // Expected status code: 500
+        // Expected behavior: Service call fails
+        // Expected output: Error message or uncaught exception
         it('should return 500 when database operation fails', async () => {
-            // Setup request with error-triggering googleId
             mockRequest = {
                 body: {
                     googleId: 'error-user',
@@ -146,7 +145,6 @@ describe('User Auth Controller', () => {
                 },
             };
 
-            // Call controller with console.error mocked to prevent test output noise
             const originalConsoleError = console.error;
             console.error = jest.fn();
 
@@ -159,12 +157,9 @@ describe('User Auth Controller', () => {
                 // Expect error to be thrown
             }
 
-            // Restore console.error
             console.error = originalConsoleError;
 
-            // Assertions for error handling
             expect(userAuthService.findCreateUser).toHaveBeenCalled();
-            // The controller doesn't have explicit error handling, so we can't assert on status/json
         });
     });
 });

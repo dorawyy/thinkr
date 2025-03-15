@@ -73,13 +73,13 @@ _(Placeholder for Jest coverage screenshot without mocks)_
 | **Non-Functional Requirement**  | **Location in Git**                              |
 | ------------------------------- | ------------------------------------------------ |
 | **Document Similarity Search Performance**          | [`backend\src\tests\nonfunctional\similaritySearchPerformance.test.ts`](#) |
-| **Document Upload and Study Material Generation Performance** | [`backend\src\tests\nonfunctional\documentStudyMaterialPerformance.test.ts`](#) |
+| **Document Upload and Study Material Generation Performance** | [`backend\src\tests\nonfunctional\quizGenerationPerformance.test.ts`](#) |
 
 ### 3.2. Test Verification and Logs
 
 - **Document Similarity Search Performance**
 
-  - **Verification:** This test simulates a single API call with Jest to the endpoint that performs a similarity search between different users' documents and returns the study materials that are most similar to what the caller has been studying. The focus is on the average time it takes for this similarity search to finish, which we identified as no more than 11.3 seconds based on our design specifications. The test logs capture the response time of the call to the endpoint and the performance margin (difference between response time and threshold time). We then analyze these logs to verify that performance standards are met and don't hinder user experience.
+  - **Verification:** This test simulates a single API call with Jest to the endpoint that performs a similarity search between different users' documents and returns the study materials that are most similar to what the caller has been studying. The focus is on the time it takes for this similarity search to finish, which we identified as no more than 11.3 seconds based on our design specifications. The test logs capture the response time of the call to the endpoint and the performance margin (difference between response time and threshold time). We then analyze these logs to verify that performance standards are met and don't hinder user experience.
 
   - **Log Output**
     ```
@@ -94,15 +94,21 @@ _(Placeholder for Jest coverage screenshot without mocks)_
       at src/tests/nonfunctional/similaritySearchPerformance.test.ts:29:17
 
     PASS  src/tests/nonfunctional/similaritySearchPerformance.test.ts (5.14 s)
-    NFR Suggested Materials Performance Test
-    √ should fetch suggested materials in less than 11.3 seconds (377 ms)
     ```
 
-- **Chat Data Security**
-  - **Verification:** ...
+- **Document Upload and Study Material Generation Performance**
+  - **Verification:** This test simulates a single API call with Jest to the endpoint that uploads a document to the application and polls the document endpoint to verify that quizzes and flashcards were generated. The focus is on the time it takes to upload a document and for quizzes and flashcards to be generated, which we identified as no more than 11.3 seconds based on our design specifications. The test logs capture the response time of the call to the endpoint and the performance margin (difference between response time and threshold time). We then analyze these logs to verify that performance standards are met and don't hinder user experience. **Note that currently, this NFR is not met as we are using a weaker OCR service from AWS Textract due to this project still being in the MVP phase.**
   - **Log Output**
     ```
-    [Placeholder for chat security test logs]
+    PERFORMANCE SUMMARY: Quiz/Flashcard Generation
+               -----------------------------------------------
+               ✧ Response Time:      17.34 seconds
+               ✧ Threshold:          11.3 seconds
+               ✧ Performance Margin: -6.04 seconds
+               ✧ Status:             FAILED ❌
+               -----------------------------------------------
+
+    at src/tests/nonfunctional/quizGenerationPerformance.test.ts:69:21
     ```
 
 ---
