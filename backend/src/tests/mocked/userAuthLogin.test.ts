@@ -1,137 +1,214 @@
-import request from 'supertest';
-import express from 'express';
-import { AuthPayload, Result } from '../../interfaces';
+import { Request, Response } from 'express';
+import { userAuthLogin } from '../../controllers/userAuthController';
+import { AuthPayload } from '../../interfaces';
 
-jest.mock('../../db/mongo/models/User', () => {
-    const mockFindOne = jest.fn();
-    const mockSave = jest.fn().mockResolvedValue(undefined);
-
-    function MockUser(this: any, userData: any) {
-        this.email = userData.email;
-        this.name = userData.name;
-        this.googleId = userData.googleId;
-        this.subscribed = userData.subscribed ?? false;
-        this.save = mockSave;
-    }
-
+jest.mock('../../services/userAuthService', () => {
     return {
         __esModule: true,
-        mockFindOne,
-        mockSave,
-        default: Object.assign(MockUser, {
-            findOne: mockFindOne,
-        }),
+        default: {
+            findCreateUser: jest
+                .fn()
+                .mockImplementation(async (authPayload: AuthPayload) => {
+                    if (authPayload.googleId === 'error-user') {
+                        throw new Error('Service error');
+                    }
+                    return {
+                        googleId: authPayload.googleId,
+                        name: authPayload.name,
+                        email: authPayload.email,
+                        subscribed:
+                            authPayload.googleId === 'existing-google-id'
+                                ? true
+                                : false,
+                    };
+                }),
+        },
     };
 });
 
-import authRouter from '../../routes/userAuthRoutes';
-const { mockFindOne, mockSave } = require('../../db/mongo/models/User');
+const userAuthService = require('../../services/userAuthService').default;
 
-const app = express();
-app.use(express.json());
-app.use('/auth', authRouter);
+describe('User Auth Controller', () => {
+    let mockRequest: Partial<Request>;
+    let mockResponse: Partial<Response>;
+    let jsonSpy: jest.Mock;
+    let statusSpy: jest.Mock;
 
-describe('User Auth Login (Mocked)', () => {
-    afterEach(() => {
+    beforeEach(() => {
         jest.clearAllMocks();
-    });
 
-    // Input: Valid googleId, name, and email for a new user
-    // Expected status code: 200
-    // Expected behavior: User.findOne called, new user saved
-    // Expected output: user object with provided data and subscribed=false
-    it('should create a new user when none exists', async () => {
-        mockFindOne.mockResolvedValue(null);
+        jsonSpy = jest.fn().mockReturnThis();
+        statusSpy = jest.fn().mockReturnValue({ json: jsonSpy });
 
-        const payload: AuthPayload = {
-            googleId: 'new-google-id',
-            name: 'New User',
-            email: 'new@example.com',
+        mockResponse = {
+            status: statusSpy,
+            json: jsonSpy,
         };
-
-        const response = await request(app)
-            .post('/auth/login')
-            .send(payload)
-            .expect(200);
-
-        const result = response.body as Result;
-        expect(result.data).toBeDefined();
-        expect(result.data.user).toBeDefined();
-        expect(result.data.user.googleId).toBe('new-google-id');
-        expect(result.data.user.name).toBe('New User');
-        expect(result.data.user.email).toBe('new@example.com');
-        expect(result.data.user.subscribed).toBe(false);
-
-        expect(mockFindOne).toHaveBeenCalledWith({ googleId: 'new-google-id' });
-        expect(mockSave).toHaveBeenCalled();
     });
 
-    // Input: Valid googleId, name, and email for an existing user
-    // Expected status code: 200
-    // Expected behavior: User.findOne called, no save operation
-    // Expected output: existing user object with correct subscription status
-    it('should return existing user when found', async () => {
-        mockFindOne.mockResolvedValue({
-            email: 'existing@example.com',
-            name: 'Existing User',
-            googleId: 'existing-google-id',
-            subscribed: true,
+    describe('userAuthLogin', () => {
+        // Input: Valid googleId, name, and email for a new user
+        // Expected status code: 200
+        // Expected behavior: User created via userAuthService
+        // Expected output: User object with provided data and subscribed=false
+        it('should create a new user successfully', async () => {
+            const authPayload = {
+                googleId: 'new-google-id',
+                name: 'New User',
+                email: 'new@example.com',
+            };
+
+            mockRequest = {
+                body: authPayload,
+            };
+
+            await userAuthLogin(
+                mockRequest as Request,
+                mockResponse as Response
+            );
+
+            expect(userAuthService.findCreateUser).toHaveBeenCalledWith(
+                authPayload
+            );
+            expect(statusSpy).toHaveBeenCalledWith(200);
+            expect(jsonSpy).toHaveBeenCalledWith({
+                data: {
+                    user: {
+                        googleId: authPayload.googleId,
+                        name: authPayload.name,
+                        email: authPayload.email,
+                        subscribed: false,
+                    },
+                },
+            });
         });
 
-        const payload: AuthPayload = {
-            googleId: 'existing-google-id',
-            name: 'Existing User',
-            email: 'existing@example.com',
-        };
+        // Input: Valid googleId, name, and email for an existing user
+        // Expected status code: 200
+        // Expected behavior: Existing user retrieved via userAuthService
+        // Expected output: User object with correct subscription status
+        it('should return existing user when found', async () => {
+            const authPayload = {
+                googleId: 'existing-google-id',
+                name: 'Existing User',
+                email: 'existing@example.com',
+            };
 
-        const response = await request(app)
-            .post('/auth/login')
-            .send(payload)
-            .expect(200);
+            mockRequest = {
+                body: authPayload,
+            };
 
-        const result = response.body as Result;
-        expect(result.data).toBeDefined();
-        expect(result.data.user).toBeDefined();
-        expect(result.data.user.googleId).toBe('existing-google-id');
-        expect(result.data.user.name).toBe('Existing User');
-        expect(result.data.user.email).toBe('existing@example.com');
-        expect(result.data.user.subscribed).toBe(true);
+            await userAuthLogin(
+                mockRequest as Request,
+                mockResponse as Response
+            );
 
-        expect(mockFindOne).toHaveBeenCalledWith({
-            googleId: 'existing-google-id',
+            expect(userAuthService.findCreateUser).toHaveBeenCalledWith(
+                authPayload
+            );
+            expect(statusSpy).toHaveBeenCalledWith(200);
+            expect(jsonSpy).toHaveBeenCalledWith({
+                data: {
+                    user: {
+                        googleId: authPayload.googleId,
+                        name: authPayload.name,
+                        email: authPayload.email,
+                        subscribed: true,
+                    },
+                },
+            });
         });
-        expect(mockSave).not.toHaveBeenCalled();
-    });
 
-    // Input: Missing required fields (googleId, name, or email)
-    // Expected status code: 400
-    // Expected behavior: validation error, no database queries
-    // Expected output: error message
-    it('should return 400 when required fields are missing', async () => {
-        await request(app)
-            .post('/auth/login')
-            .send({
-                name: 'Test User',
-                email: 'test@example.com',
-            })
-            .expect(400);
+        // Input: Missing required fields (googleId, name, or email)
+        // Expected status code: 400
+        // Expected behavior: Validation error, no service calls
+        // Expected output: Error message
+        it('should return 400 when required fields are missing', async () => {
+            mockRequest = {
+                body: {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                },
+            };
 
-        await request(app)
-            .post('/auth/login')
-            .send({
-                googleId: 'test-id',
-                email: 'test@example.com',
-            })
-            .expect(400);
+            await userAuthLogin(
+                mockRequest as Request,
+                mockResponse as Response
+            );
 
-        await request(app)
-            .post('/auth/login')
-            .send({
-                googleId: 'test-id',
-                name: 'Test User',
-            })
-            .expect(400);
+            expect(statusSpy).toHaveBeenCalledWith(400);
+            expect(jsonSpy).toHaveBeenCalledWith({
+                message: 'googleId, name, or email is missing or invalid',
+            });
+            expect(userAuthService.findCreateUser).not.toHaveBeenCalled();
 
-        expect(mockFindOne).not.toHaveBeenCalled();
+            mockRequest = {
+                body: {
+                    googleId: 'test-id',
+                    email: 'test@example.com',
+                },
+            };
+
+            await userAuthLogin(
+                mockRequest as Request,
+                mockResponse as Response
+            );
+
+            expect(statusSpy).toHaveBeenCalledWith(400);
+
+            mockRequest = {
+                body: {
+                    googleId: 'test-id',
+                    name: 'Test User',
+                },
+            };
+
+            await userAuthLogin(
+                mockRequest as Request,
+                mockResponse as Response
+            );
+
+            expect(statusSpy).toHaveBeenCalledWith(400);
+        });
+
+        // Input: Valid data but service throws error
+        // Expected status code: 500
+        // Expected behavior: Service call fails
+        // Expected output: Error message
+        it('should handle errors when service operation fails', async () => {
+            const authPayload = {
+                googleId: 'error-user',
+                name: 'Error User',
+                email: 'error@example.com',
+            };
+
+            mockRequest = {
+                body: authPayload,
+            };
+
+            const originalConsoleError = console.error;
+            console.error = jest.fn();
+
+            try {
+                await userAuthLogin(
+                    mockRequest as Request,
+                    mockResponse as Response
+                );
+
+                expect(statusSpy).toHaveBeenCalledWith(500);
+                expect(jsonSpy).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        message: expect.any(String),
+                    })
+                );
+            } catch (error) {
+            } finally {
+                console.error = originalConsoleError;
+            }
+
+            expect(userAuthService.findCreateUser).toHaveBeenCalledWith(
+                authPayload
+            );
+        });
     });
 });

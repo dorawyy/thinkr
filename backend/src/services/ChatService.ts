@@ -44,7 +44,28 @@ class ChatService {
             });
         }
 
-        return this.formatChatSession(session);
+        const formattedSession: ChatSessionDTO = {
+            userId: session.googleId,
+            messages: session.messages.map((msg) => ({
+                role: msg.role as string,
+                content: msg.content as string,
+                timestamp:
+                    msg.timestamp instanceof Date
+                        ? msg.timestamp.toISOString()
+                        : msg.timestamp,
+            })),
+            createdAt:
+                session.createdAt instanceof Date
+                    ? session.createdAt.toISOString()
+                    : session.createdAt,
+            updatedAt:
+                session.updatedAt instanceof Date
+                    ? session.updatedAt.toISOString()
+                    : session.updatedAt,
+            metadata: session.metadata as Record<string, string>,
+        };
+
+        return formattedSession;
     }
 
     /**
@@ -121,23 +142,6 @@ class ChatService {
             },
             { upsert: true }
         );
-    }
-
-    /**
-     * Format a chat session for the API response
-     */
-    private formatChatSession(session: any): ChatSessionDTO {
-        return {
-            userId: session.userId,
-            messages: session.messages.map((msg: any) => ({
-                role: msg.role as string,
-                content: msg.content as string,
-                timestamp: msg.timestamp,
-            })),
-            createdAt: session.createdAt,
-            updatedAt: session.updatedAt,
-            metadata: session.metadata,
-        } as ChatSessionDTO;
     }
 }
 

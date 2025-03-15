@@ -3,7 +3,7 @@
  */
 export interface Result {
     message?: string;
-    data?: any;
+    data?: unknown;
 }
 
 /**
@@ -67,7 +67,7 @@ export interface Quiz {
 }
 
 export interface ChatMessage {
-    role: 'system' | 'user' | 'assistant';
+    role: string;
     content: string;
     timestamp: string;
 }

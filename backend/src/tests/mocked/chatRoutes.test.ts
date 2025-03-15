@@ -1,6 +1,8 @@
 import request from 'supertest';
 import express from 'express';
 
+process.env.OPENAI_API_KEY = '123';
+
 jest.mock('../../services/ChatService', () => {
     const mockGetOrCreateUserChat = jest.fn();
     const mockSendMessage = jest.fn();
