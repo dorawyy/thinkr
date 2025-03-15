@@ -1,12 +1,14 @@
 package com.example.thinkr.data.repositories.subscription
 
 import com.example.thinkr.data.models.SubscriptionResponse
-import com.example.thinkr.data.remote.RemoteApi
+import com.example.thinkr.data.remote.subscription.SubscriptionApi
 
-class SubscriptionRepository(private val remoteApi: RemoteApi) : ISubscriptionRepository {
+class SubscriptionRepository(
+    private val subscriptionApi: SubscriptionApi
+) : ISubscriptionRepository {
     override suspend fun subscribe(userId: String): Result<SubscriptionResponse> {
         return try {
-            val response = remoteApi.subscribe(userId)
+            val response = subscriptionApi.subscribe(userId)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
@@ -15,7 +17,7 @@ class SubscriptionRepository(private val remoteApi: RemoteApi) : ISubscriptionRe
 
     override suspend fun getSubscriptionStatus(userId: String): Result<SubscriptionResponse> {
         return try {
-            val response = remoteApi.getSubscriptionStatus(userId)
+            val response = subscriptionApi.getSubscriptionStatus(userId)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)

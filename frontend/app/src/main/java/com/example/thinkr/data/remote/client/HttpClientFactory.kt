@@ -1,4 +1,4 @@
-package com.example.thinkr.data.remote
+package com.example.thinkr.data.remote.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
