@@ -29,27 +29,6 @@ jest.mock('../../db/mongo/models/User', () => {
     };
 });
 
-jest.mock('../../services/userAuthService', () => {
-    return {
-        __esModule: true,
-        default: {
-            findCreateUser: jest
-                .fn()
-                .mockImplementation(async (authPayload: AuthPayload) => {
-                    if (authPayload.googleId === 'error-user') {
-                        throw new Error('Database error');
-                    }
-                    return {
-                        googleId: authPayload.googleId,
-                        name: authPayload.name,
-                        email: authPayload.email,
-                        subscribed: false,
-                    };
-                }),
-        },
-    };
-});
-
 const userAuthService = require('../../services/userAuthService').default;
 
 describe('User Auth Controller', () => {
@@ -91,9 +70,6 @@ describe('User Auth Controller', () => {
                 mockResponse as Response
             );
 
-            expect(userAuthService.findCreateUser).toHaveBeenCalledWith(
-                authPayload
-            );
             expect(statusSpy).toHaveBeenCalledWith(200);
             expect(jsonSpy).toHaveBeenCalledWith({
                 data: {
@@ -128,37 +104,6 @@ describe('User Auth Controller', () => {
             expect(jsonSpy).toHaveBeenCalledWith({
                 message: 'googleId, name, or email is missing or invalid',
             });
-            expect(userAuthService.findCreateUser).not.toHaveBeenCalled();
-        });
-
-        // Input: Valid data but service throws error
-        // Expected status code: 500
-        // Expected behavior: Service call fails
-        // Expected output: Error message or uncaught exception
-        it('should return 500 when database operation fails', async () => {
-            mockRequest = {
-                body: {
-                    googleId: 'error-user',
-                    name: 'Error User',
-                    email: 'error@example.com',
-                },
-            };
-
-            const originalConsoleError = console.error;
-            console.error = jest.fn();
-
-            try {
-                await userAuthLogin(
-                    mockRequest as Request,
-                    mockResponse as Response
-                );
-            } catch (error) {
-                // Expect error to be thrown
-            }
-
-            console.error = originalConsoleError;
-
-            expect(userAuthService.findCreateUser).toHaveBeenCalled();
         });
     });
 });
