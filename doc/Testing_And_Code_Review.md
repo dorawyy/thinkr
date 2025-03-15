@@ -50,6 +50,7 @@
    - `npm install`
    - `npm run build`
    - `npm run test` OR `npm run test:coverage` (with code coverage)
+   - NOTE: for non-functional tests, you will need an environment variable in a `.env` file in the `backend` directory, please contact the team for this variable when needed
 
 ### 2.2. GitHub Actions Configuration Location
 
@@ -59,11 +60,11 @@
 
 ### 2.3. Jest Coverage Report Screenshots With Mocks
 
-_(Placeholder for Jest coverage screenshot with mocks enabled)_
+![Mocked Coverage](./image/mocked-coverage.png)
 
 ### 2.4. Jest Coverage Report Screenshots Without Mocks
 
-_(Placeholder for Jest coverage screenshot without mocks)_
+![Unmocked Coverage](./image/unmocked-coverage.png)
 
 ---
 
