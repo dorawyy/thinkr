@@ -208,7 +208,7 @@ class RAGService {
                 filter
             );
 
-            return docs ?? [];
+            return docs ?? ([] as Document[]);
         } catch (error) {
             console.error('Error fetching relevant documents:', error);
             throw new Error('Failed to fetch relevant documents');
@@ -346,7 +346,7 @@ class RAGService {
 
             const results = await this.vectorStore.similaritySearch(query, 5);
 
-            return results.map((doc) => doc.pageContent).join('\n\n');
+            return results.map((doc): string => doc.pageContent).join('\n\n');
         } catch (error) {
             console.error('Error getting context from RAG:', error);
             return 'Unable to retrieve context from your documents.';

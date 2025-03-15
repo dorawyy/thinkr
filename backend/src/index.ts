@@ -6,10 +6,8 @@ import studyRouter from './routes/studyRoutes';
 import connectMongoDB from './db/mongo/connection';
 import chatRouter from './routes/chatRoutes';
 import subsriptionRouter from './routes/subscriptionRoutes';
-import { validateEnv } from './config/env';
 
 dotenv.config();
-void validateEnv();
 
 const PORT = 3000;
 const app = express();

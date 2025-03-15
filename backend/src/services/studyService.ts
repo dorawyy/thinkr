@@ -8,19 +8,20 @@ import FlashcardSet from '../db/mongo/models/FlashcardSet';
 import QuizSet from '../db/mongo/models/QuizSet';
 import DocumentService from './documentService';
 import Document from '../db/mongo/models/Document';
+import { getEnvVariable } from '../config/env';
 
 class StudyService {
     private llm: ChatOpenAI;
     private ragService: RAGService;
     constructor() {
         this.llm = new ChatOpenAI({
-            openAIApiKey: process.env.OPENAI_API_KEY,
+            openAIApiKey: getEnvVariable('OPENAI_API_KEY'),
             temperature: 0.7,
             // model: 'gpt-4'
         });
         this.ragService = new RAGService({
-            openAIApiKey: process.env.OPENAI_API_KEY!,
-            vectorStoreUrl: process.env.VECTOR_STORE_URL!,
+            openAIApiKey: getEnvVariable('OPENAI_API_KEY'),
+            vectorStoreUrl: getEnvVariable('VECTOR_STORE_URL'),
         });
     }
 
@@ -427,7 +428,7 @@ class StudyService {
             const embeddings = new (
                 await import('@langchain/openai')
             ).OpenAIEmbeddings({
-                openAIApiKey: process.env.OPENAI_API_KEY!,
+                openAIApiKey: getEnvVariable('OPENAI_API_KEY'),
             });
 
             // Get embeddings for both texts

@@ -3,6 +3,7 @@ import ChatSession from '../db/mongo/models/Chat';
 import { ChatMessage, ChatSessionDTO } from '../interfaces';
 import { ChatOpenAI } from '@langchain/openai';
 import RAGService from './RAGService';
+import { getEnvVariable } from '../config/env';
 
 class ChatService {
     private llm: ChatOpenAI;
@@ -10,12 +11,12 @@ class ChatService {
 
     constructor() {
         this.llm = new ChatOpenAI({
-            openAIApiKey: process.env.OPENAI_API_KEY,
+            openAIApiKey: getEnvVariable('OPENAI_API_KEY'),
             temperature: 0.7,
         });
         this.ragService = new RAGService({
-            openAIApiKey: process.env.OPENAI_API_KEY!,
-            vectorStoreUrl: process.env.VECTOR_STORE_URL!,
+            openAIApiKey: getEnvVariable('OPENAI_API_KEY'),
+            vectorStoreUrl: getEnvVariable('VECTOR_STORE_URL'),
         });
     }
 

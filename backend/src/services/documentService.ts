@@ -11,6 +11,7 @@ import {
     StartDocumentTextDetectionCommand,
     GetDocumentTextDetectionCommand,
 } from '@aws-sdk/client-textract';
+import { getEnvVariable } from '../config/env';
 
 dotenv.config();
 
@@ -22,19 +23,19 @@ class DocumentService {
 
     constructor() {
         this.s3Client = new S3Client({
-            region: process.env.AWS_REGION,
+            region: getEnvVariable('AWS_REGION'),
             credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+                accessKeyId: getEnvVariable('AWS_ACCESS_KEY_ID'),
+                secretAccessKey: getEnvVariable('AWS_SECRET_ACCESS_KEY'),
             },
         });
-        this.bucketName = process.env.S3_BUCKET_NAME!;
+        this.bucketName = getEnvVariable('S3_BUCKET_NAME');
         this.date = new Date();
         this.textractClient = new TextractClient({
-            region: process.env.AWS_REGION,
+            region: getEnvVariable('AWS_REGION'),
             credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+                accessKeyId: getEnvVariable('AWS_ACCESS_KEY_ID'),
+                secretAccessKey: getEnvVariable('AWS_SECRET_ACCESS_KEY'),
             },
         });
     }
@@ -133,13 +134,13 @@ class DocumentService {
      */
     public async getDocuments(userId: string): Promise<DocumentDTO[]> {
         const allKeys = (await Document.find({ userId: userId })).map(
-            (doc) => doc.documentId
+            (doc): string => doc.documentId
         );
         const documents = await Promise.all(
-            allKeys.map((key) => this.getDocument(key, userId))
+            allKeys.map((key: string) => this.getDocument(key, userId))
         );
 
-        return documents;
+        return documents as DocumentDTO[];
     }
 
     /**

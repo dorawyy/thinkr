@@ -4,10 +4,11 @@ import {
     subscribe,
     unsubscribe,
 } from '../controllers/subscriptionController';
+import asyncHandler from '../utils/asyncHandler';
 
 const router = Router();
 
-router.post('/', subscribe);
-router.delete('/', unsubscribe);
-router.get('/', getSubscriptionStatus);
+router.post('/', asyncHandler(subscribe));
+router.delete('/', asyncHandler(unsubscribe));
+router.get('/', asyncHandler(getSubscriptionStatus));
 export default router;
