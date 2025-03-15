@@ -85,15 +85,6 @@ class DocumentUploadViewModel(
                     ).show()
                 }
                 e.printStackTrace()
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
             }
         }
     }
@@ -135,7 +126,25 @@ class DocumentUploadViewModel(
                         ).show()
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
+            } catch (e: ResponseException) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.printStackTrace()
+            } catch (e: SerializationException) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,

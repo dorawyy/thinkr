@@ -25,9 +25,6 @@ class AuthRepository(private val authApi: AuthApi) : IAuthRepository {
         } catch (e: SerializationException) {
             e.printStackTrace()
             Result.failure(e)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.failure(e)
         }
     }
 }

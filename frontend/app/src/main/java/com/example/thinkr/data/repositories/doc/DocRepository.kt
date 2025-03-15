@@ -71,11 +71,6 @@ class DocRepository(
                 it.documentId != tempDocument.documentId
             }
             e.printStackTrace()
-        } catch (e: Exception) {
-            _uploadingDocuments.value = _uploadingDocuments.value.filter {
-                it.documentId != tempDocument.documentId
-            }
-            e.printStackTrace()
         }
 
         return false
@@ -87,7 +82,15 @@ class DocRepository(
     ): SuggestedMaterials {
         return try {
             studyApi.getSuggestedMaterials(userId, limit)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Log.e("DocRepository", "Error fetching suggested materials", e)
+            e.printStackTrace()
+            SuggestedMaterials(emptyList(), emptyList())
+        } catch (e: ResponseException) {
+            Log.e("DocRepository", "Error fetching suggested materials", e)
+            e.printStackTrace()
+            SuggestedMaterials(emptyList(), emptyList())
+        } catch (e: SerializationException) {
             Log.e("DocRepository", "Error fetching suggested materials", e)
             e.printStackTrace()
             SuggestedMaterials(emptyList(), emptyList())

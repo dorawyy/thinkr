@@ -18,8 +18,6 @@ class ChatRepository(private val chatApi: ChatApi) : IChatRepository {
             Result.failure(e)
         } catch (e: SerializationException) {
             Result.failure(e)
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
@@ -33,8 +31,6 @@ class ChatRepository(private val chatApi: ChatApi) : IChatRepository {
             Result.failure(e)
         } catch (e: SerializationException) {
             Result.failure(e)
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
@@ -47,8 +43,6 @@ class ChatRepository(private val chatApi: ChatApi) : IChatRepository {
         } catch (e: ResponseException) {
             Result.failure(e)
         } catch (e: SerializationException) {
-            Result.failure(e)
-        } catch (e: Exception) {
             Result.failure(e)
         }
     }
