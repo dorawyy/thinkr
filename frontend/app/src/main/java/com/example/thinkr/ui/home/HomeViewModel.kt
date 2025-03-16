@@ -105,13 +105,13 @@ class HomeViewModel(
                 )
                 _state.update { it.copy(suggestedMaterials = suggestedMaterials) }
             } catch (e: IOException) {
-                Log.e("HomeScreenViewModel", "Network error getting suggested materials", e)
+                Log.e(TAG, "Network error getting suggested materials", e)
                 e.printStackTrace()
             } catch (e: ResponseException) {
-                Log.e("HomeScreenViewModel", "API error getting suggested materials", e)
+                Log.e(TAG, "API error getting suggested materials", e)
                 e.printStackTrace()
             } catch (e: SerializationException) {
-                Log.e("HomeScreenViewModel", "Parsing error getting suggested materials", e)
+                Log.e(TAG, "Parsing error getting suggested materials", e)
                 e.printStackTrace()
             }
         }
@@ -122,5 +122,9 @@ class HomeViewModel(
      */
     fun signOut() {
         userRepository.delUser()
+    }
+
+    companion object {
+        private const val TAG = "HomeViewModel"
     }
 }

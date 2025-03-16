@@ -35,6 +35,17 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class ChatScreenTest {
+    companion object {
+        const val TAG = "COMPOSE_TREE"
+        const val TEST_USER_ID = "test_user_id"
+        const val TEST_CHAT_CREATE_DATE = "2021-09-01T00:00:00Z"
+        const val TEST_CHAT_UPDATE_DATE = "2021-09-01"
+        val TEST_CHAT_MESSAGE_USER = ChatMessage("user", "Hello AI", TEST_CHAT_CREATE_DATE)
+        val TEST_CHAT_MESSAGE_ASSISTANT = ChatMessage("assistant", "Hello User", TEST_CHAT_CREATE_DATE)
+        const val SEND_MESSAGE = "Send Message"
+        const val MESSAGE_BOX = "Type a message"
+    }
+
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -51,7 +62,7 @@ internal class ChatScreenTest {
 
         // Mock user repository to return a valid user
         every { userRepository.getUser() } returns mockk(relaxed = true) {
-            every { googleId } returns "test_user_id"
+            every { googleId } returns TEST_USER_ID
         }
 
         // Mock successful chat history retrieval
@@ -60,11 +71,11 @@ internal class ChatScreenTest {
         } returns Result.success(
             ChatData(
                 messages = listOf(
-                    ChatMessage("user", "Hello AI", "12345"),
-                    ChatMessage("assistant", "Hello User", "12346")
+                    TEST_CHAT_MESSAGE_USER,
+                    TEST_CHAT_MESSAGE_ASSISTANT
                 ),
-                createdAt = "2021-09-01T00:00:00Z",
-                updatedAt = "2021-09-01",
+                createdAt = TEST_CHAT_CREATE_DATE,
+                updatedAt = TEST_CHAT_UPDATE_DATE,
                 metadata = emptyMap()
             )
         )
@@ -79,14 +90,14 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Verify screen elements
         composeTestRule.onNodeWithText("Chat").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hello AI").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hello User").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Type a message").assertIsDisplayed()
-        composeTestRule.onNode(hasContentDescription("Send Message")).assertIsDisplayed()
+        composeTestRule.onNodeWithText(MESSAGE_BOX).assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription(SEND_MESSAGE)).assertIsDisplayed()
     }
 
     @Test
@@ -111,11 +122,11 @@ internal class ChatScreenTest {
         } returns Result.success(
             ChatData(
                 messages = listOf(
-                    ChatMessage("user", "Hello AI", "12345"),
-                    ChatMessage("assistant", "Hello User", "12346")
+                    TEST_CHAT_MESSAGE_USER,
+                    TEST_CHAT_MESSAGE_ASSISTANT
                 ),
-                createdAt = "2021-09-01T00:00:00Z",
-                updatedAt = "2021-09-01",
+                createdAt = TEST_CHAT_CREATE_DATE,
+                updatedAt = TEST_CHAT_UPDATE_DATE,
                 metadata = emptyMap()
             )
         )
@@ -139,13 +150,13 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Enter message text
-        composeTestRule.onNodeWithText("Type a message").performTextInput("Hello AI")
+        composeTestRule.onNodeWithText(MESSAGE_BOX).performTextInput("Hello AI")
 
         // Send message
-        composeTestRule.onNode(hasContentDescription("Send Message")).performClick()
+        composeTestRule.onNode(hasContentDescription(SEND_MESSAGE)).performClick()
 
         // Wait for message to be added
         sleep(1_000)
@@ -187,7 +198,7 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Verify error state
         // Note: In the actual implementation, you might want to add a test tag for the error message
@@ -218,11 +229,11 @@ internal class ChatScreenTest {
         } returns Result.success(
             ChatData(
                 messages = listOf(
-                    ChatMessage("user", "Hello AI", "12345"),
-                    ChatMessage("assistant", "Hello User", "12346")
+                    TEST_CHAT_MESSAGE_USER,
+                    TEST_CHAT_MESSAGE_ASSISTANT
                 ),
-                createdAt = "2021-09-01T00:00:00Z",
-                updatedAt = "2021-09-01",
+                createdAt = TEST_CHAT_CREATE_DATE,
+                updatedAt = TEST_CHAT_UPDATE_DATE,
                 metadata = emptyMap()
             )
         )
@@ -242,7 +253,7 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Verify messages are initially displayed
         composeTestRule.onNodeWithText("Hello AI").assertIsDisplayed()
@@ -276,11 +287,11 @@ internal class ChatScreenTest {
         } returns Result.success(
             ChatData(
                 messages = listOf(
-                    ChatMessage("user", "Hello AI", "12345"),
-                    ChatMessage("assistant", "Hello User", "12346")
+                    TEST_CHAT_MESSAGE_USER,
+                    TEST_CHAT_MESSAGE_ASSISTANT
                 ),
-                createdAt = "2021-09-01T00:00:00Z",
-                updatedAt = "2021-09-01",
+                createdAt = TEST_CHAT_CREATE_DATE,
+                updatedAt = TEST_CHAT_UPDATE_DATE,
                 metadata = emptyMap()
             )
         )
@@ -295,7 +306,7 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Click back button
         composeTestRule.onNode(hasContentDescription("Back")).performClick()
@@ -328,11 +339,11 @@ internal class ChatScreenTest {
         } returns Result.success(
             ChatData(
                 messages = listOf(
-                    ChatMessage("user", "Hello AI", "12345"),
-                    ChatMessage("assistant", "Hello User", "12346")
+                    TEST_CHAT_MESSAGE_USER,
+                    TEST_CHAT_MESSAGE_ASSISTANT
                 ),
-                createdAt = "2021-09-01T00:00:00Z",
-                updatedAt = "2021-09-01",
+                createdAt = TEST_CHAT_CREATE_DATE,
+                updatedAt = TEST_CHAT_UPDATE_DATE,
                 metadata = emptyMap()
             )
         )
@@ -347,10 +358,10 @@ internal class ChatScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
         // Don't enter any text, just click send
-        composeTestRule.onNode(hasContentDescription("Send Message")).performClick()
+        composeTestRule.onNode(hasContentDescription(SEND_MESSAGE)).performClick()
 
         // Verify no message was sent (no repository call)
         verify(exactly = 0) { runTest { chatRepository.sendMessage(any(), any()) } }
@@ -397,17 +408,17 @@ internal class ChatScreenTest {
         composeTestRule.waitForIdle()
         sleep(5_000)
 
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = TAG)
 
-        var lenOfMessages = viewModel.state.value.messages.size
+        val lenOfMessages = viewModel.state.value.messages.size
         println("Initial number of messages: $lenOfMessages")
 
         // Enter message text
-        composeTestRule.onNodeWithText("Type a message")
+        composeTestRule.onNodeWithText(MESSAGE_BOX)
             .performTextInput("What is Quantum Computing?")
 
         // Send message
-        composeTestRule.onNode(hasContentDescription("Send Message")).performClick()
+        composeTestRule.onNode(hasContentDescription(SEND_MESSAGE)).performClick()
 
         // Wait for response
         composeTestRule.waitForIdle()

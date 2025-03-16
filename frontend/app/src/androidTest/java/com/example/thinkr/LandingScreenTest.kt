@@ -16,6 +16,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class LandingScreenTest : BaseLandingScreenTest() {
+    companion object {
+        const val GOOGLE_SIGN_IN_BUTTON = "google_sign_in_button"
+    }
     @Test
     fun landingScreen_loginSuccess() {
         setUpLandingScreenLoginSuccess()
@@ -30,11 +33,11 @@ internal class LandingScreenTest : BaseLandingScreenTest() {
             .onNodeWithText(text = "Welcome to Thinkr")
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithTag(testTag = "google_sign_in_button")
+            .onNodeWithTag(testTag = GOOGLE_SIGN_IN_BUTTON)
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithTag(testTag = "google_sign_in_button")
+            .onNodeWithTag(testTag = GOOGLE_SIGN_IN_BUTTON)
             .performClick()
 
         composeTestRule.waitForIdle()
@@ -59,11 +62,11 @@ internal class LandingScreenTest : BaseLandingScreenTest() {
             .onNodeWithText(text = "Welcome to Thinkr")
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithTag(testTag = "google_sign_in_button")
+            .onNodeWithTag(testTag = GOOGLE_SIGN_IN_BUTTON)
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithTag(testTag = "google_sign_in_button")
+            .onNodeWithTag(testTag = GOOGLE_SIGN_IN_BUTTON)
             .performClick()
 
         composeTestRule.waitForIdle()

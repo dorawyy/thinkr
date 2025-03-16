@@ -40,8 +40,8 @@ sealed interface Route {
     @Serializable
     data class DocumentOptions(val documentItem: Document) : Route {
         internal companion object {
-            const val ROUTE = "documentOptions/{documentJson}"
-            const val ARGUMENT = "documentJson"
+            const val ROUTE = "documentOptions/{$DOCUMENT_JSON}"
+            const val ARGUMENT = DOCUMENT_JSON
 
             /**
              * Creates a route string with the document parameter encoded as JSON.
@@ -51,7 +51,7 @@ sealed interface Route {
              */
             fun createRoute(document: Document): String {
                 val json = Json.encodeToString(document)
-                return ROUTE.replace("{documentJson}", Uri.encode(json))
+                return ROUTE.replace("{$DOCUMENT_JSON}", Uri.encode(json))
             }
         }
     }
@@ -100,8 +100,8 @@ sealed interface Route {
     @Serializable
     data class Flashcards(val documentItem: Document? = null, val flashcardSuggestion: String? = null) : Route {
         internal companion object {
-            const val ROUTE = "flashcards/{documentJson}/{flashcardSuggestion}"
-            const val DOCUMENT_ARGUMENT = "documentJson"
+            const val ROUTE = "flashcards/{$DOCUMENT_JSON}/{flashcardSuggestion}"
+            const val DOCUMENT_ARGUMENT = DOCUMENT_JSON
             const val FLASHCARD_ARGUMENT = "flashcardSuggestion"
 
             /**
@@ -116,7 +116,7 @@ sealed interface Route {
                 val flashcardJson = flashcardSuggestion ?: ""
 
                 return ROUTE
-                    .replace("{documentJson}", Uri.encode(docJson))
+                    .replace("{$DOCUMENT_JSON}", Uri.encode(docJson))
                     .replace("{flashcardSuggestion}", Uri.encode(flashcardJson))
             }
         }
@@ -131,8 +131,8 @@ sealed interface Route {
     @Serializable
     data class Quiz(val documentItem: Document? = null, val quizSuggestion: String? = null) : Route {
         internal companion object {
-            const val ROUTE = "quiz/{documentJson}/{quizSuggestion}"
-            const val DOCUMENT_ARGUMENT = "documentJson"
+            const val ROUTE = "quiz/{$DOCUMENT_JSON}/{quizSuggestion}"
+            const val DOCUMENT_ARGUMENT = DOCUMENT_JSON
             const val QUIZ_ARGUMENT = "quizSuggestion"
 
             /**
@@ -147,7 +147,7 @@ sealed interface Route {
                 val quizJson = quizSuggestion ?: ""
 
                 return ROUTE
-                    .replace("{documentJson}", Uri.encode(docJson))
+                    .replace("{$DOCUMENT_JSON}", Uri.encode(docJson))
                     .replace("{quizSuggestion}", Uri.encode(quizJson))
             }
         }
@@ -161,8 +161,8 @@ sealed interface Route {
     @Serializable
     data class Chat(val documentItem: Document) : Route {
         internal companion object {
-            const val ROUTE = "chat/{documentJson}"
-            const val ARGUMENT = "documentJson"
+            const val ROUTE = "chat/{$DOCUMENT_JSON}"
+            const val ARGUMENT = DOCUMENT_JSON
 
             /**
              * Creates a route string with the document parameter.
@@ -172,8 +172,12 @@ sealed interface Route {
              */
             fun createRoute(document: Document): String {
                 val json = Json.encodeToString(document)
-                return ROUTE.replace("{documentJson}", Uri.encode(json))
+                return ROUTE.replace("{$DOCUMENT_JSON}", Uri.encode(json))
             }
         }
+    }
+
+    companion object {
+        const val DOCUMENT_JSON = "documentJson"
     }
 }

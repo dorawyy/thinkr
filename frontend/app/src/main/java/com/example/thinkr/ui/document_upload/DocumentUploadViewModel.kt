@@ -63,6 +63,7 @@ class DocumentUploadViewModel(
         context: Context
     ) {
         val userId = userRepository.getUser()!!.googleId
+        val errorPrefix = "Error: "
         viewModelScope.launch {
             try {
                 val inputStream = context.contentResolver.openInputStream(uri)
@@ -96,7 +97,7 @@ class DocumentUploadViewModel(
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,
-                        "Error: ${e.message}",
+                        errorPrefix + e.message,
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -105,7 +106,7 @@ class DocumentUploadViewModel(
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,
-                        "Error: ${e.message}",
+                        errorPrefix + e.message,
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -114,7 +115,7 @@ class DocumentUploadViewModel(
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,
-                        "Error: ${e.message}",
+                        errorPrefix + e.message,
                         Toast.LENGTH_LONG
                     ).show()
                 }

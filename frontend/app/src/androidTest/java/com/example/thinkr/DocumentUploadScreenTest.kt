@@ -38,6 +38,14 @@ import java.lang.Thread.sleep
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class DocumentUploadScreenTest {
+    companion object {
+        private const val COMPOSE_TREE = "COMPOSE_TREE"
+        private const val NAME_FIELD = "Name"
+        private const val CONTEXT_FIELD = "Context"
+        private const val UPLOAD_BUTTON = "Upload"
+        private const val TEST_USER_ID = "test_user_id"
+    }
+
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -61,7 +69,7 @@ internal class DocumentUploadScreenTest {
 
         // Mock user repository to return a valid user
         every { userRepository.getUser() } returns mockk(relaxed = true) {
-            every { googleId } returns "test_user_id"
+            every { googleId } returns TEST_USER_ID
         }
 
         // Mock document repository to return success
@@ -86,18 +94,18 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Verify initial screen state
         composeTestRule.onNodeWithText("Upload Document").assertIsDisplayed()
         composeTestRule.onNode(hasContentDescription("Logo")).assertIsDisplayed()
 
         // Enter document name and context
-        composeTestRule.onNodeWithText("Name").performTextInput("Test Document")
-        composeTestRule.onNodeWithText("Context").performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
 
         // Click upload button
-        composeTestRule.onNodeWithText("Upload").performClick()
+        composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
 
         // Verify navigation to home screen
         verify { navController.navigate(Route.Home) }
@@ -117,7 +125,7 @@ internal class DocumentUploadScreenTest {
 
         // Mock user repository to return a valid user
         every { userRepository.getUser() } returns mockk(relaxed = true) {
-            every { googleId } returns "test_user_id"
+            every { googleId } returns TEST_USER_ID
         }
 
         // Setup content
@@ -131,12 +139,12 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Don't enter a document name (leave it blank)
 
         // Click upload button
-        composeTestRule.onNodeWithText("Upload").performClick()
+        composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
 
         // Verify no navigation happened
         verify(exactly = 0) { navController.navigate(any<String>()) }
@@ -156,7 +164,7 @@ internal class DocumentUploadScreenTest {
 
         // Mock user repository to return a valid user
         every { userRepository.getUser() } returns mockk(relaxed = true) {
-            every { googleId } returns "test_user_id"
+            every { googleId } returns TEST_USER_ID
         }
 
         // Mock document repository to return failure
@@ -181,14 +189,14 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Enter document name and context
-        composeTestRule.onNodeWithText("Name").performTextInput("Test Document")
-        composeTestRule.onNodeWithText("Context").performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
 
         // Click upload button
-        composeTestRule.onNodeWithText("Upload").performClick()
+        composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
 
         // Verify no navigation happened and error toast was shown
         verify(exactly = 0) { navController.navigate(any<String>()) }
@@ -208,7 +216,7 @@ internal class DocumentUploadScreenTest {
 
         // Mock user repository to return a valid user
         every { userRepository.getUser() } returns mockk(relaxed = true) {
-            every { googleId } returns "test_user_id"
+            every { googleId } returns TEST_USER_ID
         }
 
         // Mock document repository to throw an exception
@@ -233,14 +241,14 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Enter document name and context
-        composeTestRule.onNodeWithText("Name").performTextInput("Test Document")
-        composeTestRule.onNodeWithText("Context").performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
 
         // Click upload button
-        composeTestRule.onNodeWithText("Upload").performClick()
+        composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
 
         // Verify no navigation happened and error toast was shown
         verify(exactly = 0) { navController.navigate(any<String>()) }
@@ -269,7 +277,7 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Click back button
         composeTestRule.onNode(hasContentDescription("Back")).performClick()
@@ -301,15 +309,15 @@ internal class DocumentUploadScreenTest {
 
         // Debug the composition tree
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Create test strings that exceed the max length
         val longName = "a".repeat(DocumentUploadViewModel.MAX_NAME_LENGTH + 10)
         val longContext = "a".repeat(DocumentUploadViewModel.MAX_CONTEXT_LENGTH + 10)
 
         // Enter document name and context
-        composeTestRule.onNodeWithText("Name").performTextInput(longName)
-        composeTestRule.onNodeWithText("Context").performTextInput(longContext)
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput(longName)
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput(longContext)
 
         // Verify the input is limited
         // Note: Due to the nature of the compose test, we can't directly verify the field values
@@ -366,18 +374,18 @@ internal class DocumentUploadScreenTest {
         // Debug the composition tree
         composeTestRule.waitForIdle()
 
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Verify initial screen state
         composeTestRule.onNodeWithText("Upload Document").assertIsDisplayed()
         composeTestRule.onNode(hasContentDescription("Logo")).assertIsDisplayed()
 
         // Enter document name and context
-        composeTestRule.onNodeWithText("Name").performTextInput("Test Document")
-        composeTestRule.onNodeWithText("Context").performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
 
         // Click upload button
-        composeTestRule.onNodeWithText("Upload").performClick()
+        composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
 
         composeTestRule.waitForIdle()
 
