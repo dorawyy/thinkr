@@ -35,13 +35,13 @@ The Android app implements a Model-View-ViewModel inspired layer architecture ou
 
 The system uses ChromaDB to store document embeddings with the following architecture:
 
-- **User-Specific Collections**: Each user has their own ChromaDB collection named `user_{userId}`
+- **User-Specific Collections**: Each user has their own ChromaDB collection named `user_{userId}`.
 - **Document Metadata**: Documents within a collection are tagged with metadata including:
-  - `userId`: The owner of the document
-  - `documentId`: The identifier of the document
-  - `chunkIndex`: Position of the chunk within the document
-- **Document Chunking**: Large documents are split into manageable chunks for better retrieval
-- **Filtering**: Queries can be filtered to specific documents or search across all user documents
+  - `userId`: The owner of the document.
+  - `documentId`: The identifier of the document.
+  - `chunkIndex`: Position of the chunk within the document.
+- **Document Chunking**: Large documents are split into manageable chunks for better retrieval.
+- **Filtering**: Queries can be filtered to specific documents or search across all user documents.
 
 ## API Endpoints
 
