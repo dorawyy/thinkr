@@ -10,7 +10,24 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
+/**
+ * Implementation of the authentication API interface.
+ *
+ * Handles network requests related to user authentication.
+ *
+ * @property client The HTTP client used to make network requests.
+ */
 class AuthApi(private val client: HttpClient) : IAuthApi {
+    /**
+     * Authenticates a user by logging them in.
+     *
+     * Makes a POST request to the login endpoint with the user credentials.
+     *
+     * @param userId The unique identifier of the user to authenticate.
+     * @param name The name of the user.
+     * @param email The email address of the user.
+     * @return AuthResponse containing authentication details and status.
+     */
     override suspend fun login(userId: String, name: String, email: String): AuthResponse {
         val response = client.post(urlString = BASE_URL + AUTH + LOGIN) {
             contentType(ContentType.Application.Json)

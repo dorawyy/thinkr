@@ -11,7 +11,23 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
+/**
+ * Implementation of the subscription API interface.
+ *
+ * Handles network requests related to user subscriptions including
+ * subscribing users and retrieving their subscription status.
+ *
+ * @property client The HTTP client used to make network requests.
+ */
 class SubscriptionApi(private val client: HttpClient) : ISubscriptionApi {
+    /**
+     * Subscribes a user to the premium service.
+     *
+     * Makes a POST request to the subscription endpoint with the user's ID.
+     *
+     * @param userId The unique identifier of the user to subscribe.
+     * @return SubscriptionResponse containing subscription details and status.
+     */
     override suspend fun subscribe(
         userId: String
     ): SubscriptionResponse {
@@ -23,6 +39,14 @@ class SubscriptionApi(private val client: HttpClient) : ISubscriptionApi {
         return Json.decodeFromString(responseBody)
     }
 
+    /**
+     * Retrieves the current subscription status for a user.
+     *
+     * Makes a GET request to the subscription endpoint with the user's ID as a parameter.
+     *
+     * @param userId The unique identifier of the user whose subscription status to check.
+     * @return SubscriptionResponse containing subscription details and status.
+     */
     override suspend fun getSubscriptionStatus(
         userId: String
     ): SubscriptionResponse {

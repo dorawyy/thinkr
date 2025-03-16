@@ -20,7 +20,25 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 
+/**
+ * Implementation of the document API interface.
+ *
+ * Handles network requests related to document operations including
+ * retrieving user documents and uploading new documents.
+ *
+ * @property client The HTTP client used to make network requests.
+ */
 class DocumentApi(private val client: HttpClient) : IDocumentApi {
+    /**
+     * Retrieves documents for a specific user.
+     *
+     * Makes a GET request to the document retrieve endpoint with the user's ID and
+     * optional document IDs as parameters.
+     *
+     * @param userId The unique identifier of the user whose documents to retrieve.
+     * @param documentIds Optional list of specific document IDs to retrieve. If null, returns all user documents.
+     * @return List of Document objects belonging to the user.
+     */
     override suspend fun getDocuments(
         userId: String,
         documentIds: List<String>?
@@ -41,6 +59,19 @@ class DocumentApi(private val client: HttpClient) : IDocumentApi {
         return docs?.map { Json.decodeFromJsonElement(Document.serializer(), it) } ?: emptyList()
     }
 
+    /**
+     * Uploads a document to the server.
+     *
+     * Makes a POST request to the document upload endpoint with the file content
+     * and metadata as a multipart form.
+     *
+     * @param fileBytes The binary content of the file to upload.
+     * @param fileName The name of the file being uploaded.
+     * @param userId The unique identifier of the user uploading the document.
+     * @param documentName The display name for the document.
+     * @param documentContext Additional context information about the document.
+     * @return UploadResponse containing the status and details of the upload operation.
+     */
     override suspend fun uploadDocument(
         fileBytes: ByteArray,
         fileName: String,

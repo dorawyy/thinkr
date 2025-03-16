@@ -13,7 +13,25 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+/**
+ * Factory for creating configured HTTP clients.
+ *
+ * Provides a standard way to create and configure HttpClient instances with
+ * common plugins and settings for API communication.
+ */
 object HttpClientFactory {
+    /**
+     * Creates a configured HTTP client with the specified engine.
+     *
+     * Configures the client with:
+     * - Content negotiation for JSON serialization/deserialization
+     * - Timeout settings for socket and request operations
+     * - Logging of HTTP requests and responses
+     * - Default content type set to application/json
+     *
+     * @param engine The HTTP client engine implementation to use.
+     * @return A configured HttpClient instance ready for API communication.
+     */
     fun create(engine: HttpClientEngine): HttpClient {
         return HttpClient(engine) {
             install(ContentNegotiation) {
