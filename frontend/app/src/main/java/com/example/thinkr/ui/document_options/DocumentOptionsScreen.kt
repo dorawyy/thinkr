@@ -44,6 +44,17 @@ import com.example.thinkr.data.models.Document
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the document options screen, showing available actions for a document.
+ *
+ * This screen presents various learning options for a document such as quizzes, flashcards, and
+ * AI chat. Options appear with staggered animations and are disabled until the document is ready.
+ * Premium features like AI chat are handled differently based on subscription status.
+ *
+ * @param documentItem The document for which options should be displayed.
+ * @param navController Navigation controller to handle screen navigation.
+ * @param viewModel ViewModel that manages the document options screen state and operations.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentOptionsScreen(
@@ -125,11 +136,10 @@ fun DocumentOptionsScreen(
             Spacer(modifier = Modifier.height(50.dp))
         }
     }
-
 }
 
 @Composable
-fun DocumentOptionButtonWrapper(
+private fun DocumentOptionButtonWrapper(
     visible: Boolean,
     title: String,
     onClick: () -> Unit,
@@ -145,7 +155,7 @@ fun DocumentOptionButtonWrapper(
 }
 
 @Composable
-fun DocumentOptionButton(
+private fun DocumentOptionButton(
     title: String,
     onClick: () -> Unit,
     isReady: Boolean

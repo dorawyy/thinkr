@@ -44,6 +44,16 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
+/**
+ * Composable that displays the chat interface for user interaction with AI.
+ *
+ * This screen shows the chat history between user and AI, provides a text input
+ * field for sending new messages, and handles scrolling to show the latest messages.
+ * It includes a top app bar with navigation back and option to clear chat history.
+ *
+ * @param navController Navigation controller to handle screen navigation.
+ * @param viewModel ViewModel that manages the chat screen state and operations.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
