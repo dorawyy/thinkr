@@ -31,9 +31,10 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
             formData.append('documentName', documentName);
             formData.append('context', context);
 
-            // Get headers directly and bypass the linter issue
-            const headers = formData.getHeaders ? { ...formData.getHeaders() } : {
-                'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
+            // Manually create headers to bypass the linter issue
+            const boundary = formData.getBoundary();
+            const headers = {
+                'Content-Type': `multipart/form-data; boundary=${boundary}`
             };
 
             const uploadResponse = await axios.post(

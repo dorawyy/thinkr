@@ -13,7 +13,7 @@ const asyncHandler = <
     ) => Promise<unknown>
 ): RequestHandler<P, ResBody, ReqBody, ReqQuery> => {
     return (req, res, next): void => {
-        Promise.resolve(fn(req, res, next)).catch((err: unknown) => next(err));
+        Promise.resolve(fn(req, res, next)).catch((err: unknown) => { next(err)});
     };
 };
 

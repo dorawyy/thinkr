@@ -62,7 +62,7 @@ class ChatService {
                 session.updatedAt instanceof Date
                     ? session.updatedAt.toISOString()
                     : session.updatedAt,
-            metadata: session.metadata!,
+            metadata: session.metadata ?? {},
         };
 
         return formattedSession;

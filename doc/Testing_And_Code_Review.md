@@ -33,7 +33,7 @@
 
 #### 2.1.2. Commit Hash Where Tests Run
 
-`[Insert Commit SHA here]`
+```101301a fix: Codacy backend warnings```
 
 #### 2.1.3. Explanation on How to Run the Tests
 
