@@ -61,9 +61,7 @@ export interface QuizDTO {
 export interface Quiz {
     question: string;
     answer: string;
-    options: {
-        [key: string]: string;
-    };
+    options: Record<string, string>;
 }
 
 export interface ChatMessage {

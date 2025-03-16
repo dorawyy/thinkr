@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from 'express';
+import { Router } from 'express';
 import {
     deleteDocument,
     getDocuments,
@@ -13,7 +13,7 @@ const router = Router();
 router.post(
     '/upload',
     upload.single('document'),
-    asyncHandler(uploadDocuments) as RequestHandler
+    asyncHandler(uploadDocuments)
 );
 router.delete('/delete', asyncHandler(deleteDocument));
 router.get('/retrieve', asyncHandler(getDocuments));
