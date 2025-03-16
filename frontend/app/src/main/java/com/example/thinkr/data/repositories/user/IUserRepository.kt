@@ -10,9 +10,34 @@ import com.example.thinkr.data.models.User
  * handling subscription status.
  */
 interface IUserRepository {
+    /**
+     * Sets the currently authenticated user.
+     *
+     * @param user The user to be stored as the currently authenticated user.
+     */
     fun setUser(user: User)
+
+    /**
+     * Retrieves the currently authenticated user.
+     *
+     * @return A copy of the current user object, or null if no user is authenticated.
+     */
     fun getUser(): User?
-    fun delUser()
+
+    /**
+     * Marks the current user as a subscribed/premium user.
+     */
     fun subscribeUser()
+
+    /**
+     * Removes the current user and marks the session as signed out.
+     */
+    fun delUser()
+
+    /**
+     * Checks if the user has explicitly signed out.
+     *
+     * @return True if the user has signed out, false otherwise.
+     */
     fun isSignedOut(): Boolean
 }

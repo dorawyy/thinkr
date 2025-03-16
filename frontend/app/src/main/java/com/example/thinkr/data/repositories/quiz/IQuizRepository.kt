@@ -11,5 +11,12 @@ import com.example.thinkr.data.models.QuizItem
  * These items are typically retrieved from a remote study API.
  */
 interface IQuizRepository {
+    /**
+     * Retrieves a list of quiz items for a specific document.
+     *
+     * @param documentItem The document for which to generate quiz items.
+     * @return List of QuizItem objects containing questions and answers.
+     * @throws IllegalStateException if no user is currently authenticated.
+     */
     suspend fun getQuiz(documentItem: Document): List<QuizItem>
 }
