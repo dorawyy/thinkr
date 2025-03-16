@@ -34,9 +34,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the landing screen of the application.
+ *
+ * This screen serves as the entry point of the app, providing a Google Sign-In option.
+ * It displays the app logo, a welcome message, and handles the authentication flow.
+ * Shows loading indicator during authentication and error messages if sign-in fails.
+ *
+ * @param viewModel ViewModel that manages authentication state and processes.
+ * @param navigateToHome Callback function to navigate to the home screen after successful authentication.
+ * @param onSignOut Callback function to be invoked when sign-out is required.
+ */
 @Composable
 fun LandingScreen(
-    viewModel: LandingScreenViewModel = koinViewModel(),
+    viewModel: LandingViewModel = koinViewModel(),
     navigateToHome: () -> Unit,
     onSignOut: () -> Unit
 ) {

@@ -41,6 +41,17 @@ import com.example.thinkr.R
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the document upload screen of the application.
+ *
+ * This screen allows users to upload a document with metadata including a name and context.
+ * It provides input validation for text fields, ensuring they don't exceed maximum length limits.
+ * The screen includes a back navigation button, fields for document metadata, and an upload button.
+ *
+ * @param navController Navigation controller to handle screen navigation.
+ * @param selectedUri The URI of the document file that was selected for upload.
+ * @param viewModel ViewModel that manages the document upload process and screen state.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentUploadScreen(

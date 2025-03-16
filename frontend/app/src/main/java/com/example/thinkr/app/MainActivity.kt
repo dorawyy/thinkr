@@ -27,9 +27,9 @@ import com.example.thinkr.ui.document_upload.DocumentUploadViewModel
 import com.example.thinkr.ui.flashcards.FlashcardsScreen
 import com.example.thinkr.ui.flashcards.FlashcardsViewModel
 import com.example.thinkr.ui.home.HomeScreen
-import com.example.thinkr.ui.home.HomeScreenViewModel
+import com.example.thinkr.ui.home.HomeViewModel
 import com.example.thinkr.ui.landing.LandingScreen
-import com.example.thinkr.ui.landing.LandingScreenViewModel
+import com.example.thinkr.ui.landing.LandingViewModel
 import com.example.thinkr.ui.payment.PaymentScreen
 import com.example.thinkr.ui.payment.PaymentViewModel
 import com.example.thinkr.ui.profile.ProfileScreen
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         navigation<Route.RouteGraph>(startDestination = startDestination) {
                             composable<Route.Landing> {
-                                val viewModel = koinViewModel<LandingScreenViewModel>()
+                                val viewModel = koinViewModel<LandingViewModel>()
 
                                 LandingScreen(
                                     viewModel = viewModel,
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable<Route.Home> {
-                                val viewModel = koinViewModel<HomeScreenViewModel>()
+                                val viewModel = koinViewModel<HomeViewModel>()
 
                                 HomeScreen(
                                     navController = navController,

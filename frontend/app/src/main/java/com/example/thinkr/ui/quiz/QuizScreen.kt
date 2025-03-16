@@ -56,6 +56,14 @@ import com.example.thinkr.ui.shared.AnimatedCardDeck
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Main composable for the quiz screen that displays quiz content and handles user interactions.
+ *
+ * @param document The document to generate a quiz from. Can be null if using suggestedQuiz.
+ * @param suggestedQuiz A pre-generated quiz suggestion. Can be null if using document.
+ * @param navController Navigation controller to handle navigation between screens.
+ * @param viewModel ViewModel that manages quiz state and logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
@@ -194,7 +202,7 @@ fun QuizScreen(
 }
 
 @Composable
-fun MultipleChoiceQuizCard(
+private fun  MultipleChoiceQuizCard(
     quizState: QuizState,
     quizViewModel: QuizViewModel,
     questionIndex: Int,
@@ -283,10 +291,9 @@ fun MultipleChoiceQuizCard(
 }
 
 @Composable
-fun QuizTimer(
+private fun QuizTimer(
     totalTimeSeconds: Int,
-    onTimeUp: () -> Unit,
-    modifier: Modifier = Modifier
+    onTimeUp: () -> Unit
 ) {
     var timeRemaining by remember { mutableIntStateOf(totalTimeSeconds) }
     var isRunning by remember { mutableStateOf(true) }

@@ -31,6 +31,21 @@ import com.example.thinkr.data.models.FlashcardSuggestion
 import com.example.thinkr.ui.shared.AnimatedCardDeck
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the flashcards screen of the application.
+ *
+ * This screen presents flashcards to the user as an interactive card deck that can be swiped
+ * through. Users can flip cards horizontally to see the front and back of each flashcard,
+ * and swipe vertically to navigate between different flashcards.
+ *
+ * The screen can load flashcards either from a specific document or from suggested flashcards
+ * passed from another screen.
+ *
+ * @param document The document containing flashcards to be displayed, or null if using suggested flashcards.
+ * @param suggestedFlashcards Pre-generated flashcard suggestions to display, or null if loading from a document.
+ * @param navController Navigation controller to handle screen navigation.
+ * @param viewModel ViewModel that manages the flashcards screen state and operations.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlashcardsScreen(

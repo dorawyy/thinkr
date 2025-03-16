@@ -2,32 +2,43 @@ package com.example.thinkr.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
-import com.example.thinkr.data.models.User
-import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
-class HomeScreenViewModel(
+/**
+ * ViewModel that manages the home screen state and document-related operations.
+ *
+ * Responsible for handling user interactions on the home screen, managing document retrieval,
+ * suggested materials loading, and navigation to other screens.
+ *
+ * @property docRepository Repository for accessing and managing document data.
+ * @property userRepository Repository for accessing user information.
+ */
+class HomeViewModel(
     private val docRepository: DocRepository,
-    private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     var state: StateFlow<HomeScreenState> = _state.asStateFlow()
 
+    /**
+     * Processes user actions on the home screen.
+     *
+     * Handles navigation, document selection, dialog visibility, and file uploads.
+     *
+     * @param action The user action to process.
+     * @param navController Navigation controller to handle screen transitions.
+     */
     fun onAction(action: HomeScreenAction, navController: NavController) {
         when (action) {
             HomeScreenAction.BackButtonClicked -> {
@@ -59,35 +70,11 @@ class HomeScreenViewModel(
         }
     }
 
-    fun checkUser(account: GoogleSignInAccount?) {
-        if (account == null && userRepository.getUser() == null) {
-            Log.w("HomeScreenViewModel", "User not signed in")
-        } else if (userRepository.getUser() == null) {
-            viewModelScope.launch {
-                authRepository.login(
-                    googleId = account!!.id!!,
-                    name = account.displayName ?: "",
-                    email = account.email ?: ""
-                ).fold(
-                    onSuccess = {
-                        userRepository.setUser(it.data.user.copy())
-                    },
-                    onFailure = { exception ->
-                        Log.e("HomeScreenViewModel", "Error logging in", exception)
-                        userRepository.setUser(
-                            User(
-                                email = account.email ?: "",
-                                name = account.displayName ?: "",
-                                googleId = account.id ?: "",
-                                subscribed = false
-                            )
-                        )
-                    }
-                )
-            }
-        }
-    }
-
+    /**
+     * Retrieves the user's documents from the repository.
+     *
+     * Updates the state with the retrieved documents. Will retry if user info is not yet available.
+     */
     suspend fun getDocuments() {
         if (userRepository.getUser() != null) {
             _state.update {
@@ -104,6 +91,11 @@ class HomeScreenViewModel(
         }
     }
 
+    /**
+     * Retrieves suggested learning materials for the user.
+     *
+     * Updates the state with suggested materials. Handles various potential error conditions.
+     */
     suspend fun getSuggestedMaterial() {
         if (userRepository.getUser() != null) {
             try {
@@ -125,6 +117,9 @@ class HomeScreenViewModel(
         }
     }
 
+    /**
+     * Signs out the current user by removing user data.
+     */
     fun signOut() {
         userRepository.delUser()
     }

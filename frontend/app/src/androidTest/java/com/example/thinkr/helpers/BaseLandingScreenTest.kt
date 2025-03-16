@@ -4,7 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.thinkr.data.repositories.auth.AuthRepository
 import com.example.thinkr.data.repositories.user.UserRepository
 import com.example.thinkr.ui.landing.LandingScreen
-import com.example.thinkr.ui.landing.LandingScreenViewModel
+import com.example.thinkr.ui.landing.LandingViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -26,7 +26,7 @@ open class BaseLandingScreenTest {
     protected fun setUpLandingScreenLoginSuccess() {
         val userRepository = mockk<UserRepository>(relaxed = true)
         val authRepository = mockk<AuthRepository>(relaxed = true)
-        val viewModel = LandingScreenViewModel(
+        val viewModel = LandingViewModel(
             userRepository = userRepository,
             authRepository = authRepository
         )
@@ -58,7 +58,7 @@ open class BaseLandingScreenTest {
     protected fun setUpLandingScreenLoginFail() {
         val userRepository = mockk<UserRepository>(relaxed = true)
         val authRepository = mockk<AuthRepository>(relaxed = true)
-        val viewModel = LandingScreenViewModel(
+        val viewModel = LandingViewModel(
             userRepository = userRepository,
             authRepository = authRepository
         )

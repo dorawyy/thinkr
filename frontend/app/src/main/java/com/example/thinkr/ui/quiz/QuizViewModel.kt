@@ -11,10 +11,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel responsible for managing quiz data and user interactions during a quiz session.
+ *
+ * @property quizRepository Repository used to fetch quiz questions and data.
+ */
 class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
     private var _state = MutableStateFlow(QuizState())
     val state = _state.asStateFlow()
 
+    /**
+     * Loads a quiz based on a document.
+     *
+     * @param documentItem The document from which to generate the quiz.
+     */
     suspend fun loadQuiz(documentItem: Document) {
         val quiz = quizRepository.getQuiz(documentItem)
         _state.update {
@@ -26,6 +36,11 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
         }
     }
 
+    /**
+     * Loads a pre-suggested quiz.
+     *
+     * @param suggestedQuiz The suggested quiz to load.
+     */
     fun loadSuggestedQuiz(suggestedQuiz: QuizSuggestion) {
         viewModelScope.launch {
             _state.update {
@@ -38,16 +53,27 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
         }
     }
 
+    /**
+     * Handles back button press by navigating back in the navigation stack.
+     *
+     * @param navController The navigation controller to handle navigation.
+     */
     fun onBackPressed(navController: NavController) {
         navController.popBackStack()
     }
 
+    /**
+     * Sets the quiz state to started.
+     */
     fun onStartQuiz() {
         _state.update {
             it.copy(started = true)
         }
     }
 
+    /**
+     * Handles the end of the quiz timer by revealing answers and calculating the total score.
+     */
     fun onQuizTimeUp() {
         _state.update {
             it.copy(
@@ -59,6 +85,12 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
         }
     }
 
+    /**
+     * Updates the selected answer for a specific question.
+     *
+     * @param questionIndex The index of the question being answered.
+     * @param answerKey The key/identifier of the selected answer.
+     */
     fun onAnswerSelected(questionIndex: Int, answerKey: String) {
         _state.update {
             it.copy(

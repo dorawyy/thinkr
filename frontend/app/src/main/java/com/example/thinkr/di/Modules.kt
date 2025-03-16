@@ -29,8 +29,8 @@ import com.example.thinkr.ui.chat.ChatViewModel
 import com.example.thinkr.ui.document_options.DocumentOptionsViewModel
 import com.example.thinkr.ui.document_upload.DocumentUploadViewModel
 import com.example.thinkr.ui.flashcards.FlashcardsViewModel
-import com.example.thinkr.ui.home.HomeScreenViewModel
-import com.example.thinkr.ui.landing.LandingScreenViewModel
+import com.example.thinkr.ui.home.HomeViewModel
+import com.example.thinkr.ui.landing.LandingViewModel
 import com.example.thinkr.ui.payment.PaymentViewModel
 import com.example.thinkr.ui.profile.ProfileViewModel
 import com.example.thinkr.ui.quiz.QuizViewModel
@@ -56,8 +56,8 @@ val appModule = module {
     singleOf(::SubscriptionRepository).bind<ISubscriptionRepository>()
     singleOf(::ChatRepository).bind<IChatRepository>()
     singleOf(::QuizRepository).bind<IQuizRepository>()
-    viewModelOf(::LandingScreenViewModel)
-    viewModelOf(::HomeScreenViewModel)
+    viewModelOf(::LandingViewModel)
+    viewModelOf(::HomeViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::PaymentViewModel)
     viewModelOf(::DocumentUploadViewModel)
