@@ -39,7 +39,7 @@ sealed interface Route {
      */
     @Serializable
     data class DocumentOptions(val documentItem: Document) : Route {
-        companion object {
+        internal companion object {
             const val ROUTE = "documentOptions/{documentJson}"
             const val ARGUMENT = "documentJson"
 
@@ -63,7 +63,7 @@ sealed interface Route {
      */
     @Serializable
     data class DocumentUpload(val selectedUri: String) : Route {
-        companion object {
+        internal companion object {
             const val ROUTE = "documentUpload/{selectedUri}"
             const val ARGUMENT = "selectedUri"
 
@@ -99,7 +99,7 @@ sealed interface Route {
      */
     @Serializable
     data class Flashcards(val documentItem: Document? = null, val flashcardSuggestion: String? = null) : Route {
-        companion object {
+        internal companion object {
             const val ROUTE = "flashcards/{documentJson}/{flashcardSuggestion}"
             const val DOCUMENT_ARGUMENT = "documentJson"
             const val FLASHCARD_ARGUMENT = "flashcardSuggestion"
@@ -130,7 +130,7 @@ sealed interface Route {
      */
     @Serializable
     data class Quiz(val documentItem: Document? = null, val quizSuggestion: String? = null) : Route {
-        companion object {
+        internal companion object {
             const val ROUTE = "quiz/{documentJson}/{quizSuggestion}"
             const val DOCUMENT_ARGUMENT = "documentJson"
             const val QUIZ_ARGUMENT = "quizSuggestion"
@@ -160,7 +160,7 @@ sealed interface Route {
      */
     @Serializable
     data class Chat(val documentItem: Document) : Route {
-        companion object {
+        internal companion object {
             const val ROUTE = "chat/{documentJson}"
             const val ARGUMENT = "documentJson"
 
