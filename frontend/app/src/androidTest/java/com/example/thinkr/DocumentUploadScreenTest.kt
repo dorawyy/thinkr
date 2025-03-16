@@ -42,8 +42,11 @@ internal class DocumentUploadScreenTest {
         private const val COMPOSE_TREE = "COMPOSE_TREE"
         private const val NAME_FIELD = "Name"
         private const val CONTEXT_FIELD = "Context"
+        private const val UPLOAD_DOCUMENT_TITLE = "Upload Document"
         private const val UPLOAD_BUTTON = "Upload"
         private const val TEST_USER_ID = "test_user_id"
+        private const val TEST_DOCUMENT_NAME = "Test Document"
+        private const val TEST_DOCUMENT_CONTEXT = "This is a test document context"
     }
 
     @get:Rule
@@ -97,12 +100,12 @@ internal class DocumentUploadScreenTest {
         composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Verify initial screen state
-        composeTestRule.onNodeWithText("Upload Document").assertIsDisplayed()
+        composeTestRule.onNodeWithText(UPLOAD_DOCUMENT_TITLE).assertIsDisplayed()
         composeTestRule.onNode(hasContentDescription("Logo")).assertIsDisplayed()
 
         // Enter document name and context
-        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
-        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput(TEST_DOCUMENT_NAME)
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput(TEST_DOCUMENT_CONTEXT)
 
         // Click upload button
         composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
@@ -192,8 +195,8 @@ internal class DocumentUploadScreenTest {
         composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Enter document name and context
-        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
-        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput(TEST_DOCUMENT_NAME)
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput(TEST_DOCUMENT_CONTEXT)
 
         // Click upload button
         composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
@@ -244,8 +247,8 @@ internal class DocumentUploadScreenTest {
         composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Enter document name and context
-        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
-        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput(TEST_DOCUMENT_NAME)
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput(TEST_DOCUMENT_CONTEXT)
 
         // Click upload button
         composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()
@@ -377,12 +380,12 @@ internal class DocumentUploadScreenTest {
         composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         // Verify initial screen state
-        composeTestRule.onNodeWithText("Upload Document").assertIsDisplayed()
+        composeTestRule.onNodeWithText(UPLOAD_DOCUMENT_TITLE).assertIsDisplayed()
         composeTestRule.onNode(hasContentDescription("Logo")).assertIsDisplayed()
 
         // Enter document name and context
-        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput("Test Document")
-        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput("This is a test document context")
+        composeTestRule.onNodeWithText(NAME_FIELD).performTextInput(TEST_DOCUMENT_NAME)
+        composeTestRule.onNodeWithText(CONTEXT_FIELD).performTextInput(TEST_DOCUMENT_CONTEXT)
 
         // Click upload button
         composeTestRule.onNodeWithText(UPLOAD_BUTTON).performClick()

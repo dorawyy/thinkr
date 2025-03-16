@@ -177,7 +177,10 @@ sealed interface Route {
         }
     }
 
+    /**
+     * Route constants for navigation actions.
+     */
     companion object {
-        const val DOCUMENT_JSON = "documentJson"
+        private const val DOCUMENT_JSON = "documentJson"
     }
 }

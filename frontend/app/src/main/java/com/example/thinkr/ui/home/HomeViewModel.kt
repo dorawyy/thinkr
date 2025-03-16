@@ -124,6 +124,9 @@ class HomeViewModel(
         userRepository.delUser()
     }
 
+    /**
+     * Tag for logging purposes.
+     */
     companion object {
         private const val TAG = "HomeViewModel"
     }
