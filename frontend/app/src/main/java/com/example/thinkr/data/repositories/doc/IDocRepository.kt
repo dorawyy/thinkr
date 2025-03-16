@@ -3,8 +3,13 @@ package com.example.thinkr.data.repositories.doc
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.SuggestedMaterials
 import kotlinx.coroutines.flow.Flow
-import java.io.InputStream
 
+/**
+ * Interface for managing document-related operations.
+ *
+ * Defines the contract for retrieving, uploading, and managing user documents.
+ * Provides access to document lists, uploading progress, and suggested learning materials.
+ */
 interface IDocRepository {
     suspend fun getDocuments(
         userId: String,
