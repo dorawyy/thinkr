@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class PaymentScreenTest : BasePaymentScreenTest() {
+internal class PaymentScreenTest : BasePaymentScreenTest() {
     @Test
     fun paymentScreen_subscribeSuccess() {
         setUpPaymentScreenSubscribeSuccess()

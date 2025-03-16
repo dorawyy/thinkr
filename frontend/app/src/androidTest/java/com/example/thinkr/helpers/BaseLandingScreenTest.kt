@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import kotlin.properties.Delegates
 
-open class BaseLandingScreenTest {
+internal open class BaseLandingScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

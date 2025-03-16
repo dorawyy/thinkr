@@ -37,7 +37,7 @@ import java.lang.Thread.sleep
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-class DocumentUploadScreenTest {
+internal class DocumentUploadScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

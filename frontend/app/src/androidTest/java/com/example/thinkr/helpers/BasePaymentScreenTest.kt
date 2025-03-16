@@ -9,7 +9,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Rule
 
-open class BasePaymentScreenTest {
+internal open class BasePaymentScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
