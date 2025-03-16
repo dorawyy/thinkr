@@ -17,6 +17,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Composable that renders an individual chat message bubble.
+ *
+ * Displays a message with different styles and alignments based on whether the current
+ * user is the sender. Sender messages appear with primary color background aligned to the right,
+ * while received messages use secondary container color aligned to the left.
+ * Each message includes the message content and a timestamp.
+ *
+ * @param message The message object to display, containing content, timestamp and sender information.
+ */
 @Composable
 fun ChatMessageItem(message: Message) {
     val isSender = message.isSender

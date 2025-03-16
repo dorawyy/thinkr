@@ -26,6 +26,12 @@ import com.example.thinkr.R
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.ui.home.HomeScreenAction
 
+/**
+ * A composable that displays a document as a list item with an icon, name, and optional loading indicator.
+ *
+ * @param item The document to display in the list item
+ * @param onAction Callback function that handles actions when the item is clicked. Default is an empty lambda.
+ */
 @Composable
 fun ListItem(
     item: Document,

@@ -37,6 +37,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * A composable that displays a deck of animated cards with swipe gestures.
+ *
+ * @param cardSize The size of the cards in the deck. Default is 300.dp.
+ * @param frontBackPairs List of pairs containing the front and back content composables for each card.
+ * @param enableHorizontalSwipe Whether horizontal swipe gestures should trigger card flipping. Default is true.
+ */
 @Composable
 fun AnimatedCardDeck(
     cardSize: Dp = 300.dp,
@@ -115,6 +122,21 @@ fun AnimatedCardDeck(
     )
 }
 
+/**
+ * A composable that displays an animated card with swipe gestures for flipping and navigation.
+ *
+ * @param cardSize The size of the card.
+ * @param frontContent Composable content to display on the front of the card.
+ * @param backContent Composable content to display on the back of the card.
+ * @param showAnswer Whether to show the back side of the card.
+ * @param isFlipping Whether the card is currently in the middle of a flip animation.
+ * @param isChangingCard Whether the card is currently being changed/replaced with another card.
+ * @param slideDirection The direction of slide animation (-1 for up, 1 for down).
+ * @param onSwipeRight Callback invoked when card is swiped right.
+ * @param onSwipeLeft Callback invoked when card is swiped left.
+ * @param onSwipeUp Callback invoked when card is swiped up.
+ * @param onSwipeDown Callback invoked when card is swiped down.
+ */
 @Composable
 fun AnimatedCard(
     cardSize: Dp,

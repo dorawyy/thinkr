@@ -1,9 +1,9 @@
 package com.example.thinkr.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.Intent.ACTION_OPEN_DOCUMENT
+import android.content.Context
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +28,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.ktor.http.ContentDisposition.Companion.File
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.RuntimeException
 
+/**
+ * Composable that displays a file picker dialog.
+ *
+ * This dialog allows the user to select a file from their device's storage.
+ * After selection, it copies the file to the app's private storage and provides
+ * the resulting URI to the caller. Handles file access errors and displays
+ * appropriate error messages.
+ *
+ * @param onDismiss Callback function to be invoked when the dialog should be dismissed.
+ * @param onSelected Callback function that receives the selected file's URI after processing.
+ */
 @SuppressLint("Recycle")
 @Composable
 fun FilePickerDialog(
@@ -42,20 +54,32 @@ fun FilePickerDialog(
     val context = LocalContext.current
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
     var selectedFileName by remember { mutableStateOf<String?>(null) }
+    var filePickerError by remember { mutableStateOf(value = false) }
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
-            uri?.let {
-                val inputStream = context.contentResolver.openInputStream(uri) ?: throw IOException("Could not open document")
-                val file = File(context.filesDir, uri.lastPathSegment ?: "unknown")
+            try {
+                uri?.let {
+                    val inputStream = context.contentResolver.openInputStream(uri) ?: throw IOException(
+                        "Could not open document"
+                    )
+                    val file = File(context.filesDir, uri.lastPathSegment ?: "unknown")
 
-                inputStream.use { input ->
-                    FileOutputStream(file).use { output ->
-                        input.copyTo(output)
+                    inputStream.use { input ->
+                        FileOutputStream(file).use { output ->
+                            input.copyTo(output)
+                        }
                     }
+                    selectedFileUri = Uri.fromFile(file)
+                    selectedFileName = Uri.fromFile(file)?.let { getFileName(context, it) }
                 }
-                selectedFileUri = Uri.fromFile(file)
-                selectedFileName = Uri.fromFile(file)?.let { getFileName(context, it) }
+                filePickerError = false
+            } catch (e: RuntimeException) {
+                filePickerError = true
+                e.printStackTrace()
+            } catch (e: FileNotFoundException) {
+                filePickerError = true
+                e.printStackTrace()
             }
         }
     )
@@ -70,8 +94,7 @@ fun FilePickerDialog(
                 contentAlignment = Alignment.Center
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(16.dp),
+                    modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -89,6 +112,13 @@ fun FilePickerDialog(
                     Button(onClick = onDismiss) {
                         Text(text = "Close")
                     }
+                    if (filePickerError) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Error: please select a PDF file",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }
@@ -98,4 +128,17 @@ fun FilePickerDialog(
         onDismiss()
         onSelected(selectedFileUri!!)
     }
+}
+
+private fun getFileName(context: Context, uri: Uri): String? {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (nameIndex != -1) {
+                return it.getString(nameIndex)
+            }
+        }
+    }
+    return null
 }

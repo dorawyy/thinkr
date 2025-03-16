@@ -18,77 +18,43 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import java.io.IOException
 
+/**
+ * ViewModel that manages the document upload process and screen state.
+ *
+ * Handles uploading documents to the repository, input validation,
+ * and navigation flows related to the document upload screen.
+ *
+ * @property docRepository Repository for uploading and managing documents.
+ * @property userRepository Repository for accessing current user information.
+ */
 class DocumentUploadViewModel(
     private val docRepository: DocRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(DocumentUploadState())
+    private val _state = MutableStateFlow(DocumentUploadScreenState())
 
+    /**
+     * Navigates back to the home screen.
+     *
+     * @param navController Navigation controller to handle screen transition.
+     */
     fun onBackPressed(navController: NavController) {
         navController.navigate(Route.Home)
     }
 
-    fun onUploadWithBytes(
-        navController: NavController,
-        documentName: String,
-        documentContext: String,
-        fileBytes: ByteArray,
-        fileName: String,
-        context: Context
-    ) {
-        val userId = userRepository.getUser()!!.googleId
-        viewModelScope.launch {
-            try {
-                val result = docRepository.uploadDocument(
-                    fileBytes = fileBytes,
-                    fileName = fileName,
-                    userId = userId,
-                    documentName = documentName,
-                    documentContext = documentContext
-                )
-
-                if (result) {
-                    navController.navigate(Route.Home)
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            context,
-                            "Upload failed",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
-            } catch (e: ResponseException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
-            } catch (e: SerializationException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
-            }
-        }
-    }
-
+    /**
+     * Uploads a document to the repository.
+     *
+     * Reads the selected file from the URI, uploads it to the repository with the provided
+     * metadata, and handles navigation after successful upload. Displays appropriate error
+     * messages on failure.
+     *
+     * @param navController Navigation controller to handle screen transition after upload.
+     * @param documentName Name of the document being uploaded.
+     * @param documentContext Additional context information about the document.
+     * @param uri URI of the selected document file.
+     * @param context Android context used to access content resolver.
+     */
     fun onUpload(
         navController: NavController,
         documentName: String,
@@ -158,7 +124,7 @@ class DocumentUploadViewModel(
         _state.update { it.copy(name = documentName, context = documentContext, uri = uri) }
     }
 
-    companion object {
+    internal companion object {
         const val MAX_NAME_LENGTH = 50
         const val MAX_CONTEXT_LENGTH = 500
     }

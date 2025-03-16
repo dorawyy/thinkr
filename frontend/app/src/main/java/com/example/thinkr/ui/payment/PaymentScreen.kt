@@ -18,6 +18,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the payment screen for premium subscription.
+ *
+ * This screen allows users to start a free trial of premium features. It shows informational
+ * text, a button to start the free trial, and displays any error messages if the subscription
+ * process fails.
+ *
+ * @param paymentViewModel ViewModel that manages payment and subscription processes.
+ * @param navToProfile Callback function to navigate back to the profile screen.
+ */
 @Composable
 fun PaymentScreen(
     paymentViewModel: PaymentViewModel = koinViewModel(),
@@ -49,43 +59,6 @@ fun PaymentScreen(
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
             )
-//            Text(text = "Payment information")
-//            Spacer(modifier = Modifier.height(16.dp))
-//            OutlinedTextField(
-//                value = state.cardNumber,
-//                onValueChange = { viewModel.onCardNumberChange(it) },
-//                label = { Text(text = "Card Number") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                singleLine = true
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            OutlinedTextField(
-//                value = state.cardExpiration,
-//                onValueChange = { viewModel.onExpirationChange(it) },
-//                label = { Text(text = "MM/YY") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                singleLine = true
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            OutlinedTextField(
-//                value = state.cardCvc,
-//                onValueChange = { viewModel.onCvcChange(it) },
-//                label = { Text(text = "CVC") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                singleLine = true
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            OutlinedTextField(
-//                value = state.cardBillingAddress,
-//                onValueChange = { viewModel.onBillingAddressChange(it) },
-//                label = { Text(text = "Billing Address") },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-//                singleLine = true
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
-//            TextButton(onClick = onConfirm) {
-//                Text(text = "Pay")
-//            }
         }
     }
 }

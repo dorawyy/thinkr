@@ -20,6 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Composable that displays the user profile information and subscription status.
+ *
+ * @param profileViewModel ViewModel that manages profile data and state.
+ * @param isSubscribed Boolean indicating if the user is subscribed through the app purchase flow.
+ * @param onPressBack Callback function invoked when the user presses the back button.
+ * @param onSelectPremium Callback function invoked when the user selects to purchase premium plan.
+ */
 @Composable
 fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel(),
