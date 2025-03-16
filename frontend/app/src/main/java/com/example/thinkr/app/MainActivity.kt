@@ -1,14 +1,19 @@
 package com.example.thinkr.app
 
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,15 +48,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.serialization.json.Json
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Main activity for the Thinkr application that handles navigation.
+ *
+ * This activity sets up the navigation routes for the application.
+ * It manages all screen destinations, route parameters, and
+ * the Google Sign-In authentication.
+ */
 class MainActivity : ComponentActivity() {
     lateinit var googleSignInClient: GoogleSignInClient
 
+    /**
+     * Called when the activity is first created.
+     *
+     * Sets up the Google Sign-In, initializes the navigation graph, and defines
+     * all application routes with their respective Composable functions.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     * being shut down, this contains the data it most recently supplied.
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        setupGoogleSignIn()
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
@@ -64,178 +83,209 @@ class MainActivity : ComponentActivity() {
                         startDestination = Route.RouteGraph
                     ) {
                         navigation<Route.RouteGraph>(startDestination = startDestination) {
-                            composable<Route.Landing> {
-                                val viewModel = koinViewModel<LandingViewModel>()
-
-                                LandingScreen(
-                                    viewModel = viewModel,
-                                    navigateToHome = { navController.navigate(Route.Home) },
-                                    onSignOut = { googleSignInClient.signOut() }
-                                )
-                            }
-
-                            composable<Route.Home> {
-                                val viewModel = koinViewModel<HomeViewModel>()
-
-                                HomeScreen(
-                                    navController = navController,
-                                    viewModel = viewModel,
-                                    onSignOut = {
-                                        googleSignInClient.signOut().addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                navController.navigate(Route.Landing)
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-
-                            composable(
-                                route = Route.DocumentOptions.ROUTE,
-                                arguments = listOf(navArgument(Route.DocumentOptions.ARGUMENT) {
-                                    type = NavType.StringType
-                                })
-                            ) { backStackEntry ->
-                                val json =
-                                    backStackEntry.arguments?.getString(Route.DocumentOptions.ARGUMENT)
-                                        ?: ""
-                                val document =
-                                    Json.decodeFromString<Document>(Uri.decode(json)) // Decode JSON back to object
-                                val viewModel = koinViewModel<DocumentOptionsViewModel>()
-                                DocumentOptionsScreen(document, navController, viewModel)
-                            }
-
-                            composable(
-                                route = Route.DocumentUpload.ROUTE,
-                                arguments = listOf(navArgument(Route.DocumentUpload.ARGUMENT) {
-                                    type = NavType.StringType
-                                })
-                            ) { backStackEntry ->
-                                val json =
-                                    backStackEntry.arguments?.getString(Route.DocumentUpload.ARGUMENT)
-                                        ?: ""
-                                val selectedUri = Uri.parse(Uri.decode(json))
-                                val viewModel = koinViewModel<DocumentUploadViewModel>()
-
-                                DocumentUploadScreen(navController, selectedUri, viewModel)
-                            }
-
-                            composable<Route.Profile> { navBackStackEntry ->
-                                val viewModel = koinViewModel<ProfileViewModel>()
-                                val paymentViewModel = navBackStackEntry
-                                    .sharedKoinViewModel<PaymentViewModel>(navController)
-                                val isPremium = paymentViewModel.state.value.isSubscribed
-
-                                ProfileScreen(
-                                    profileViewModel = viewModel,
-                                    isSubscribed = isPremium,
-                                    onPressBack = { navController.navigate(Route.Home) },
-                                    onSelectPremium = { navController.navigate(Route.Payment) }
-                                )
-                            }
-
-                            composable<Route.Payment> { navBackStackEntry ->
-                                val paymentViewModel = navBackStackEntry
-                                    .sharedKoinViewModel<PaymentViewModel>(navController)
-
-                                PaymentScreen(
-                                    paymentViewModel = paymentViewModel,
-                                    navToProfile = { navController.navigate(Route.Profile) }
-                                )
-                            }
-
-                            composable(
-                                route = Route.Flashcards.ROUTE,
-                                arguments = listOf(
-                                    navArgument(Route.Flashcards.DOCUMENT_ARGUMENT) {
-                                        type = NavType.StringType
-                                    },
-                                    navArgument(Route.Flashcards.FLASHCARD_ARGUMENT) {
-                                        type = NavType.StringType
-                                    }
-                                )
-                            ) { backStackEntry ->
-                                val documentJson = backStackEntry.arguments?.getString(Route.Flashcards.DOCUMENT_ARGUMENT) ?: ""
-                                val flashcardJson = backStackEntry.arguments?.getString(Route.Flashcards.FLASHCARD_ARGUMENT) ?: ""
-                                val viewModel = koinViewModel<FlashcardsViewModel>()
-
-                                val document = if (documentJson.isNotEmpty()) {
-                                    Json.decodeFromString<Document>(Uri.decode(documentJson))
-                                } else {
-                                    null
-                                }
-
-                                val flashcardSet = if (flashcardJson.isNotEmpty()) {
-                                    Json.decodeFromString<FlashcardSuggestion>(Uri.decode(flashcardJson))
-                                } else {
-                                    null
-                                }
-
-                                FlashcardsScreen(
-                                    document = document,
-                                    suggestedFlashcards = flashcardSet,
-                                    navController = navController,
-                                    viewModel = viewModel
-                                )
-                            }
-
-                            composable(
-                                route = Route.Quiz.ROUTE,
-                                arguments = listOf(
-                                    navArgument(Route.Quiz.DOCUMENT_ARGUMENT) {
-                                        type = NavType.StringType
-                                    },
-                                    navArgument(Route.Quiz.QUIZ_ARGUMENT) {
-                                        type = NavType.StringType
-                                    }
-                                )
-                            ) { backStackEntry ->
-                                val documentJson = backStackEntry.arguments?.getString(Route.Quiz.DOCUMENT_ARGUMENT) ?: ""
-                                val quizJson = backStackEntry.arguments?.getString(Route.Quiz.QUIZ_ARGUMENT) ?: ""
-                                val viewModel = koinViewModel<QuizViewModel>()
-
-                                val document = if (documentJson.isNotEmpty()) {
-                                    Json.decodeFromString<Document>(Uri.decode(documentJson))
-                                } else {
-                                    null
-                                }
-
-                                val quizSet = if (quizJson.isNotEmpty()) {
-                                    Json.decodeFromString<QuizSuggestion>(Uri.decode(quizJson))
-                                } else {
-                                    null
-                                }
-
-                                QuizScreen(
-                                    document = document,
-                                    suggestedQuiz = quizSet,
-                                    navController = navController,
-                                    viewModel = viewModel
-                                )
-                            }
-
-                            composable(
-                                route = Route.Chat.ROUTE,
-                                arguments = listOf(navArgument(Route.Chat.ARGUMENT) {
-                                    type = NavType.StringType
-                                })
-                            ) { backStackEntry ->
-                                val json =
-                                    backStackEntry.arguments?.getString(Route.Chat.ARGUMENT)
-                                        ?: ""
-                                val document =
-                                    Json.decodeFromString<Document>(Uri.decode(json)) // Decode JSON back to object
-                                val viewModel = koinViewModel<ChatViewModel>()
-
-                                ChatScreen(
-                                    navController = navController,
-                                    viewModel = viewModel
-                                )
-                            }
+                            setupLandingRoute(navController)
+                            setupHomeRoute(navController)
+                            setupDocumentOptionsRoute(navController)
+                            setupDocumentUploadRoute(navController)
+                            setupProfileRoute(navController)
+                            setupPaymentRoute(navController)
+                            setupFlashcardsRoute(navController)
+                            setupQuizRoute(navController)
+                            setupChatRoute(navController)
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun setupGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+    }
+
+    private fun NavGraphBuilder.setupLandingRoute(navController: NavController) {
+        composable<Route.Landing> {
+            val viewModel = koinViewModel<LandingViewModel>()
+
+            LandingScreen(
+                viewModel = viewModel,
+                navigateToHome = { navController.navigate(Route.Home) },
+                onSignOut = { googleSignInClient.signOut() }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupHomeRoute(navController: NavController) {
+        composable<Route.Home> {
+            val viewModel = koinViewModel<HomeViewModel>()
+
+            HomeScreen(
+                navController = navController,
+                viewModel = viewModel,
+                onSignOut = {
+                    googleSignInClient.signOut().addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            navController.navigate(Route.Landing)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupDocumentOptionsRoute(navController: NavController) {
+        composable(
+            route = Route.DocumentOptions.ROUTE,
+            arguments = listOf(navArgument(Route.DocumentOptions.ARGUMENT) {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString(Route.DocumentOptions.ARGUMENT) ?: ""
+            val document = Json.decodeFromString<Document>(Uri.decode(json))
+            val viewModel = koinViewModel<DocumentOptionsViewModel>()
+            DocumentOptionsScreen(document, navController, viewModel)
+        }
+    }
+
+    private fun NavGraphBuilder.setupDocumentUploadRoute(navController: NavController) {
+        composable(
+            route = Route.DocumentUpload.ROUTE,
+            arguments = listOf(navArgument(Route.DocumentUpload.ARGUMENT) {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString(Route.DocumentUpload.ARGUMENT) ?: ""
+            val selectedUri = Uri.decode(json).toUri()
+            val viewModel = koinViewModel<DocumentUploadViewModel>()
+
+            DocumentUploadScreen(navController, selectedUri, viewModel)
+        }
+    }
+
+    private fun NavGraphBuilder.setupProfileRoute(navController: NavController) {
+        composable<Route.Profile> { navBackStackEntry ->
+            val viewModel = koinViewModel<ProfileViewModel>()
+            val paymentViewModel = navBackStackEntry
+                .sharedKoinViewModel<PaymentViewModel>(navController)
+            val isPremium = paymentViewModel.state.value.isSubscribed
+
+            ProfileScreen(
+                profileViewModel = viewModel,
+                isSubscribed = isPremium,
+                onPressBack = { navController.navigate(Route.Home) },
+                onSelectPremium = { navController.navigate(Route.Payment) }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupPaymentRoute(navController: NavController) {
+        composable<Route.Payment> { navBackStackEntry ->
+            val paymentViewModel = navBackStackEntry
+                .sharedKoinViewModel<PaymentViewModel>(navController)
+
+            PaymentScreen(
+                paymentViewModel = paymentViewModel,
+                navToProfile = { navController.navigate(Route.Profile) }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupFlashcardsRoute(navController: NavController) {
+        composable(
+            route = Route.Flashcards.ROUTE,
+            arguments = listOf(
+                navArgument(Route.Flashcards.DOCUMENT_ARGUMENT) {
+                    type = NavType.StringType
+                },
+                navArgument(Route.Flashcards.FLASHCARD_ARGUMENT) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val documentJson =
+                backStackEntry.arguments?.getString(Route.Flashcards.DOCUMENT_ARGUMENT) ?: ""
+            val flashcardJson =
+                backStackEntry.arguments?.getString(Route.Flashcards.FLASHCARD_ARGUMENT) ?: ""
+            val viewModel = koinViewModel<FlashcardsViewModel>()
+
+            val document = if (documentJson.isNotEmpty()) {
+                Json.decodeFromString<Document>(Uri.decode(documentJson))
+            } else {
+                null
+            }
+
+            val flashcardSet = if (flashcardJson.isNotEmpty()) {
+                Json.decodeFromString<FlashcardSuggestion>(Uri.decode(flashcardJson))
+            } else {
+                null
+            }
+
+            FlashcardsScreen(
+                document = document,
+                suggestedFlashcards = flashcardSet,
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupQuizRoute(navController: NavController) {
+        composable(
+            route = Route.Quiz.ROUTE,
+            arguments = listOf(
+                navArgument(Route.Quiz.DOCUMENT_ARGUMENT) {
+                    type = NavType.StringType
+                },
+                navArgument(Route.Quiz.QUIZ_ARGUMENT) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val documentJson =
+                backStackEntry.arguments?.getString(Route.Quiz.DOCUMENT_ARGUMENT) ?: ""
+            val quizJson = backStackEntry.arguments?.getString(Route.Quiz.QUIZ_ARGUMENT) ?: ""
+            val viewModel = koinViewModel<QuizViewModel>()
+
+            val document = if (documentJson.isNotEmpty()) {
+                Json.decodeFromString<Document>(Uri.decode(documentJson))
+            } else {
+                null
+            }
+
+            val quizSet = if (quizJson.isNotEmpty()) {
+                Json.decodeFromString<QuizSuggestion>(Uri.decode(quizJson))
+            } else {
+                null
+            }
+
+            QuizScreen(
+                document = document,
+                suggestedQuiz = quizSet,
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun NavGraphBuilder.setupChatRoute(navController: NavController) {
+        composable(
+            route = Route.Chat.ROUTE,
+            arguments = listOf(navArgument(Route.Chat.ARGUMENT) {
+                type = NavType.StringType
+            })
+        ) {
+//            val json = backStackEntry.arguments?.getString(Route.Chat.ARGUMENT) ?: ""
+//            val document = Json.decodeFromString<Document>(Uri.decode(json))
+            val viewModel = koinViewModel<ChatViewModel>()
+
+            ChatScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }
