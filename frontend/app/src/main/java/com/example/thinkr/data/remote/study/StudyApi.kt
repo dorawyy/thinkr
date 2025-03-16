@@ -32,8 +32,8 @@ class StudyApi(private val client: HttpClient) : IStudyApi {
      */
     override suspend fun getFlashcards(userId: String, documentId: String): List<FlashcardItem> {
         val response = client.get(urlString = BASE_URL + STUDY + FLASHCARDS) {
-            parameter("userId", userId)
-            parameter("documentId", documentId)
+            parameter(USER_ID, userId)
+            parameter(DOCUMENT_ID, documentId)
         }
         val responseBody = response.bodyAsText()
         val flashcardsResponse = Json.decodeFromString<FlashcardsResponse>(responseBody)
@@ -51,8 +51,8 @@ class StudyApi(private val client: HttpClient) : IStudyApi {
      */
     override suspend fun getQuiz(userId: String, documentId: String): List<QuizItem> {
         val response = client.get(urlString = BASE_URL + STUDY + QUIZ) {
-            parameter("userId", userId)
-            parameter("documentId", documentId)
+            parameter(USER_ID, userId)
+            parameter(DOCUMENT_ID, documentId)
         }
         val responseBody = response.bodyAsText()
         val quizResponse = Json.decodeFromString<QuizResponse>(responseBody)
@@ -73,8 +73,8 @@ class StudyApi(private val client: HttpClient) : IStudyApi {
         limit: Int?
     ): SuggestedMaterials {
         val response = client.get(urlString = BASE_URL + STUDY + SUGGESTED_MATERIALS) {
-            parameter("userId", userId)
-            parameter("limit", limit ?: 1)
+            parameter(USER_ID, userId)
+            parameter(LIMIT, limit ?: 1)
         }
         println("suggested materials GET request $response")
         val responseBody = response.bodyAsText()
@@ -88,5 +88,8 @@ class StudyApi(private val client: HttpClient) : IStudyApi {
         private const val FLASHCARDS = "/flashcards"
         private const val QUIZ = "/quiz"
         private const val SUGGESTED_MATERIALS = "/suggestedMaterials"
+        private const val USER_ID = "userId"
+        private const val DOCUMENT_ID = "documentId"
+        private const val LIMIT = "limit"
     }
 }

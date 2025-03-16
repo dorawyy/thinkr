@@ -125,17 +125,17 @@ class DocRepository(
         return try {
             studyApi.getSuggestedMaterials(userId, limit)
         } catch (e: IOException) {
-            Log.e("DocRepository", "Error fetching suggested materials", e)
-            e.printStackTrace()
-            SuggestedMaterials(emptyList(), emptyList())
+            handleFetchError(e)
         } catch (e: ResponseException) {
-            Log.e("DocRepository", "Error fetching suggested materials", e)
-            e.printStackTrace()
-            SuggestedMaterials(emptyList(), emptyList())
+            handleFetchError(e)
         } catch (e: SerializationException) {
-            Log.e("DocRepository", "Error fetching suggested materials", e)
-            e.printStackTrace()
-            SuggestedMaterials(emptyList(), emptyList())
+            handleFetchError(e)
         }
+    }
+
+    private fun handleFetchError(e: Exception): SuggestedMaterials {
+        Log.e("DocRepository", "Error fetching suggested materials", e)
+        e.printStackTrace()
+        return SuggestedMaterials(emptyList(), emptyList())
     }
 }
