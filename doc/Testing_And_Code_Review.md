@@ -122,10 +122,10 @@
 `frontend/app/src/androidTest/java/com/example/thinkr/`
 
 ### 4.2. Tests
-### **Use Case: Upload Documents**
+
 
 #### **Main Success Scenario**
-1. The user opens the "Upload Document" screen.
+
 2. The app shows input fields for "Name" and "Context", along with an "Upload" button.
 3. The user enters a valid document name and context. The "Upload" button is enabled.
 4. The user presses the "Upload" button.
@@ -133,13 +133,13 @@
 
 #### **Failure Scenarios**
 3a. The user inputs an empty document name.
-  - 3a1. The app prevents upload and displays an error message.
+
 5a. The document upload fails due to network issues or API failure.
-  - 5a1. The app displays an error message.
-  - 5a2. The user is not navigated away from the screen.
+- 5a1. The app displays an error message.
+- 5a2. The user is not navigated away from the screen.
 5b. The app throws an exception during upload.
-  - 5b1. The app displays an error message.
-  - 5b2. The user is not navigated away from the screen.
+- 5b1. The app displays an error message.
+- 5b2. The user is not navigated away from the screen.
 
 #### **Test Case Specification**
 
@@ -168,7 +168,7 @@
 | 5b2. The user is not navigated away | Verify no navigation occurs |
 
 #### **Additional Tests**
-- **Back Button Navigation:**
+
   - Click "Back" button
   - Verify navigation to "Home" screen
 - **Text Field Limits:**
@@ -182,15 +182,15 @@
 ### **Use Case: Chat with AI**
 
 #### **Main Success Scenario**
-1. The user opens the "Chat with AI" screen.
+
 2. The AI responds contextually based on the uploaded documents.
 3. The AI returns responses in the chat.
 
 #### **Failure Scenarios**
 1a. The app fails to return a response due to a network error.
-   - 1a1. The app displays an error message asking the user to check their connection.
+
 2b. The user's message exceeds the context length limit.
-   - 2b1. The "Send" button is disabled, preventing message submission until shortened.
+- 2b1. The "Send" button is disabled, preventing message submission until shortened.
 
 #### **Test Case Specification**
 
@@ -388,17 +388,17 @@ _(Placeholder for screenshots of Codacyâ€™s Issues page)_
 ### Frontend Issues
 All of the remaining issues are related to the number of lines or the complexity of composables. Over-fragmenting Composables can harm readability, reusability, and performance due to unnecessary recompositions and complex state management.  
 Sources:  
-- Google Developers: [Jetpack Compose best practices](https://developer.android.com/jetpack/compose/performance#best-practices)  
+
 - Official Jetpack Compose documentation: [Thinking in Compose](https://developer.android.com/jetpack/compose/mental-model)  
 
 #### **MainActivity - Too Many Functions**
-- **Issue:** Class `MainActivity` has 11 functions (threshold is 11).
+
 - **Justification:** `MainActivity` serves as the entry point for the application and needs to manage essential lifecycle and UI-related functions. Given its role, splitting it into multiple files would add unnecessary complexity without significant maintainability benefits. [Source: Android Developers - Activity Lifecycle](https://developer.android.com/guide/components/activities/activity-lifecycle).
 
 ---
 
 #### **ProfileScreen - Too Many Lines of Code**
-- **Issue:** `ProfileScreen` has 52 lines (limit is 50).
+
 - **Justification:** The additional lines result from necessary UI composition, including handling state and effects within Jetpack Compose. Refactoring would require breaking down UI elements, which may not provide a meaningful readability improvement. [Source: Google Developer Guide on Compose Best Practices](https://developer.android.com/jetpack/compose/performance).
 
 ---
