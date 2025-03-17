@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
 const asyncHandler = <
-    P = any,
-    ResBody = any,
-    ReqBody = any,
-    ReqQuery = any
+    P = unknown,
+    ResBody = unknown,
+    ReqBody = unknown,
+    ReqQuery = unknown,
 >(
     fn: (
         req: Request<P, ResBody, ReqBody, ReqQuery>,
@@ -13,7 +13,9 @@ const asyncHandler = <
     ) => Promise<unknown>
 ): RequestHandler<P, ResBody, ReqBody, ReqQuery> => {
     return (req, res, next): void => {
-        Promise.resolve(fn(req, res, next)).catch((err: unknown) => { next(err)});
+        Promise.resolve(fn(req, res, next)).catch((err: unknown) => {
+            next(err);
+        });
     };
 };
 
