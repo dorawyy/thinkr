@@ -206,26 +206,28 @@ fun AnimatedCard(
                     onDragStart = { isDragging = true },
                     onDragEnd = { isDragging = false }
                 ) { change, dragAmount ->
-                    if (!isDragging) return@detectDragGestures
-
-                    if (dragAmount.y > verticalDragThreshold) {
-                        onSwipeDown()
-                        Log.d("Drag", "Down")
-                        isDragging = false
-                    } else if (dragAmount.y < -verticalDragThreshold) {
-                        onSwipeUp()
-                        Log.d("Drag", "Up")
-                        isDragging = false
-                    } else if (dragAmount.x > horizontalDragThreshold) {
-                        onSwipeRight()
-                        Log.d("Drag", "Right")
-                        isDragging = false
-                    } else if (dragAmount.x < -horizontalDragThreshold) {
-                        onSwipeLeft()
-                        Log.d("Drag", "Left")
-                        isDragging = false
+                    if (isDragging) {
+                        if (dragAmount.y > verticalDragThreshold) {
+                            onSwipeDown()
+                            Log.d("Drag", "Down")
+                            isDragging = false
+                        } else if (dragAmount.y < -verticalDragThreshold) {
+                            onSwipeUp()
+                            Log.d("Drag", "Up")
+                            isDragging = false
+                        } else if (dragAmount.x > horizontalDragThreshold) {
+                            onSwipeRight()
+                            Log.d("Drag", "Right")
+                            isDragging = false
+                        } else if (dragAmount.x < -horizontalDragThreshold) {
+                            onSwipeLeft()
+                            Log.d("Drag", "Left")
+                            isDragging = false
+                        }
+                        change.consume()
+                    } else {
+                        return@detectDragGestures
                     }
-                    change.consume()
                 }
             },
         contentAlignment = Alignment.Center
