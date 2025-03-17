@@ -85,44 +85,28 @@ class DocumentUploadViewModel(
                 if (result) {
                     navController.navigate(Route.Home)
                 } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            context,
-                            "Upload failed",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    showErrorToast(RuntimeException(),  "Upload failed", context)
                 }
             } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        errorPrefix + e.message,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
+                showErrorToast(e,  errorPrefix + e.message, context)
             } catch (e: ResponseException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        errorPrefix + e.message,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
+                showErrorToast(e,  errorPrefix + e.message, context)
             } catch (e: SerializationException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        errorPrefix + e.message,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                e.printStackTrace()
+                showErrorToast(e,  errorPrefix + e.message, context)
             }
         }
         _state.update { it.copy(name = documentName, context = documentContext, uri = uri) }
+    }
+
+    private suspend fun showErrorToast(e: Exception, errorMessage: String, context: Context) {
+        withContext(Dispatchers.Main) {
+            Toast.makeText(
+                context,
+                errorMessage,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+        e.printStackTrace()
     }
 
     internal companion object {
