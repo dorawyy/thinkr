@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.QuizSuggestion
 import com.example.thinkr.ui.shared.AnimatedCardDeck
 import kotlinx.coroutines.delay
@@ -126,8 +127,7 @@ fun QuizScreen(
                             quizState = state,
                             quizViewModel = viewModel,
                             questionIndex = index,
-                            question = quizItem.question,
-                            choices = quizItem.options,
+                            quizItem = quizItem,
                             correctAnswerKey = state.quiz[index].answer,
                             revealAnswer = state.revealAnswer,
                         )
@@ -206,11 +206,12 @@ private fun  MultipleChoiceQuizCard(
     quizState: QuizState,
     quizViewModel: QuizViewModel,
     questionIndex: Int,
-    question: String,
-    choices: Map<String, String>,
+    quizItem: QuizItem,
     correctAnswerKey: String,
     revealAnswer: Boolean = false,
 ) {
+    val question = quizItem.question
+    val choices = quizItem.options
     LazyColumn(
         modifier = Modifier
             .padding(16.dp)
