@@ -74,10 +74,10 @@ fun FilePickerDialog(
                     selectedFileName = Uri.fromFile(file)?.let { getFileName(context, it) }
                 }
                 filePickerError = false
-            } catch (e: RuntimeException) {
+            } catch (e: FileNotFoundException) {
                 filePickerError = true
                 e.printStackTrace()
-            } catch (e: FileNotFoundException) {
+            } catch (e: RuntimeException) {
                 filePickerError = true
                 e.printStackTrace()
             }
