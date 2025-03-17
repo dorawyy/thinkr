@@ -63,62 +63,65 @@ fun AnimatedCardDeck(
 
     AnimatedCard(
         cardSize = cardSize,
-        frontContent = frontBackPairs[currentIndex].first,
-        backContent = frontBackPairs[currentIndex].second,
+        frontBackContent = frontBackPairs[currentIndex],
         showAnswer = showAnswer,
         isFlipping = isFlipping,
         isChangingCard = isChangingCard,
         slideDirection = slideDirection,
-        onSwipeRight = {
-            if (enableHorizontalSwipe && !isFlipping && !isChangingCard) {
-                coroutineScope.launch {
-                    isFlipping = true
-                    delay(300) // Allow animation to play
-                    showAnswer = !showAnswer
-                    delay(50)
-                    isFlipping = false
+        onSwipeRightLeft = Pair(
+            {
+                if (enableHorizontalSwipe && !isFlipping && !isChangingCard) {
+                    coroutineScope.launch {
+                        isFlipping = true
+                        delay(300) // Allow animation to play
+                        showAnswer = !showAnswer
+                        delay(50)
+                        isFlipping = false
+                    }
+                }
+            },
+            {
+                if (enableHorizontalSwipe && !isFlipping && !isChangingCard) {
+                    coroutineScope.launch {
+                        isFlipping = true
+                        delay(300) // Allow animation to play
+                        showAnswer = !showAnswer
+                        delay(50)
+                        isFlipping = false
+                    }
                 }
             }
-        },
-        onSwipeLeft = {
-            if (enableHorizontalSwipe && !isFlipping && !isChangingCard) {
-                coroutineScope.launch {
-                    isFlipping = true
-                    delay(300) // Allow animation to play
-                    showAnswer = !showAnswer
-                    delay(50)
-                    isFlipping = false
+        ),
+        onSwipeUpDown = Pair(
+            {
+                if (currentIndex < frontBackPairs.size - 1 && !isChangingCard && !isFlipping) {
+                    coroutineScope.launch {
+                        slideDirection = -1
+                        isChangingCard = true
+                        targetIndex = currentIndex + 1
+                        delay(300) // Allow animation to play
+                        currentIndex = targetIndex
+                        showAnswer = false
+                        delay(50)
+                        isChangingCard = false
+                    }
+                }
+            },
+            {
+                if (currentIndex > 0 && !isChangingCard && !isFlipping) {
+                    coroutineScope.launch {
+                        slideDirection = 1
+                        isChangingCard = true
+                        targetIndex = currentIndex - 1
+                        delay(300) // Allow animation to play
+                        currentIndex = targetIndex
+                        showAnswer = false
+                        delay(50)
+                        isChangingCard = false
+                    }
                 }
             }
-        },
-        onSwipeUp = {
-            if (currentIndex < frontBackPairs.size - 1 && !isChangingCard && !isFlipping) {
-                coroutineScope.launch {
-                    slideDirection = -1
-                    isChangingCard = true
-                    targetIndex = currentIndex + 1
-                    delay(300) // Allow animation to play
-                    currentIndex = targetIndex
-                    showAnswer = false
-                    delay(50)
-                    isChangingCard = false
-                }
-            }
-        },
-        onSwipeDown = {
-            if (currentIndex > 0 && !isChangingCard && !isFlipping) {
-                coroutineScope.launch {
-                    slideDirection = 1
-                    isChangingCard = true
-                    targetIndex = currentIndex - 1
-                    delay(300) // Allow animation to play
-                    currentIndex = targetIndex
-                    showAnswer = false
-                    delay(50)
-                    isChangingCard = false
-                }
-            }
-        }
+        ),
     )
 }
 
@@ -126,31 +129,31 @@ fun AnimatedCardDeck(
  * A composable that displays an animated card with swipe gestures for flipping and navigation.
  *
  * @param cardSize The size of the card.
- * @param frontContent Composable content to display on the front of the card.
- * @param backContent Composable content to display on the back of the card.
+ * @param frontBackContent Pair of Composable contents to display on the front and back of the card.
  * @param showAnswer Whether to show the back side of the card.
  * @param isFlipping Whether the card is currently in the middle of a flip animation.
  * @param isChangingCard Whether the card is currently being changed/replaced with another card.
  * @param slideDirection The direction of slide animation (-1 for up, 1 for down).
- * @param onSwipeRight Callback invoked when card is swiped right.
- * @param onSwipeLeft Callback invoked when card is swiped left.
- * @param onSwipeUp Callback invoked when card is swiped up.
- * @param onSwipeDown Callback invoked when card is swiped down.
+ * @param onSwipeRightLeft Pair of Callbacks invoked when card is swiped right or left.
+ * @param onSwipeUpDown Pair of Callbacks invoked when card is swiped up or down.
  */
 @Composable
 fun AnimatedCard(
     cardSize: Dp,
-    frontContent: @Composable () -> Unit,
-    backContent: @Composable () -> Unit,
+    frontBackContent: Pair<@Composable () -> Unit, @Composable () -> Unit>,
     showAnswer: Boolean,
     isFlipping: Boolean,
     isChangingCard: Boolean,
     slideDirection: Int,
-    onSwipeRight: () -> Unit,
-    onSwipeLeft: () -> Unit,
-    onSwipeUp: () -> Unit,
-    onSwipeDown: () -> Unit
+    onSwipeRightLeft: Pair<() -> Unit, () -> Unit>,
+    onSwipeUpDown: Pair<() -> Unit, () -> Unit>,
 ) {
+    val frontContent = frontBackContent.first
+    val backContent = frontBackContent.second
+    val onSwipeRight = onSwipeRightLeft.first
+    val onSwipeLeft = onSwipeRightLeft.second
+    val onSwipeUp = onSwipeUpDown.first
+    val onSwipeDown = onSwipeUpDown.second
     // Animation state for flipping
     // When isFlipping is true, we animate to 90 degrees (halfway)
     // After the state change, it will automatically continue to 180 or back to 0

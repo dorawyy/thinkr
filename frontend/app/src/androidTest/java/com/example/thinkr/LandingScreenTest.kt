@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class LandingScreenTest : BaseLandingScreenTest() {
     companion object {
+        const val COMPOSE_TREE = "COMPOSE_TREE"
         const val GOOGLE_SIGN_IN_BUTTON = "google_sign_in_button"
     }
     @Test
@@ -24,7 +25,7 @@ internal class LandingScreenTest : BaseLandingScreenTest() {
         setUpLandingScreenLoginSuccess()
 
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         composeTestRule
             .onNode(hasContentDescription(value = "App Logo"))
@@ -53,7 +54,7 @@ internal class LandingScreenTest : BaseLandingScreenTest() {
         setUpLandingScreenLoginFail()
 
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         composeTestRule
             .onNode(hasContentDescription(value = "App Logo"))
@@ -70,7 +71,7 @@ internal class LandingScreenTest : BaseLandingScreenTest() {
             .performClick()
 
         composeTestRule.waitForIdle()
-        composeTestRule.onRoot().printToLog(tag = "COMPOSE_TREE")
+        composeTestRule.onRoot().printToLog(tag = COMPOSE_TREE)
 
         assertFalse(navigateToHomeCalled)
         composeTestRule
