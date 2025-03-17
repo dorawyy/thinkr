@@ -32,7 +32,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.RuntimeException
 
 /**
  * Composable that displays a file picker dialog.
@@ -77,7 +76,13 @@ fun FilePickerDialog(
             } catch (e: FileNotFoundException) {
                 filePickerError = true
                 e.printStackTrace()
-            } catch (e: RuntimeException) {
+            } catch (e: SecurityException) {
+                filePickerError = true
+                e.printStackTrace()
+            } catch (e: IOException) {
+                filePickerError = true
+                e.printStackTrace()
+            } catch (e: Exception){
                 filePickerError = true
                 e.printStackTrace()
             }
