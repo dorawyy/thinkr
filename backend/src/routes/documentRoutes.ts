@@ -13,7 +13,7 @@ const router = Router();
 router.post(
     '/upload',
     upload.single('document'),
-    asyncHandler<any, any, any, any>(uploadDocuments)
+    asyncHandler(uploadDocuments)
 );
 router.delete('/delete', asyncHandler(deleteDocument));
 router.get('/retrieve', asyncHandler(getDocuments));
