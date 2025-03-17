@@ -119,43 +119,115 @@
 
 ### 4.1. Location in Git of Front-end Test Suite:
 
-`frontend/src/androidTest/java/com/studygroupfinder/`
+`frontend/app/src/androidTest/java/com/example/thinkr/`
 
 ### 4.2. Tests
 
-- **Use Case: Login**
 
-  - **Expected Behaviors:**
-    | **Scenario Steps** | **Test Case Steps** |
-    | ------------------ | ------------------- |
-    | 1. The user opens â€œAdd Todo Itemsâ€ screen. | Open â€œAdd Todo Itemsâ€ screen. |
-    | 2. The app shows an input text field and an â€œAddâ€ button. The add button is disabled. | Check that the text field is present on screen.<br>Check that the button labelled â€œAddâ€ is present on screen.<br>Check that the â€œAddâ€ button is disabled. |
-    | 3a. The user inputs an ill-formatted string. | Input â€œ_^_^^OQ#$â€ in the text field. |
-    | 3a1. The app displays an error message prompting the user for the expected format. | Check that a dialog is opened with the text: â€œPlease use only alphanumeric charactersâ€. |
-    | 3. The user inputs a new item for the list and the add button becomes enabled. | Input â€œbuy milkâ€ in the text field.<br>Check that the button labelled â€œaddâ€ is enabled. |
-    | 4. The user presses the â€œAddâ€ button. | Click the button labelled â€œaddâ€. |
-    | 5. The screen refreshes and the new item is at the bottom of the todo list. | Check that a text box with the text â€œbuy milkâ€ is present on screen.<br>Input â€œbuy chocolateâ€ in the text field.<br>Click the button labelled â€œaddâ€.<br>Check that two text boxes are present on the screen with â€œbuy milkâ€ on top and â€œbuy chocolateâ€ at the bottom. |
-    | 5a. The list exceeds the maximum todo-list size. | Repeat steps 3 to 5 ten times.<br>Check that a dialog is opened with the text: â€œYou have too many items, try completing one firstâ€. |
+#### **Main Success Scenario**
 
-  - **Test Logs:**
-    ```
-    [Placeholder for Espresso test execution logs]
-    ```
+2. The app shows input fields for "Name" and "Context", along with an "Upload" button.
+3. The user enters a valid document name and context. The "Upload" button is enabled.
+4. The user presses the "Upload" button.
+5. The document is uploaded successfully, and the user is navigated to the home screen.
 
-- **Use Case: ...**
+#### **Failure Scenarios**
+3a. The user inputs an empty document name.
 
-  - **Expected Behaviors:**
+5a. The document upload fails due to network issues or API failure.
+- 5a1. The app displays an error message.
+- 5a2. The user is not navigated away from the screen.
+5b. The app throws an exception during upload.
+- 5b1. The app displays an error message.
+- 5b2. The user is not navigated away from the screen.
 
-    | **Scenario Steps** | **Test Case Steps** |
-    | ------------------ | ------------------- |
-    | ...                | ...                 |
+#### **Test Case Specification**
 
-  - **Test Logs:**
-    ```
-    [Placeholder for Espresso test execution logs]
-    ```
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 1. The user opens "Upload Document" screen | Open "Upload Document" screen |
+| 2. The app displays input fields and "Upload" button | Check for "Name" and "Context" fields and "Upload" button |
+| | Verify "Upload" button is disabled initially |
+| 3. The user inputs a valid document name and context | Input "Test Document" in "Name" field |
+| | Input "This is a test document context" in "Context" field |
+| | Verify "Upload" button is enabled |
+| 4. The user presses the "Upload" button | Click "Upload" button |
+| 5. The document is uploaded successfully | Verify navigation to "Home" screen |
 
-- **...**
+#### **Failure Cases**
+
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 3a. The user inputs an empty document name | Leave "Name" field empty |
+| 3a1. The app displays an error message | Click "Upload" button and verify error message |
+| 5a. The document upload fails due to network issues | Mock API failure |
+| 5a1. The app displays an error message | Verify error message is displayed |
+| 5a2. The user is not navigated away | Verify no navigation occurs |
+| 5b. The app throws an exception during upload | Mock API exception |
+| 5b1. The app displays an error message | Verify error message is displayed |
+| 5b2. The user is not navigated away | Verify no navigation occurs |
+
+#### **Additional Tests**
+
+  - Click "Back" button
+  - Verify navigation to "Home" screen
+- **Text Field Limits:**
+  - Input excessive text into "Name" and "Context" fields
+  - Verify input is limited to max length
+
+- **Test Logs:**
+
+![Unmocked Coverage](./image/document-upload-test.png)
+
+### **Use Case: Chat with AI**
+
+#### **Main Success Scenario**
+
+2. The AI responds contextually based on the uploaded documents.
+3. The AI returns responses in the chat.
+
+#### **Failure Scenarios**
+1a. The app fails to return a response due to a network error.
+
+2b. The user's message exceeds the context length limit.
+- 2b1. The "Send" button is disabled, preventing message submission until shortened.
+
+#### **Test Case Specification**
+
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 1. The user opens "Chat with AI" screen | Open "Chat with AI" screen |
+| 2. The AI returns context-aware responses | Send message: "Hello AI" |
+| | Verify AI response is displayed |
+| 3. The AI understands uploaded document information | Upload document and ask a related question |
+| | Verify AI responds with relevant content |
+
+#### **Failure Cases**
+
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 1a. App fails to return a response due to a network error | Simulate network failure |
+| 1a1. Show an error message | Verify message: "Check your connection" is displayed |
+| 2b. User message exceeds length limit | Input an overly long message |
+| 2b1. Disable "Send" button | Verify "Send" button is disabled |
+
+#### **Additional Tests**
+- **Back Button Navigation:**
+  - Click "Back" button
+  - Verify navigation back happens
+- **Chat History Loads Correctly:**
+  - Open "Chat with AI" screen
+  - Verify previous messages are displayed
+- **Clear Chat History:**
+  - Click "Delete Chat"
+  - Verify messages are removed
+
+- **Test Logs:**
+
+![Unmocked Coverage](./image/chat-test.png)
+
+
+
 
 ---
 
@@ -306,4 +378,84 @@ _(Placeholder for screenshots of Codacyâ€™s Issues page)_
       - [Express.js Middleware Documentation](https://expressjs.com/en/guide/writing-middleware.html)
       - [TypeScript Handbook: Function Types](https://www.typescriptlang.org/docs/handbook/2/functions.html)
 
-- ...
+
+
+
+
+
+
+
+### Frontend Issues
+All of the remaining issues are related to the number of lines or the complexity of composables. Over-fragmenting Composables can harm readability, reusability, and performance due to unnecessary recompositions and complex state management.  
+Sources:  
+
+- Official Jetpack Compose documentation: [Thinking in Compose](https://developer.android.com/jetpack/compose/mental-model)  
+
+#### **MainActivity - Too Many Functions**
+
+- **Justification:** `MainActivity` serves as the entry point for the application and needs to manage essential lifecycle and UI-related functions. Given its role, splitting it into multiple files would add unnecessary complexity without significant maintainability benefits. [Source: Android Developers - Activity Lifecycle](https://developer.android.com/guide/components/activities/activity-lifecycle).
+
+---
+
+#### **ProfileScreen - Too Many Lines of Code**
+
+- **Justification:** The additional lines result from necessary UI composition, including handling state and effects within Jetpack Compose. Refactoring would require breaking down UI elements, which may not provide a meaningful readability improvement. [Source: Google Developer Guide on Compose Best Practices](https://developer.android.com/jetpack/compose/performance).
+
+---
+
+#### **FilePickerDialog - Anonymous Function Too Long**
+- **Issue:** Anonymous function inside `FilePickerDialog` has 62 lines (limit is 50).
+- **Justification:** The function handles file selection, user permissions, and UI updates in a single location to reduce complexity elsewhere. Extracting logic into separate functions may make debugging more difficult. [Source: Google’s Guide on Managing Permissions](https://developer.android.com/training/permissions/requesting).
+
+---
+
+#### **AnimatedCard - Too Many Lines, High Complexity**
+- **Issues:**  
+  - `AnimatedCard` has 132 lines (limit is 50).  
+  - Cyclomatic complexity of 11 (limit is 8).  
+  - Too many parameters (threshold is 6).  
+- **Justification:** `AnimatedCard` is a self-contained UI component handling multiple user interactions (swipe gestures, flipping animations, state changes). Extracting its logic into separate composables would add unnecessary indirection without significantly improving readability. [Source: Jetpack Compose Performance Optimization](https://developer.android.com/jetpack/compose/performance).
+
+---
+
+#### **FlashcardsScreen - Too Many Lines**
+- **Issue:** `FlashcardsScreen` is 71 lines long (limit is 60).
+- **Justification:** The screen requires managing UI composition and state transitions. Extracting state management could introduce unnecessary complexity without significant readability benefits. [Source: Google’s Guide on State and Jetpack Compose](https://developer.android.com/jetpack/compose/state).
+
+---
+
+#### **HomeScreenContent - Too Many Lines**
+- **Issue:** `HomeScreenContent` is 122 lines long (limit is 60).
+- **Justification:** Home screen composition involves several nested UI components. Extracting subcomponents would increase the number of function calls without improving code clarity. [Source: Jetpack Compose UI Structuring](https://developer.android.com/jetpack/compose/performance).
+
+---
+
+#### **DocumentUploadScreen - Too Many Lines**
+- **Issue:** `DocumentUploadScreen` has 97 lines (limit is 50).
+- **Justification:** This function manages file selection, uploading, and UI updates. Splitting it would make tracking the upload process harder without clear benefits. [Source: Android File Management Best Practices](https://developer.android.com/training/data-storage).
+
+---
+
+#### **QuizScreen - Too Many Lines**
+- **Issue:** `QuizScreen` has 107 lines (limit is 50).
+- **Justification:** The function is structured to handle multiple quiz states and UI updates efficiently. Extracting logic would add unnecessary fragmentation without improving maintainability. [Source: Jetpack Compose State Handling](https://developer.android.com/jetpack/compose/state).
+
+---
+
+#### **ChatScreen - Too Many Lines**
+- **Issue:** `ChatScreen` has 114 lines (limit is 60).
+- **Justification:** The screen involves handling real-time chat updates, UI animations, and message rendering. Splitting it into multiple functions would not improve clarity but would add function calls. [Source: Google Developer Guide on Real-Time Messaging](https://firebase.google.com/docs/firestore/manage-data/real-time).
+
+---
+
+#### **MultipleChoiceQuizCard - Too Many Parameters**
+- **Issue:** `MultipleChoiceQuizCard` has more than 6 parameters.
+- **Justification:** The parameters define necessary quiz attributes such as state, index, and choices. Reducing parameters would require wrapping them into a data class, which may reduce readability. [Source: Kotlin Best Practices - Function Parameters](https://kotlinlang.org/docs/coding-conventions.html#function-parameter-lists).
+
+---
+
+#### **LandingScreen - Too Many Lines**
+- **Issue:** `LandingScreen` has 76 lines (limit is 60).
+- **Justification:** The screen includes necessary UI elements and state management, making further decomposition unnecessary. [Source: Jetpack Compose UI Best Practices](https://developer.android.com/jetpack/compose/performance).
+
+---
