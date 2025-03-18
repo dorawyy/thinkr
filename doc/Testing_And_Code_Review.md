@@ -175,9 +175,6 @@
   - Input excessive text into "Name" and "Context" fields
   - Verify input is limited to max length
 
-- **Test Logs:**
-
-![Unmocked Coverage](./image/document-upload-test.png)
 
 ### **Use Case: Chat with AI**
 
@@ -222,11 +219,49 @@
   - Click "Delete Chat"
   - Verify messages are removed
 
-- **Test Logs:**
 
-![Unmocked Coverage](./image/chat-test.png)
+### **Use Case: View Generated Flashcards and Quizzes**
+
+#### **Main Success Scenario**
+1. User can access AI-generated flashcards based on the uploaded document.
+2. User can access AI-generated quizzes based on the uploaded document.
+
+#### **Failure Scenarios**
+1a. Flashcards or quizzes fail to generate due to an error.
+   - 1a1. The app displays an error message and redirects the user to the home screen.
+
+#### **Test Case Specification**
+
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 1. User accesses AI-generated flashcards | Open "Flashcards" screen |
+| | Verify flashcards are displayed correctly |
+| 2. User accesses AI-generated quizzes | Open "Quiz" screen |
+| | Verify quiz questions and options are displayed correctly |
+
+#### **Failure Cases**
+
+| **Scenario Steps** | **Test Case Steps** |
+|--------------------|--------------------|
+| 1a. Flashcards or quizzes fail to generate | Simulate missing flashcard or quiz data |
+| 1a1. App displays an error and redirects to home | Verify error message is displayed and user is redirected to "Home" screen |
+
+#### **Additional Tests**
+- **Navigation to Flashcards and Quizzes:**
+  - Click "Review Flashcards"
+  - Verify navigation to "Flashcards" screen
+  - Click "Take Quiz"
+  - Verify navigation to "Quiz" screen
+- **Quiz Interaction:**
+  - Answer quiz questions and submit
+  - Verify score is displayed
+- **Flashcard Interaction:**
+  - Swipe through flashcards and verify transitions
+- **Handling of Errors:**
+  - Test app behavior when flashcards or quiz data is unavailable
 
 
+![Unmocked Coverage](./image/frontend-test-logs.png)
 
 
 ---
