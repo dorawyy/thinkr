@@ -23,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.lang.Thread.sleep
 
-class DocumentOptionsScreenTest {
+internal class DocumentOptionsScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
