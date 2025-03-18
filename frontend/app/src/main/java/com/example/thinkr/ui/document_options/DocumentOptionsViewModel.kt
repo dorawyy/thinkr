@@ -1,6 +1,10 @@
 package com.example.thinkr.ui.document_options
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.repositories.doc.DocRepository
 import com.example.thinkr.data.repositories.user.UserRepository
@@ -35,7 +39,7 @@ class DocumentOptionsViewModel(
      *
      * @param documentItem The document to check for readiness.
      */
-    suspend fun checkIfDocumentIsReady(documentItem: Document) {
+    suspend fun checkIfDocumentIsReady(documentItem: Document, context: Context, navController: NavController) {
         for (i in 0 until RETRIES) {
             val response = docRepository.getDocuments(
                 userRepository.getUser()!!.googleId,
@@ -49,6 +53,8 @@ class DocumentOptionsViewModel(
                 Thread.sleep(TIMEOUT)
             }
         }
+        onError(context)
+        navController.navigate(Route.Home)
     }
 
     /**
@@ -62,6 +68,16 @@ class DocumentOptionsViewModel(
 
     private fun onReady() {
         _state.update { it.copy(isReady = true) }
+    }
+
+    private suspend fun onError(context: Context) {
+        withContext(Dispatchers.Main) {
+            Toast.makeText(
+                context,
+                "Error: Document processing failed, please upload again!",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     internal companion object {
