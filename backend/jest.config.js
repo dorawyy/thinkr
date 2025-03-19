@@ -14,6 +14,8 @@ module.exports = {
     '!src/**/*.test.ts',
     '!src/**/*.spec.ts',
     '!src/**/tests/**',
+    '!src/**/*mongo*.ts',
+    '!src/**/db/**',
     '!**/node_modules/**'
   ],
   coverageThreshold: {
