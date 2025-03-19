@@ -17,7 +17,11 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
     jest.setTimeout(20000);
 
     // Upload a test document and return the document ID
-    async function uploadTestDocument(userId: string, documentName: string, context: string): Promise<string> {
+    async function uploadTestDocument(
+        userId: string,
+        documentName: string,
+        context: string
+    ): Promise<string> {
         const testFilePath = path.resolve(__dirname, './testDoc.pdf');
         const formData = new FormData();
         formData.append('document', fs.createReadStream(testFilePath));
@@ -42,7 +46,10 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
     }
 
     // Wait for document processing to complete
-    async function waitForDocumentProcessing(userId: string, documentId: string): Promise<void> {
+    async function waitForDocumentProcessing(
+        userId: string,
+        documentId: string
+    ): Promise<void> {
         let isGenerationComplete = false;
         while (!isGenerationComplete) {
             const retrieveResponse = await axios.get(
@@ -60,13 +67,18 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
             if (retrieveResponse.data.data.docs.activityGenerationComplete) {
                 isGenerationComplete = true;
             } else {
-                await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
+                await new Promise((resolve) =>
+                    setTimeout(resolve, POLL_INTERVAL)
+                );
             }
         }
     }
 
     // Delete a test document
-    async function cleanupTestDocument(userId: string, documentId: string): Promise<void> {
+    async function cleanupTestDocument(
+        userId: string,
+        documentId: string
+    ): Promise<void> {
         await axios.delete(`${API_URL}/document/delete`, {
             params: {
                 userId: userId,
@@ -84,8 +96,12 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
 
         try {
             // Upload document and get document ID
-            documentId = await uploadTestDocument(userId, documentName, context);
-            
+            documentId = await uploadTestDocument(
+                userId,
+                documentName,
+                context
+            );
+
             // Wait for document processing to complete
             await waitForDocumentProcessing(userId, documentId);
 
