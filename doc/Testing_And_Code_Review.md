@@ -274,11 +274,13 @@
 
 ### 5.2. Unfixed Issues per Codacy Category
 
-_(Placeholder for screenshots of Codacyâ€™s Category Breakdown table in Overview)_
+Note: This includes the Markdown issues, as we were not able to filter them in this breakdown.
+
+![Unmocked Coverage](./image/codacy-category-sc.png)
 
 ### 5.3. Unfixed Issues per Codacy Code Pattern
 
-_(Placeholder for screenshots of Codacyâ€™s Issues page)_
+![Unmocked Coverage](./image/codacy-pattern-sc.png)
 
 ### 5.4. Justifications for Unfixed Issues
 
