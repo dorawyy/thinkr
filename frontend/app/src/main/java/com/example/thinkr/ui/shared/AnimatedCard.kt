@@ -206,26 +206,34 @@ fun AnimatedCard(
                     onDragStart = { isDragging = true },
                     onDragEnd = { isDragging = false }
                 ) { change, dragAmount ->
-                    if (!isDragging) return@detectDragGestures
+                    if (isDragging) {
+                        when {
+                            dragAmount.y > verticalDragThreshold -> {
+                                onSwipeDown()
+                                Log.d("Drag", "Down")
+                                isDragging = false
+                            }
 
-                    if (dragAmount.y > verticalDragThreshold) {
-                        onSwipeDown()
-                        Log.d("Drag", "Down")
-                        isDragging = false
-                    } else if (dragAmount.y < -verticalDragThreshold) {
-                        onSwipeUp()
-                        Log.d("Drag", "Up")
-                        isDragging = false
-                    } else if (dragAmount.x > horizontalDragThreshold) {
-                        onSwipeRight()
-                        Log.d("Drag", "Right")
-                        isDragging = false
-                    } else if (dragAmount.x < -horizontalDragThreshold) {
-                        onSwipeLeft()
-                        Log.d("Drag", "Left")
-                        isDragging = false
+                            dragAmount.y < -verticalDragThreshold -> {
+                                onSwipeUp()
+                                Log.d("Drag", "Up")
+                                isDragging = false
+                            }
+
+                            dragAmount.x > horizontalDragThreshold -> {
+                                onSwipeRight()
+                                Log.d("Drag", "Right")
+                                isDragging = false
+                            }
+
+                            dragAmount.x < -horizontalDragThreshold -> {
+                                onSwipeLeft()
+                                Log.d("Drag", "Left")
+                                isDragging = false
+                            }
+                        }
+                        change.consume()
                     }
-                    change.consume()
                 }
             },
         contentAlignment = Alignment.Center
