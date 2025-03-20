@@ -66,6 +66,12 @@
 
 ![Unmocked Coverage](./image/unmocked-coverage.png)
 
+### 2.5 Reasoning For Files with < 100% coverage:
+`index.ts`: This file does not affect core logic of the application and only instantiates parts of the server that are already tested via testing the endpoints directly.
+`asyncHandler.ts`: This file was created to fix a Codacy issue and has zero effect on any endpoints, it is just a way to simplify route handling so its left untested.
+`RAGService.ts`: This file is a wrapper around calls to external components such as ChromaDB and LangChain, we were unable to mock ChromaDB and LangChain components directly so we decided that it was adequate to mock the the interface itself as it was enough for most of our feature testing.
+`documentService.ts`: Some of the methods here directly call AWS Textract and AWS S3, and does some minor processing on results from those external call, but we were unable to succesfully replicate AWS mocks without creating wrapper methods which would force us to change our code to match the tests, so we decided it was adequate to mock the interface methods that use AWS itself for our tests. 
+`studyService.ts`: Like `RAGService.ts`, we were unable to replicate mocks to ChromaDB and LangChain, so we decided to just mock the interfaces itself that utilize calls from those external services. 
 ---
 
 ## 3. Back-end Test Specification: Tests of Non-Functional Requirements
