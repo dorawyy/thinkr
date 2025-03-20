@@ -66,7 +66,8 @@
 
 ![Unmocked Coverage](./image/unmocked-coverage.png)
 
-### 2.5 Reasoning For Files with < 100% coverage:
+### 2.5 Reasoning For Files with < 100% coverage
+
 `index.ts`: This file does not affect core logic of the application and only instantiates parts of the server that are already tested via testing the endpoints directly.
 `asyncHandler.ts`: This file was created to fix a Codacy issue and has zero effect on any endpoints, it is just a way to simplify route handling so its left untested.
 `RAGService.ts`: This file is a wrapper around calls to external components such as ChromaDB and LangChain, we were unable to mock ChromaDB and LangChain components directly so we decided that it was adequate to mock the the interface itself as it was enough for most of our feature testing.
