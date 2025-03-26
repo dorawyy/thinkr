@@ -1,6 +1,10 @@
 # M3 - Requirements and Design
 
 ## 1. Change History
+- Changed RAGService to be an internal interface
+   - Date of Modification: Mar 26
+   - Modified Sections: 4.1, 4.4
+   - Rationale: RAGService is not exposed as an API endpoint so it is changed to be an internal interface that other interfaces rely on for them to work. 
 - Removed unused endpoints like generateQuizzes and generateFlashcards from StudyService interface
    - Date of Modification: Mar 12
    - Modified Sections: 4.4
@@ -159,6 +163,9 @@ Note: Users and Students will be used synonymously in this document.
 
 5. **StudyService**
     - **Purpose and rationale**: Allows for retrieval of generated flashcards and quizzes based on the extracted text of a provided document.
+
+6. **RAGService**
+   - **Purpose and rationale**: **Internal service** that handles document embedding, similarity search, and context retrieval for AI-powered features like chat and suggested materials.
 
 ### **4.2. Databases**  
 
@@ -324,6 +331,39 @@ Note: Users and Students will be used synonymously in this document.
     * @return List of flashcards and quizzes 
     */
     Object getSuggestedStudyMaterials(String userId);
+    ```
+
+6. **RAGService**
+
+    ```java
+    /**
+    * Internal service for document retrieval, similarity search, and context generation
+    */
+    interface RAGService {
+        /**
+        * Retrieves relevant context for a user message
+        * 
+        * @param message The user message
+        * @param userId The user ID
+        * @return Relevant document content as context
+        */
+        String getRelevantContext(String message, String userId);
+        
+        /**
+        * Queries document embeddings to find relevant content
+        * 
+        * @param message The user message or query
+        * @return Matching document chunks
+        */
+        List<DocumentChunk> queryEmbeddings(String message);
+        
+        /**
+        * Finds documents similar to the user's documents based on vector similarity
+        * 
+        * @return List of similar documents from other users
+        */
+        List<Document> findSimilarDocuments();
+    }
     ```
 
 ### **4.5. Frameworks**
