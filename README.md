@@ -160,7 +160,8 @@ The system uses ChromaDB to store document embeddings with the following archite
    "document": "<your file (single) here>",
    "userId": "user google id",
    "documentName": "<user's given name for this document>",
-   "context": "<user's provided context about this document>"
+   "context": "<user's provided context about this document>",
+   "public": "true" // Optional, defaults to "false" if not provided
 }
 ```
 - Response:
@@ -170,12 +171,13 @@ The system uses ChromaDB to store document embeddings with the following archite
       "docs": {
          "documentId": "first file",
          "uploadTime": "time of file upload",
-         "activityGenerationComplete": false
+         "activityGenerationComplete": false,
+         "public": false
       },
    }
 }
 ```
-- Note: The system supports PDF, JPEG, PNG, TIFF, and text files. This will also extract document text into the ChromaDB, and create the quiz and flashcards associated with the document uploaded in a separate background process.
+- Note: The system supports PDF, JPEG, PNG, TIFF, and text files. This will also extract document text into the ChromaDB, and create the quiz and flashcards associated with the document uploaded in a separate background process. The `public` field determines whether the document can be included in suggested materials for other users.
 
 **Endpoint: `/document/delete`**
 - Deletes one document given a userId and the documentId you want to delete
@@ -207,13 +209,15 @@ The system uses ChromaDB to store document embeddings with the following archite
             "documentId": "first file",
             "documentName": "<user's given name for this document>",
             "uploadTime": "time of file upload",
-            "activityGenerationComplete": false
+            "activityGenerationComplete": false,
+            "public": true
          },
          {
             "documentId": "second file",
             "documentName": "<user's given name for this document>",
             "uploadTime": "time of file upload",
-            "activityGenerationComplete": true
+            "activityGenerationComplete": true,
+            "public": false
          }
       ]
    }
@@ -227,7 +231,8 @@ The system uses ChromaDB to store document embeddings with the following archite
          "documentId": "first file",
          "documentName": "<user's given name for this document>",
          "uploadTime": "time of file upload",
-         "activityGenerationComplete": false
+         "activityGenerationComplete": false,
+         "public": false
       }
    }
 }
@@ -363,7 +368,7 @@ The system uses ChromaDB to store document embeddings with the following archite
 ```
 
 **Endpoint: `/study/suggestedMaterials`**
-- Retrieves suggested study materials (flashcards and quizzes) from other users' documents that are similar to the user's documents.
+- Retrieves suggested study materials (flashcards and quizzes) from other users' public documents that are similar to the user's documents.
 - Method: `GET`
 - Params:
 ```json
@@ -379,6 +384,7 @@ The system uses ChromaDB to store document embeddings with the following archite
          {
             "userId": "other user google id",
             "documentId": "file documentId",
+            "documentName": "Document Name",
             "flashcards": [
                {
                   "front": "term",
@@ -391,6 +397,7 @@ The system uses ChromaDB to store document embeddings with the following archite
          {
             "userId": "other user google id",
             "documentId": "file documentId",
+            "documentName": "Document Name",
             "quiz": [
                {
                   "question": "Question?",
@@ -408,7 +415,7 @@ The system uses ChromaDB to store document embeddings with the following archite
    }
 }
 ```
-- Note: This endpoint finds study materials from other users' documents that are most similar to the requesting user's documents. The similarity is calculated using document embeddings and cosine similarity. If no similar documents are found, empty arrays will be returned for both flashcards and quizzes.
+- Note: This endpoint finds study materials from other users' public documents that are most similar to the requesting user's documents. The similarity is calculated using document embeddings and cosine similarity. If no similar documents are found, empty arrays will be returned for both flashcards and quizzes.
 
 ### Subscription
 
@@ -476,7 +483,7 @@ Here are some example cURL commands to test the API:
 
 ### Document Upload
 ```
-curl -X POST http://localhost:3000/document/upload -F "document=@/path/to/your/document.pdf" -F "userId=user123"
+curl -X POST http://localhost:3000/document/upload -F "document=@/path/to/your/document.pdf" -F "userId=user123" -F "public=true"
 ```
 
 ### RAG Query (All Documents)
