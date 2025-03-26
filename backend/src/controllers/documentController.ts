@@ -10,7 +10,7 @@ export const uploadDocuments = async (
     req: Request,
     res: Response
 ): Promise<void> => {
-    const { userId, documentName } = req.body;
+    const { userId, documentName, public: isPublic } = req.body;
 
     if (!userId || !req.file || !documentName) {
         res.status(400).json({
@@ -24,7 +24,8 @@ export const uploadDocuments = async (
         const docs = await DocumentService.uploadDocument(
             file,
             userId as string,
-            documentName as string
+            documentName as string,
+            isPublic as boolean
         );
 
         res.status(200).json({

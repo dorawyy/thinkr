@@ -23,8 +23,8 @@ const documentSchema = new Schema<IDocument>({
     },
     public: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 
 const Document = model<IDocument>('Document', documentSchema);
