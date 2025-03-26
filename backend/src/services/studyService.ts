@@ -339,6 +339,7 @@ class StudyService {
         // Get all documents from other users
         const otherUsersDocuments = await Document.find({
             userId: { $ne: userId },
+            public: true
         });
 
         if (otherUsersDocuments.length === 0) {

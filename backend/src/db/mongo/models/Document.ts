@@ -7,6 +7,7 @@ export interface IDocument extends MongooseDocument {
     uploadDate: string;
     s3documentId: string;
     activityGenerationComplete: boolean;
+    public: boolean;
 }
 
 const documentSchema = new Schema<IDocument>({
@@ -20,6 +21,10 @@ const documentSchema = new Schema<IDocument>({
         required: true,
         default: false,
     },
+    public: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const Document = model<IDocument>('Document', documentSchema);
