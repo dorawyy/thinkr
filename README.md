@@ -160,7 +160,8 @@ The system uses ChromaDB to store document embeddings with the following archite
    "document": "<your file (single) here>",
    "userId": "user google id",
    "documentName": "<user's given name for this document>",
-   "context": "<user's provided context about this document>"
+   "context": "<user's provided context about this document>",
+   "public" : false
 }
 ```
 - Response:
@@ -170,7 +171,8 @@ The system uses ChromaDB to store document embeddings with the following archite
       "docs": {
          "documentId": "first file",
          "uploadTime": "time of file upload",
-         "activityGenerationComplete": false
+         "activityGenerationComplete": false,
+         "public": false
       },
    }
 }
@@ -207,13 +209,15 @@ The system uses ChromaDB to store document embeddings with the following archite
             "documentId": "first file",
             "documentName": "<user's given name for this document>",
             "uploadTime": "time of file upload",
-            "activityGenerationComplete": false
+            "activityGenerationComplete": false,
+            "public": false
          },
          {
             "documentId": "second file",
             "documentName": "<user's given name for this document>",
             "uploadTime": "time of file upload",
-            "activityGenerationComplete": true
+            "activityGenerationComplete": true,
+            "public": false
          }
       ]
    }
@@ -379,6 +383,7 @@ The system uses ChromaDB to store document embeddings with the following archite
          {
             "userId": "other user google id",
             "documentId": "file documentId",
+            "documentName": "doc name",
             "flashcards": [
                {
                   "front": "term",
@@ -391,6 +396,7 @@ The system uses ChromaDB to store document embeddings with the following archite
          {
             "userId": "other user google id",
             "documentId": "file documentId",
+            "documentName": "doc name",
             "quiz": [
                {
                   "question": "Question?",
