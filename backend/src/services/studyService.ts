@@ -294,10 +294,27 @@ class StudyService {
                 this.fetchQuizzesForDocuments(similarDocumentIds),
             ]);
 
-            // 4. Clean up structure - removive _id
+            // Get document names for the similar documents
+            const documentMap = new Map();
+            for (const doc of similarDocumentIds) {
+                const document = await Document.findOne({
+                    documentId: doc.documentId,
+                    userId: doc.otherUserId,
+                });
+                if (document) {
+                    documentMap.set(
+                        `${doc.otherUserId}-${doc.documentId}`,
+                        document.name
+                    );
+                }
+            }
+
+            // 4. Clean up structure - remove _id and add documentName
             const flashcards = rawFlashcards.map((f) => ({
                 userId: f.userId,
                 documentId: f.documentId,
+                documentName:
+                    documentMap.get(`${f.userId}-${f.documentId}`) || '',
                 flashcards: f.flashcards.map((flashcard) => ({
                     front: flashcard.front,
                     back: flashcard.back,
@@ -307,6 +324,8 @@ class StudyService {
             const quizzes = rawQuizzes.map((q) => ({
                 userId: q.userId,
                 documentId: q.documentId,
+                documentName:
+                    documentMap.get(`${q.userId}-${q.documentId}`) || '',
                 quiz: q.quiz.map((quiz) => ({
                     question: quiz.question,
                     answer: quiz.answer,
@@ -339,7 +358,7 @@ class StudyService {
         // Get all documents from other users
         const otherUsersDocuments = await Document.find({
             userId: { $ne: userId },
-            public: true
+            public: true,
         });
 
         if (otherUsersDocuments.length === 0) {

@@ -102,6 +102,7 @@ describe('Study Routes (Mocked)', () => {
                     {
                         userId: 'other-user',
                         documentId: 'doc3',
+                        documentName: 'Document 3',
                         flashcards: [{ front: 'Term 5', back: 'Definition 5' }],
                     },
                 ],
@@ -109,6 +110,7 @@ describe('Study Routes (Mocked)', () => {
                     {
                         userId: 'other-user',
                         documentId: 'doc3',
+                        documentName: 'Document 3',
                         quiz: [
                             {
                                 question: 'Question 3?',
