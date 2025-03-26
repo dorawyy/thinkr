@@ -47,7 +47,7 @@ class DocumentService {
         file: Express.Multer.File,
         userId: string,
         name: string,
-        isPublic: boolean = false
+        isPublic = false
     ): Promise<DocumentDTO> {
         const key = `${userId}-${file.originalname}`;
         const documentId = file.originalname;
@@ -128,7 +128,7 @@ class DocumentService {
             uploadTime: doc?.uploadDate,
             activityGenerationComplete: doc?.activityGenerationComplete,
             documentName: doc?.name,
-            public: doc?.public || false,
+            public: doc?.public ?? false,
         } as DocumentDTO;
     }
 
