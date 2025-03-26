@@ -152,6 +152,7 @@ describe('Document Controller', () => {
                     documentId: 'test.pdf',
                     uploadDate: expect.any(String),
                     activityGenerationComplete: false,
+                    public: false,
                 },
                 { upsert: true, new: true }
             );

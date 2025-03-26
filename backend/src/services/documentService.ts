@@ -46,7 +46,8 @@ class DocumentService {
     public async uploadDocument(
         file: Express.Multer.File,
         userId: string,
-        name: string
+        name: string,
+        isPublic = false
     ): Promise<DocumentDTO> {
         const key = `${userId}-${file.originalname}`;
         const documentId = file.originalname;
@@ -76,6 +77,7 @@ class DocumentService {
                 documentId: documentId,
                 uploadDate: dateFormatted,
                 activityGenerationComplete: false,
+                public: isPublic,
             },
             { upsert: true, new: true }
         );
@@ -85,6 +87,7 @@ class DocumentService {
             uploadTime: dateFormatted,
             activityGenerationComplete: false,
             documentName: name,
+            public: isPublic,
         } as DocumentDTO;
     }
 
@@ -125,6 +128,7 @@ class DocumentService {
             uploadTime: doc?.uploadDate,
             activityGenerationComplete: doc?.activityGenerationComplete,
             documentName: doc?.name,
+            public: doc?.public ?? false,
         } as DocumentDTO;
     }
 

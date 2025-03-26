@@ -33,6 +33,7 @@ export interface DocumentDTO {
     uploadTime: string;
     activityGenerationComplete: boolean;
     documentName: string;
+    public?: boolean;
 }
 
 /**
