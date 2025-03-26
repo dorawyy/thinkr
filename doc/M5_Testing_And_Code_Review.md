@@ -4,7 +4,7 @@
 
 | **Change Date**   | **Modified Sections** | **Rationale** |
 | ----------------- | --------------------- | ------------- |
-| _Nothing to show_ |
+| 3/26/2025 | 3.2 | Passes all nfrs tests | 
 
 ---
 
@@ -106,15 +106,16 @@
     ```
 
 - **Document Upload and Study Material Generation Performance**
-  - **Verification:** This test simulates a single API call with Jest to the endpoint that uploads a document to the application and polls the document endpoint to verify that quizzes and flashcards were generated. The focus is on the time it takes to upload a document and for quizzes and flashcards to be generated, which we identified as no more than 11.3 seconds based on our design specifications. The test logs capture the response time of the call to the endpoint and the performance margin (difference between response time and threshold time). We then analyze these logs to verify that performance standards are met and don't hinder user experience. **Note that currently, this NFR is not met as we are using a weaker OCR service from AWS Textract due to this project still being in the MVP phase.**
+  - **Verification:** This test simulates a single API call with Jest to the endpoint that uploads a document to the application and polls the document endpoint to verify that quizzes and flashcards were generated. The focus is on the time it takes to upload a document and for quizzes and flashcards to be generated, which we identified as no more than 11.3 seconds based on our design specifications. The test logs capture the response time of the call to the endpoint and the performance margin (difference between response time and threshold time). We then analyze these logs to verify that performance standards are met and don't hinder user experience.
+
   - **Log Output**
     ```
     PERFORMANCE SUMMARY: Quiz/Flashcard Generation
                -----------------------------------------------
-               ✧ Response Time:      17.34 seconds
+               ✧ Response Time:      10.28 seconds
                ✧ Threshold:          11.3 seconds
-               ✧ Performance Margin: -6.04 seconds
-               ✧ Status:             FAILED ❌
+               ✧ Performance Margin: 1.02 seconds
+               ✧ Status:             PASSED ✅
                -----------------------------------------------
 
     at src/tests/nonfunctional/quizGenerationPerformance.test.ts:69:21
