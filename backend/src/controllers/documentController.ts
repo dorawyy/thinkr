@@ -18,14 +18,14 @@ export const uploadDocuments = async (
         } as Result);
         return;
     }
-
+    
     try {
         const file = req.file as Express.Multer.File;
         const docs = await DocumentService.uploadDocument(
             file,
             userId as string,
             documentName as string,
-            isPublic as boolean
+            isPublic === "true"
         );
 
         res.status(200).json({
