@@ -128,7 +128,7 @@ class DocumentService {
             uploadTime: doc?.uploadDate,
             activityGenerationComplete: doc?.activityGenerationComplete,
             documentName: doc?.name,
-            public: doc?.public ?? false,
+            public: doc?.public,
         } as DocumentDTO;
     }
 
