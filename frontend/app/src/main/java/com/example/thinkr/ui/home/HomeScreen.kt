@@ -1,5 +1,8 @@
 package com.example.thinkr.ui.home
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,12 +49,19 @@ import kotlinx.serialization.json.Json
  * @param viewModel ViewModel that manages the home screen state and operations.
  * @param onSignOut Callback function to be invoked when the user signs out.
  */
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel,
     onSignOut: () -> Unit
 ) {
+    val context = LocalContext.current as? Activity
+
+    BackHandler {
+        context?.finish() // Exits the app
+    }
+
     val state = viewModel.state.collectAsState()
     var showDialog by remember { mutableStateOf(value = false) }
 
