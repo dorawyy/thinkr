@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,6 +63,7 @@ fun DocumentUploadScreen(
 ) {
     var documentName by remember { mutableStateOf("") }
     var documentContext by remember { mutableStateOf("") }
+    var documentPublic by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -102,7 +105,18 @@ fun DocumentUploadScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = documentPublic,
+                onCheckedChange = { documentPublic = it },
+                modifier = Modifier.padding(16.dp)
+            )
+            Text("Make Document Public")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = documentName,
@@ -145,6 +159,7 @@ fun DocumentUploadScreen(
                             navController = navController,
                             documentName = documentName,
                             documentContext = documentContext,
+                            documentPublic = documentPublic,
                             uri = selectedUri,
                             context = localContext
                         )

@@ -38,6 +38,7 @@ interface IDocRepository {
      * @param userId The unique identifier of the user uploading the document.
      * @param documentName The display name for the document.
      * @param documentContext Additional context information about the document.
+     * @param documentPublic Boolean indicating whether the document should be publicly accessible.
      * @return Boolean indicating whether the upload was successful.
      */
     suspend fun uploadDocument(
@@ -45,7 +46,8 @@ interface IDocRepository {
         fileName: String,
         userId: String,
         documentName: String,
-        documentContext: String
+        documentContext: String,
+        documentPublic: Boolean
     ): Boolean
 
     /**

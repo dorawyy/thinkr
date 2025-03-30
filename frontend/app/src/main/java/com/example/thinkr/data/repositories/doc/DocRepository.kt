@@ -61,6 +61,7 @@ class DocRepository(
      * @param userId The unique identifier of the user uploading the document.
      * @param documentName The display name for the document.
      * @param documentContext Additional context information about the document.
+     * @param documentPublic Boolean indicating whether the document should be publicly accessible.
      * @return Boolean indicating whether the upload was successful.
      */
     override suspend fun uploadDocument(
@@ -68,7 +69,8 @@ class DocRepository(
         fileName: String,
         userId: String,
         documentName: String,
-        documentContext: String
+        documentContext: String,
+        documentPublic: Boolean
     ): Boolean {
         val tempDocument = Document(
             documentId = "temp_${System.currentTimeMillis()}",
@@ -77,7 +79,7 @@ class DocRepository(
             activityGenerationComplete = false,
             isUploading = true,
             documentContext = documentContext,
-            public = false
+            public = documentPublic
         )
 
         _uploadingDocuments.value += tempDocument
