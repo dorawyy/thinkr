@@ -170,7 +170,7 @@ class ChatViewModel(
     }
 
     internal companion object {
-        private const val MESSAGE_STREAM_DELAY = 50L
+        private const val MESSAGE_STREAM_DELAY = 20L
         private const val SYSTEM = "system"
         private const val USER = "user"
     }

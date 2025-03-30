@@ -41,7 +41,8 @@ data class ChatData(
     val messages: List<ChatMessage>,
     val createdAt: String,
     val updatedAt: String,
-    val metadata: Map<String, String>
+    val metadata: Map<String, String>,
+    val userId: String
 )
 
 /**
