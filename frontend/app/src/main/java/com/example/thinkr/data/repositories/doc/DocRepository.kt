@@ -76,19 +76,20 @@ class DocRepository(
             uploadTime = System.currentTimeMillis().toString(),
             activityGenerationComplete = false,
             isUploading = true,
-            documentContext = documentContext
+            documentContext = documentContext,
+            public = false
         )
 
         _uploadingDocuments.value += tempDocument
 
         try {
-//            val response = documentApi.uploadDocument(
-//                fileBytes = fileBytes,
-//                fileName = fileName,
-//                userId = userId,
-//                documentName = documentName,
-//                documentContext = documentContext
-//            )
+            documentApi.uploadDocument(
+                fileBytes = fileBytes,
+                fileName = fileName,
+                userId = userId,
+                documentName = documentName,
+                documentContext = documentContext
+            )
             return true
         } catch (e: IOException) {
             _uploadingDocuments.value = _uploadingDocuments.value.filter {
