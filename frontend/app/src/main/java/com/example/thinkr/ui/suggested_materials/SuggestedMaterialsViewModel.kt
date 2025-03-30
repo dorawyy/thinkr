@@ -52,6 +52,10 @@ class SuggestedMaterialsViewModel(
         _state.update { it.copy(isLoading = false) }
     }
 
+
+    /**
+    * Tag for logging purposes.
+    */
     companion object {
         private const val TAG = "SuggestedMaterialsViewModel"
     }
