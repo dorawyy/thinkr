@@ -18,5 +18,6 @@ data class QuizState(
     var started: Boolean = false,
     var revealAnswer: Boolean = false,
     var totalScore: Int = 0,
-    var totalTimeSeconds: Int = 0
+    var totalTimeSeconds: Int = 0,
+    var quizTimerVisible: Boolean = true
 )

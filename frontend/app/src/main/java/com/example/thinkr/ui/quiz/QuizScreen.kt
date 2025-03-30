@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
@@ -54,6 +55,7 @@ import com.example.thinkr.data.models.Document
 import com.example.thinkr.data.models.QuizItem
 import com.example.thinkr.data.models.QuizSuggestion
 import com.example.thinkr.ui.shared.AnimatedCardDeck
+import com.example.thinkr.ui.shared.GradientButton
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -154,15 +156,18 @@ fun QuizScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            QuizTimer(
-                totalTimeSeconds = state.totalTimeSeconds,
-                onTimeUp = {
-                    viewModel.onQuizTimeUp()
-                    vibrate(context)
-                }
-            )
+            if (state.quizTimerVisible) {
+                Spacer(modifier = Modifier.height(16.dp))
+                QuizTimer(
+                    totalTimeSeconds = state.totalTimeSeconds,
+                    onTimeUp = {
+                        if (state.quizTimerVisible) {
+                            viewModel.onQuizTimeUp()
+                            vibrate(context)
+                        }
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -184,6 +189,16 @@ fun QuizScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            if (!state.revealAnswer) {
+                GradientButton(
+                    text = "Submit",
+                    gradientColors = listOf(Color(0xFF6633CC), Color(0xFFFF3399)),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .width(200.dp),
+                    onClick = { viewModel.onSubmitQuiz() },
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -235,7 +250,7 @@ private fun  MultipleChoiceQuizCard(
             val isSelected = quizState.selectedAnswers[questionIndex] == key
             val isCorrect = key == correctAnswerKey
             val backgroundColor = when {
-                !revealAnswer -> if (isSelected) Color.Gray else Color.Transparent
+                !revealAnswer -> if (isSelected) Color.LightGray else Color.Transparent
                 isSelected && isCorrect -> Color(0xFFD0F0D0) // Light green
                 isSelected && !isCorrect -> Color(0xFFF0D0D0) // Light red
                 isCorrect -> Color(0xFFD0F0D0) // Show correct answer

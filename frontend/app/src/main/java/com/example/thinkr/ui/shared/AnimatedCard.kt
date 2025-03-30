@@ -200,7 +200,6 @@ fun AnimatedCard(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .background(Color.White)
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { isDragging = true },
@@ -248,8 +247,7 @@ fun AnimatedCard(
                     scaleY = scale
                     cameraDistance = 12f * density
                 }
-                .border(2.dp, Color.Black, RoundedCornerShape(16.dp))
-                .background(Color.LightGray, RoundedCornerShape(16.dp)),
+                .border(2.dp, Color.Black, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
             // Question side
