@@ -92,32 +92,6 @@ class HomeViewModel(
     }
 
     /**
-     * Retrieves suggested learning materials for the user.
-     *
-     * Updates the state with suggested materials. Handles various potential error conditions.
-     */
-    suspend fun getSuggestedMaterial() {
-        if (userRepository.getUser() != null) {
-            try {
-                val suggestedMaterials = docRepository.getSuggestedMaterials(
-                    userId = userRepository.getUser()!!.googleId,
-                    limit = 1
-                )
-                _state.update { it.copy(suggestedMaterials = suggestedMaterials) }
-            } catch (e: IOException) {
-                Log.e(TAG, "Network error getting suggested materials", e)
-                e.printStackTrace()
-            } catch (e: ResponseException) {
-                Log.e(TAG, "API error getting suggested materials", e)
-                e.printStackTrace()
-            } catch (e: SerializationException) {
-                Log.e(TAG, "Parsing error getting suggested materials", e)
-                e.printStackTrace()
-            }
-        }
-    }
-
-    /**
      * Signs out the current user by removing user data.
      */
     fun signOut() {
