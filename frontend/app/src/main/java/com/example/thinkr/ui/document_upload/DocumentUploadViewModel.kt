@@ -52,6 +52,7 @@ class DocumentUploadViewModel(
      * @param navController Navigation controller to handle screen transition after upload.
      * @param documentName Name of the document being uploaded.
      * @param documentContext Additional context information about the document.
+     * @param documentPublic Boolean indicating whether the document should be publicly accessible.
      * @param uri URI of the selected document file.
      * @param context Android context used to access content resolver.
      */
@@ -59,6 +60,7 @@ class DocumentUploadViewModel(
         navController: NavController,
         documentName: String,
         documentContext: String,
+        documentPublic: Boolean,
         uri: Uri,
         context: Context
     ) {
@@ -79,7 +81,8 @@ class DocumentUploadViewModel(
                     fileName = fileName,
                     userId = userId,
                     documentName = documentName,
-                    documentContext = documentContext
+                    documentContext = documentContext,
+                    documentPublic = documentPublic
                 )
 
                 if (result) {

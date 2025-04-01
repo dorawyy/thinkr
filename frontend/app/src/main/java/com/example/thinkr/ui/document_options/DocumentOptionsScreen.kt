@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,16 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -36,12 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
 import com.example.thinkr.data.models.Document
+import com.example.thinkr.ui.shared.GradientButton
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -163,29 +160,12 @@ private fun DocumentOptionButton(
     onClick: () -> Unit,
     isReady: Boolean
 ) {
-    Button(
-        onClick = {
-            if (isReady) onClick()
-        },
+    GradientButton(
+        text = title,
+        gradientColors = if (!isReady) listOf(Color(0xFF9E9E9E), Color(0xFF9E9E9E)) else listOf(Color(0xFF6633CC), Color(0xFFFF3399)),
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .height(56.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isReady) MaterialTheme.colorScheme.primary else Color.LightGray,
-            contentColor = if (isReady) Color.LightGray else Color.Gray
-        ),
-        shape = RoundedCornerShape(28.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }
-    }
+        onClick = onClick,
+    )
 }

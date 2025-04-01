@@ -80,7 +80,8 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
                 revealAnswer = true,
                 totalScore = it.selectedAnswers.mapIndexed { index, selectedIndex ->
                     if (selectedIndex == it.quiz[index].answer) 1 else 0
-                }.reduce { sum, element -> sum + element }
+                }.reduce { sum, element -> sum + element },
+                quizTimerVisible = false
             )
         }
     }
@@ -99,5 +100,20 @@ class QuizViewModel(private val quizRepository: QuizRepository) : ViewModel() {
                 }
             )
         }
+    }
+
+    /**
+     * Submits the quiz by hiding the quiz timer and revealing the answers.
+     *
+     * This function updates the state to hide the quiz timer and then calls
+     * `onQuizTimeUp` to reveal the answers and calculate the total score.
+     */
+    fun onSubmitQuiz() {
+        _state.update {
+            it.copy(
+                quizTimerVisible = false
+            )
+        }
+        onQuizTimeUp()
     }
 }

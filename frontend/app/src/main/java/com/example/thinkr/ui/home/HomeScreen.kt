@@ -1,5 +1,8 @@
 package com.example.thinkr.ui.home
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,10 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,15 +27,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.thinkr.app.Route
+import com.example.thinkr.ui.shared.GradientButton
 import com.example.thinkr.ui.shared.ListItem
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 /**
  * Composable that displays the home screen of the application.
@@ -45,18 +48,24 @@ import kotlinx.serialization.json.Json
  * @param viewModel ViewModel that manages the home screen state and operations.
  * @param onSignOut Callback function to be invoked when the user signs out.
  */
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel,
     onSignOut: () -> Unit
 ) {
+    val context = LocalContext.current as? Activity
+
+    BackHandler {
+        context?.finish() // Exits the app
+    }
+
     val state = viewModel.state.collectAsState()
     var showDialog by remember { mutableStateOf(value = false) }
 
     LaunchedEffect(Unit) {
         viewModel.getDocuments()
-        viewModel.getSuggestedMaterial()
     }
 
     if (showDialog) {
@@ -138,89 +147,14 @@ private fun HomeScreenContent(
                         Text(text = "Add")
                     }
                 }
-
-                if (state.value.retrievedDocuments.isNotEmpty()) {
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Materials from a most similar document",
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
-                    if (state.value.suggestedMaterials.flashcards.isNotEmpty()) {
-                        item {
-                            Text(text = "Flashcards")
-                        }
-
-                        items(state.value.suggestedMaterials.flashcards) { flashcardSet ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .clickable {
-                                        val flashcardJson = Json.encodeToString(flashcardSet)
-                                        navController.navigate(
-                                            Route.Flashcards.createRoute(
-                                                flashcardSuggestion = flashcardJson
-                                            )
-                                        )
-                                    }
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = "${flashcardSet.flashcards.size} flashcards",
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        item {
-                            Text(text = "No similar document with flashcards")
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
-                    if (state.value.suggestedMaterials.quizzes.isNotEmpty()) {
-                        item {
-                            Text(text = "Quiz")
-                        }
-
-                        items(state.value.suggestedMaterials.quizzes) { quizSet ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .clickable {
-                                        val quizJson = Json.encodeToString(quizSet)
-                                        navController.navigate(Route.Quiz.createRoute(quizSuggestion = quizJson))
-                                    }
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = "${quizSet.quiz.size} questions",
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        item {
-                            Text(text = "No similar document with quiz")
-                        }
-                    }
-                } else {
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Upload a document to get materials from a most similar document")
-                    }
-                }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            GradientButton(
+                text = "View Suggested Materials",
+                gradientColors = if (state.value.retrievedDocuments.isEmpty()) listOf(Color(0xFF9E9E9E), Color(0xFF9E9E9E)) else listOf(Color(0xFF00CCCC), Color(0xFF3399FF)),
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(400.dp).clickable { state.value.retrievedDocuments.isEmpty() },
+                onClick = { navController.navigate(Route.SuggestedMaterials) },
+            )
         }
     }
 }

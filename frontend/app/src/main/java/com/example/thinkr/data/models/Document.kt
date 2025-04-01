@@ -22,6 +22,7 @@ data class Document(
     val documentName: String,
     val uploadTime: String,
     val activityGenerationComplete: Boolean,
+    val public: Boolean,
     @Transient
     val isUploading: Boolean = false,
     @Transient
