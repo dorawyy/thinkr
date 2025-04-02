@@ -97,7 +97,7 @@ export const getDocuments = async (
 
     try {
         const docs = documentId
-            ? await DocumentService.getDocument(documentId, userId)
+            ? [await DocumentService.getDocument(documentId, userId)]
             : await DocumentService.getDocuments(userId);
 
         const result = {
