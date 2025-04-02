@@ -14,8 +14,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -46,11 +44,8 @@ class DocumentApi(private val client: HttpClient) : IDocumentApi {
         val response = client.get(urlString = BASE_URL + DOCUMENT + RETRIEVE) {
             parameter("userId", userId)
             parameter(
-                key = "documentIds",
-                value = if (documentIds == null) "[]" else Json.encodeToString(
-                    serializer = ListSerializer(String.serializer()),
-                    value = documentIds
-                )
+                key = "documentId",
+                value = if (documentIds == null) "" else documentIds[0]
             )
         }
         val responseBody = response.bodyAsText()

@@ -5,10 +5,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -166,6 +164,6 @@ private fun DocumentOptionButton(
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .height(56.dp),
-        onClick = onClick,
+        onClick = { if (isReady) onClick() },
     )
 }
