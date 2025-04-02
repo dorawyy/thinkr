@@ -420,7 +420,7 @@ describe('Document Controller', () => {
         // Input: Valid userId and documentId
         // Expected status code: 200
         // Expected behavior: Retrieves specific document for the user
-        // Expected output: Single DocumentDTO object
+        // Expected output: Array containing a single DocumentDTO object
         it('should retrieve a specific document for a user', async () => {
             const userId = 'user123';
             const documentId = 'doc1.pdf';
@@ -450,11 +450,13 @@ describe('Document Controller', () => {
             expect(statusSpy).toHaveBeenCalledWith(200);
             expect(jsonSpy).toHaveBeenCalledWith({
                 data: {
-                    docs: expect.objectContaining({
-                        documentId,
-                        activityGenerationComplete: true,
-                        documentName: 'Document 1',
-                    }),
+                    docs: expect.arrayContaining([
+                        expect.objectContaining({
+                            documentId,
+                            activityGenerationComplete: true,
+                            documentName: 'Document 1',
+                        }),
+                    ]),
                 },
             });
         });

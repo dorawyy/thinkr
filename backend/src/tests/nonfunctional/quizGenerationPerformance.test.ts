@@ -64,7 +64,7 @@ describe('NFR Quiz/Flashcard Generation Performance Test', () => {
 
             expect(retrieveResponse.status).toBe(200);
 
-            if (retrieveResponse.data.data.docs.activityGenerationComplete) {
+            if (retrieveResponse.data.data.docs[0].activityGenerationComplete) {
                 isGenerationComplete = true;
             } else {
                 await new Promise((resolve) =>
