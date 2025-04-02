@@ -41,6 +41,8 @@ import com.example.thinkr.ui.profile.ProfileScreen
 import com.example.thinkr.ui.profile.ProfileViewModel
 import com.example.thinkr.ui.quiz.QuizScreen
 import com.example.thinkr.ui.quiz.QuizViewModel
+import com.example.thinkr.ui.suggested_materials.SuggestedMaterialsScreen
+import com.example.thinkr.ui.suggested_materials.SuggestedMaterialsViewModel
 import com.example.thinkr.ui.theme.ThinkrTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -85,6 +87,7 @@ class MainActivity : ComponentActivity() {
                         navigation<Route.RouteGraph>(startDestination = startDestination) {
                             setupLandingRoute(navController)
                             setupHomeRoute(navController)
+                            setupSuggestedMaterialsRoute(navController)
                             setupDocumentOptionsRoute(navController)
                             setupDocumentUploadRoute(navController)
                             setupProfileRoute(navController)
@@ -132,6 +135,17 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.setupSuggestedMaterialsRoute(navController: NavController) {
+        composable<Route.SuggestedMaterials> {
+            val viewModel = koinViewModel<SuggestedMaterialsViewModel>()
+
+            SuggestedMaterialsScreen(
+                navController = navController,
+                viewModel = viewModel,
             )
         }
     }

@@ -34,6 +34,7 @@ import com.example.thinkr.ui.landing.LandingViewModel
 import com.example.thinkr.ui.payment.PaymentViewModel
 import com.example.thinkr.ui.profile.ProfileViewModel
 import com.example.thinkr.ui.quiz.QuizViewModel
+import com.example.thinkr.ui.suggested_materials.SuggestedMaterialsViewModel
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.core.module.dsl.singleOf
@@ -58,6 +59,7 @@ val appModule = module {
     singleOf(::QuizRepository).bind<IQuizRepository>()
     viewModelOf(::LandingViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::SuggestedMaterialsViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::PaymentViewModel)
     viewModelOf(::DocumentUploadViewModel)

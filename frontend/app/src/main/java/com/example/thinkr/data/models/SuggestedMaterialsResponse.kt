@@ -41,6 +41,7 @@ data class SuggestedMaterials(
 data class FlashcardSuggestion(
     val userId: String,
     val documentId: String,
+    val documentName: String,
     val flashcards: List<FlashcardItem>
 )
 
@@ -57,5 +58,6 @@ data class FlashcardSuggestion(
 data class QuizSuggestion(
     val userId: String,
     val documentId: String,
+    val documentName: String,
     val quiz: List<QuizItem>
 )

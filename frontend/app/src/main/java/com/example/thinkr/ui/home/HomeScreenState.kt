@@ -12,15 +12,10 @@ import com.example.thinkr.data.models.SuggestedMaterials
  * @property selectedDocument The currently selected document, or null if no document is selected.
  * @property retrievedDocuments List of documents retrieved from the repository.
  * @property uploadingDocuments List of documents currently being uploaded.
- * @property suggestedMaterials Collection of suggested learning materials including flashcards and quizzes.
  */
 data class HomeScreenState(
     val showDialog: Boolean = false,
     val selectedDocument: Document? = null,
     val retrievedDocuments: List<Document> = emptyList(),
     val uploadingDocuments: List<Document> = emptyList(),
-    val suggestedMaterials: SuggestedMaterials = SuggestedMaterials(
-        flashcards = emptyList(),
-        quizzes = emptyList()
-    )
 )

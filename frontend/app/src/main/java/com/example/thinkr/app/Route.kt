@@ -33,6 +33,12 @@ sealed interface Route {
     data object Home : Route
 
     /**
+     * Suggested Materials screen route.
+     */
+    @Serializable
+    data object SuggestedMaterials : Route
+
+    /**
      * Document options screen route with a document parameter.
      *
      * @property documentItem The document to display options for.
