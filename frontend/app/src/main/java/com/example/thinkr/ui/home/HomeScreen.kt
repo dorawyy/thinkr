@@ -147,14 +147,23 @@ private fun HomeScreenContent(
                         Text(text = "Add")
                     }
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    GradientButton(
+                        text = "View Suggested Materials",
+                        gradientColors = if (state.value.retrievedDocuments.isEmpty()) listOf(
+                            Color(
+                                0xFF9E9E9E
+                            ), Color(0xFF9E9E9E)
+                        ) else listOf(Color(0xFF00CCCC), Color(0xFF3399FF)),
+                        modifier = Modifier.align(Alignment.CenterHorizontally).width(400.dp)
+                            .clickable { state.value.retrievedDocuments.isEmpty() },
+                        onClick = { navController.navigate(Route.SuggestedMaterials) },
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            GradientButton(
-                text = "View Suggested Materials",
-                gradientColors = if (state.value.retrievedDocuments.isEmpty()) listOf(Color(0xFF9E9E9E), Color(0xFF9E9E9E)) else listOf(Color(0xFF00CCCC), Color(0xFF3399FF)),
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(400.dp).clickable { state.value.retrievedDocuments.isEmpty() },
-                onClick = { navController.navigate(Route.SuggestedMaterials) },
-            )
         }
     }
 }
