@@ -264,7 +264,7 @@ class StudyService {
      */
     public async getSuggestedMaterials(
         userId: string,
-        limit: number = 5
+        limit = 5
     ): Promise<{
         flashcards: FlashCardDTO[];
         quizzes: QuizDTO[];
@@ -548,7 +548,7 @@ class StudyService {
      * Fetch quizzes for a list of documents
      */
     private async fetchQuizzesForDocuments(
-        documents: Array<{ documentId: string; otherUserId: string }>
+        documents: { documentId: string; otherUserId: string }[]
     ): Promise<QuizDTO[]> {
         const quizSets: QuizDTO[] = [];
 
