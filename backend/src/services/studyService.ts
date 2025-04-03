@@ -310,28 +310,54 @@ class StudyService {
             }
 
             // 4. Clean up structure - remove _id and add documentName
-            const flashcards = rawFlashcards.map((f) => ({
-                userId: f.userId,
-                documentId: f.documentId,
-                documentName:
-                    documentMap.get(`${f.userId}-${f.documentId}`) || '',
-                flashcards: f.flashcards.map((flashcard) => ({
-                    front: flashcard.front,
-                    back: flashcard.back,
-                })),
-            })) as FlashCardDTO[];
+            // Use a Set to track documents we've already added to avoid duplicates
+            const processedDocIds = new Set<string>();
 
-            const quizzes = rawQuizzes.map((q) => ({
-                userId: q.userId,
-                documentId: q.documentId,
-                documentName:
-                    documentMap.get(`${q.userId}-${q.documentId}`) || '',
-                quiz: q.quiz.map((quiz) => ({
-                    question: quiz.question,
-                    answer: quiz.answer,
-                    options: quiz.options,
-                })),
-            })) as QuizDTO[];
+            const flashcards = rawFlashcards
+                .filter((f) => {
+                    const uniqueId = `${f.userId}-${f.documentId}`;
+                    // Only include this flashcard set if we haven't seen this document before
+                    if (!processedDocIds.has(uniqueId)) {
+                        processedDocIds.add(uniqueId);
+                        return true;
+                    }
+                    return false;
+                })
+                .map((f) => ({
+                    userId: f.userId,
+                    documentId: f.documentId,
+                    documentName:
+                        documentMap.get(`${f.userId}-${f.documentId}`) || '',
+                    flashcards: f.flashcards.map((flashcard) => ({
+                        front: flashcard.front,
+                        back: flashcard.back,
+                    })),
+                })) as FlashCardDTO[];
+
+            // Reset the Set for quiz processing
+            processedDocIds.clear();
+
+            const quizzes = rawQuizzes
+                .filter((q) => {
+                    const uniqueId = `${q.userId}-${q.documentId}`;
+                    // Only include this quiz set if we haven't seen this document before
+                    if (!processedDocIds.has(uniqueId)) {
+                        processedDocIds.add(uniqueId);
+                        return true;
+                    }
+                    return false;
+                })
+                .map((q) => ({
+                    userId: q.userId,
+                    documentId: q.documentId,
+                    documentName:
+                        documentMap.get(`${q.userId}-${q.documentId}`) || '',
+                    quiz: q.quiz.map((quiz) => ({
+                        question: quiz.question,
+                        answer: quiz.answer,
+                        options: quiz.options,
+                    })),
+                })) as QuizDTO[];
 
             return { flashcards, quizzes };
         } catch (error) {
@@ -365,6 +391,9 @@ class StudyService {
             return [];
         }
 
+        // Track unique document IDs to avoid duplicates
+        const processedCombinations = new Set<string>();
+
         // For each of the user's documents, find similar documents
         for (const docId of userDocumentIds) {
             try {
@@ -383,6 +412,17 @@ class StudyService {
                 // For each document from other users, calculate similarity
                 for (const otherDoc of otherUsersDocuments) {
                     try {
+                        // Create a unique key for this combination
+                        const uniqueKey = `${otherDoc.userId}-${otherDoc.documentId}`;
+
+                        // Skip if we've already processed this document
+                        if (processedCombinations.has(uniqueKey)) {
+                            continue;
+                        }
+
+                        // Mark as processed
+                        processedCombinations.add(uniqueKey);
+
                         // Get the other document's text from ChromaDB
                         const otherDocText =
                             await this.ragService.fetchDocumentsFromVectorDB(
