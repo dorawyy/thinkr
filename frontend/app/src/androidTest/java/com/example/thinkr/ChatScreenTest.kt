@@ -79,7 +79,8 @@ internal class ChatScreenTest {
                 ),
                 createdAt = TEST_CHAT_CREATE_DATE,
                 updatedAt = TEST_CHAT_UPDATE_DATE,
-                metadata = emptyMap()
+                metadata = emptyMap(),
+                userId = TEST_USER_ID
             )
         )
 
@@ -130,7 +131,8 @@ internal class ChatScreenTest {
                 ),
                 createdAt = TEST_CHAT_CREATE_DATE,
                 updatedAt = TEST_CHAT_UPDATE_DATE,
-                metadata = emptyMap()
+                metadata = emptyMap(),
+                userId = TEST_USER_ID
             )
         )
 
@@ -237,7 +239,8 @@ internal class ChatScreenTest {
                 ),
                 createdAt = TEST_CHAT_CREATE_DATE,
                 updatedAt = TEST_CHAT_UPDATE_DATE,
-                metadata = emptyMap()
+                metadata = emptyMap(),
+                userId = TEST_USER_ID
             )
         )
 
@@ -295,7 +298,8 @@ internal class ChatScreenTest {
                 ),
                 createdAt = TEST_CHAT_CREATE_DATE,
                 updatedAt = TEST_CHAT_UPDATE_DATE,
-                metadata = emptyMap()
+                metadata = emptyMap(),
+                userId = TEST_USER_ID
             )
         )
 
@@ -347,7 +351,8 @@ internal class ChatScreenTest {
                 ),
                 createdAt = TEST_CHAT_CREATE_DATE,
                 updatedAt = TEST_CHAT_UPDATE_DATE,
-                metadata = emptyMap()
+                metadata = emptyMap(),
+                userId = TEST_USER_ID
             )
         )
 
