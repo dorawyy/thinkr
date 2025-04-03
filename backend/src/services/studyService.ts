@@ -373,13 +373,13 @@ class StudyService {
         userId: string,
         userDocumentIds: string[],
         limit: number
-    ): Promise<Array<{ documentId: string; otherUserId: string }>> {
+    ): Promise<{ documentId: string; otherUserId: string }[]> {
         // Initialize results array
-        const similarityResults: Array<{
+        const similarityResults: {
             documentId: string;
             otherUserId: string;
             similarityScore: number;
-        }> = [];
+        }[] = [];
 
         // Get all documents from other users
         const otherUsersDocuments = await Document.find({
@@ -522,7 +522,7 @@ class StudyService {
      * Fetch flashcards for a list of documents
      */
     private async fetchFlashcardsForDocuments(
-        documents: Array<{ documentId: string; otherUserId: string }>
+        documents: { documentId: string; otherUserId: string }[]
     ): Promise<FlashCardDTO[]> {
         const flashcardSets: FlashCardDTO[] = [];
 
