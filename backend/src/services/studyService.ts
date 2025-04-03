@@ -499,7 +499,10 @@ class StudyService {
 
             // Calculate cosine similarity
             const dotProduct = embedding1.reduce(
-                (sum, val, idx) => sum + val * (Number.isInteger(idx) && idx >= 0 && idx < embedding2.length ? embedding2[idx] : 0),
+                (sum, val, idx) => {
+                    const embedding2Value = idx >= 0 && idx < embedding2.length ? embedding2[idx] : 0;
+                    return sum + val * embedding2Value;
+                  },
                 0
             );
             const magnitude1 = Math.sqrt(
