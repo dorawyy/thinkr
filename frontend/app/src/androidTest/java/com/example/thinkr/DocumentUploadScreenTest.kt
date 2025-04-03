@@ -82,7 +82,8 @@ internal class DocumentUploadScreenTest {
                 fileName = any(),
                 userId = any(),
                 documentName = any(),
-                documentContext = any()
+                documentContext = any(),
+                documentPublic = any()
             )
         } returns true
 
@@ -177,7 +178,8 @@ internal class DocumentUploadScreenTest {
                 fileName = any(),
                 userId = any(),
                 documentName = any(),
-                documentContext = any()
+                documentContext = any(),
+                documentPublic = any()
             )
         } returns false
 
@@ -229,7 +231,8 @@ internal class DocumentUploadScreenTest {
                 fileName = any(),
                 userId = any(),
                 documentName = any(),
-                documentContext = any()
+                documentContext = any(),
+                documentPublic = any()
             )
         } throws Exception("Network error")
 

@@ -68,7 +68,8 @@ internal class FlashcardsScreenTest {
             documentId = "test_document6130544703607720127.pdf",
             documentName = "Test Document",
             uploadTime = "2025-03-13 17:49:53",
-            activityGenerationComplete = true
+            activityGenerationComplete = true,
+            public = true
         )
 
         private val TEST_USER = User(
