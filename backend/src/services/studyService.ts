@@ -499,10 +499,9 @@ class StudyService {
 
             const dotProduct = Array.from(embedding1.entries()).reduce(
                 (sum, [i, val]) => {
-                    const e2Val =
-                        i < embedding2.length
-                            ? Object.values(embedding2)[i]
-                            : 0;
+                    const e2Val = i < embedding2.length
+                    ? Array.from(embedding2).find((_, index) => index === i) || 0
+                    : 0;
                     return sum + val * e2Val;
                 },
                 0
