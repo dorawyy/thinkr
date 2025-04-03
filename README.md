@@ -8,7 +8,7 @@ The Android app implements a Model-View-ViewModel inspired layer architecture ou
 
 ## Backend Setup
 
-1. `npm install`.
+1. `npm install`
 2. Set up mongoDB (connection URI)
 3. Create a `.env` file in the `backend` directory with the following variables:
    ```plaintext
