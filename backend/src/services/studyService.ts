@@ -497,7 +497,7 @@ class StudyService {
                 text2,
             ]);
 
-            const pairs = embedding1.map((v, i) => [v, i < embedding2.length ? embedding2[i] : 0]);
+            const pairs = embedding1.map((v, i) => [v, i < embedding2.length ? embedding2[`${i}`] : 0]);
 
             const dotProduct = pairs.reduce((sum, [val1, val2]) => {
               const num1 = typeof val1 === 'number' ? val1 : 0;
