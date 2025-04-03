@@ -497,15 +497,14 @@ class StudyService {
                 text2,
             ]);
 
-            const dotProduct = Array.from(embedding1.entries()).reduce(
-                (sum, [i, val]) => {
-                    const e2Val = i < embedding2.length
-                    ? Array.from(embedding2).find((_, index) => index === i) || 0
-                    : 0;
-                    return sum + val * e2Val;
-                },
-                0
-            );
+            const pairs = embedding1.map((v, i) => [v, i < embedding2.length ? embedding2[i] : 0]);
+
+            const dotProduct = pairs.reduce((sum, [val1, val2]) => {
+              const num1 = typeof val1 === 'number' ? val1 : 0;
+              const num2 = typeof val2 === 'number' ? val2 : 0;
+              return sum + num1 * num2;
+            }, 0);
+
             const magnitude1 = Math.sqrt(
                 embedding1.reduce((sum, val) => sum + val * val, 0)
             );
